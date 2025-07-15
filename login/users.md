@@ -1,5 +1,7 @@
 <a href="javascript:void(0)" onclick="history.back()">⬅️ Назад</a>
 
+[Повернутися на головну](/)
+
 # 1.3.2.1 Користувачі
 
 ![](../_media/admin-panel-users.png ':no-zoom')
@@ -42,3 +44,6 @@
 - Адмін - Звичайна роль для адміністраторів
 
 
+<a href="javascript:void(0)" onclick="history.back()">⬅️ Назад</a>
+
+[Повернутися на головну](/)

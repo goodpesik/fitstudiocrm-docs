@@ -8,4 +8,5 @@
 - [3.4. Тренери](/menu/coaches)
 - [3.5. Зали](/menu/rooms)
 - [3.6. Абонементи](/menu/plans)
-- [3.7. Звіти](/menu/reports)
+- [3.7. Продукти](/menu/products)
+- [3.8. Звіти](/menu/reports)

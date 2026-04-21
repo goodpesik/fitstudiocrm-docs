@@ -38,7 +38,7 @@ timezone: string;
 
 ### Migration
 
-Standard TypeORM `ALTER TABLE settings ADD COLUMN timezone varchar DEFAULT 'Europe/Kyiv'`.
+No migration needed — schema is applied via ORM sync.
 
 ### No other backend changes
 
@@ -186,6 +186,9 @@ All edge cases must be covered by unit tests.
 | Conflict check — two workouts at same local time same day | Conflict detected |
 | Conflict check — two workouts at different local times same day | No conflict |
 | Conflict check — workout with `localTimeHours` vs workout without | Still detects overlap correctly |
+| **DST: recurring workout created in winter (UTC+2), new workout at same `localTimeHours` in summer (UTC+3)** | Conflict detected — both have same wall-clock hour regardless of UTC offset |
+| **DST: recurring workout created in summer (UTC+3), new workout at same `localTimeHours` in winter (UTC+2)** | Conflict detected — wall-clock comparison is DST-agnostic |
+| DST: recurring workout created in winter, new workout at different `localTimeHours` in summer | No conflict |
 
 ### fitstudiocrm-app: admin-panel.vue
 

@@ -33,7 +33,7 @@
 - Адмін-панель
 - Вийти з системи
 
-![](../_media/header-screenshot.png ':size=100x16')
+![](../_media/header-screenshot.png ':size=100x19')
 
 ---
 

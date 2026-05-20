@@ -66,7 +66,7 @@
 
 > Опція імпорту доступна в меню **Адмін-панель** на вкладці [Налаштування](/login/settings).
 
-![](../_media/admin-panel-settings-prro.png ':size=150x100')
+![](../_media/admin-panel-settings-prro.png ':size=150x86')
 
 **Необхідні поля для імпорту:**
 
@@ -78,12 +78,12 @@
 
 > Файл повинен містити хоча б одне з цих полів, інакше система покаже повідомлення про помилку.
 
-![](../_media/import-error.png ':size=150x100')
+![](../_media/import-error.png ':size=150x73')
 
 Інші поля можна замапити вручну.  
 Для прикладу підготовлено тестовий Excel-файл:
 
-![](../_media/import-simple-xls.png ':size=200x80')
+![](../_media/import-simple-xls.png ':size=200x58')
 
 **Файл містить:**
 
@@ -98,12 +98,12 @@
 
 Після завантаження файлу зʼявиться крок маппінгу:
 
-![](../_media/import-mapping-step.png ':size=150x80')
+![](../_media/import-mapping-step.png ':size=150x89')
 
 - Система ігнорує надлишкові та невідомі поля, якщо не виконати маппінг.  
 - Для цього натисніть **Додати маппінг поля**:
 
-![](../_media/import-mapping-step-1.png ':size=200x50')
+![](../_media/import-mapping-step-1.png ':size=200x45')
 
 - **Поле** — список невідповідних полів
 - **Маппінг** — список доступних полів у системі
@@ -113,17 +113,17 @@
 Поле **Прізвище** потрібно обʼєднати з полем **Імʼя**, додавши префікс-пробіл.  
 Поле **Дата** замаплюється як **Дата народження** (без префікса).
 
-![](../_media/import-mapping-step-2.png ':size=200x50')
+![](../_media/import-mapping-step-2.png ':size=200x56')
 
-![](../_media/import-mapping-step-3.png ':size=200x50')
+![](../_media/import-mapping-step-3.png ':size=200x46')
 
 Після цього буде показано превʼю імпорту:
 
-![](../_media/import-preview-step.png ':size=200x50')
+![](../_media/import-preview-step.png ':size=200x68')
 
 Якщо натиснути **Продовжити** — імпорт завершиться повідомленням:
 
-![](../_media/import-success.png ':size=200x50')
+![](../_media/import-success.png ':size=200x47')
 
 > Після імпорту всі клієнти зʼявляться у таблиці на сторінці **Клієнти**.
 

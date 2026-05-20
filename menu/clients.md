@@ -28,11 +28,11 @@
 - **Карта** — номер картки клієнта
 - **Дії** — доступні опції:
     - **[Історія](#_325-Історія)** ![](../_media/customers-transactions.png ':size=40x32')
-    - **[Редагувати](#_326-Редагувати)** ![](../_media/customers-edit-button.png ':size=40x35')
+    - **[Редагувати](#_326-Редагування-клієнта)** ![](../_media/customers-edit-button.png ':size=40x35')
     - **[Продаж](#_327-Продаж)** ![](../_media/customers-sell.png ':size=40x38')
     - **[Запис](#_328-Запис)** ![](../_media/customer-booking.png ':size=40x40')
     - **[Реєстрація](#_329-Реєстрація)** ![](../_media/customer-registration.png ':size=40x32')
-    - **[Видалити](#_3210-Видалити)** ![](../_media/customer-remove.png ':size=40x33')
+    - **[Видалити](#_3210-Видалення-клієнта)** ![](../_media/customer-remove.png ':size=40x33')
 
 ---
 

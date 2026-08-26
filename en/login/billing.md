@@ -16,7 +16,9 @@ If payment is not automatic, the same menu also shows **Pay** ("Оплатити
 
 ## The expiry warning
 
-**Two days** before the plan runs out, a banner appears in the header with the date and the number of days left. If automatic renewal is on, the banner says so — there is nothing to pay by hand.
+If **automatic renewal** is on, a notice appears once per session on signing in — "Автоматичне поновлення плану" — with the date the amount will be charged to the card on file. Nothing needs doing.
+
+If there is **no** automatic renewal, the system itself shows no warning: the reminder comes by email, and the plan's state is visible in the manager's account. The **Plan: name** line in the user menu shows the date and the days remaining, and is worth checking yourself.
 
 ---
 

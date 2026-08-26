@@ -1,0 +1,38 @@
+- [Home](/en/)
+
+- [**1. Login and Users**](/en/login/login)
+  - [1.3.2.1 Users](/en/login/users)
+  - [1.3.2.2 Settings](/en/login/settings)
+  - [1.3.2.3 Information](/en/login/info)
+  - [Telegram Bot / Mobile Application](/en/login/telegram-bot)
+
+- [**2. Opening and Closing a Shift**](/en/pages/shifts)
+
+- [**3. Menu sections**](/en/menu/menu)
+  - [3.1 Schedule](/en/menu/schedule)
+  - [3.2 Clients](/en/menu/clients)
+  - [3.3 Workouts](/en/menu/workouts)
+  - [3.4 Coaches](/en/menu/coaches)
+  - [3.5 Rooms](/en/menu/rooms)
+  - [3.6 Memberships](/en/menu/plans)
+  - [3.7 Products](/en/menu/products)
+  - [3.8 Reports ("Звіти")](/en/menu/reports)
+  - [3.9 Point of sale](/en/menu/pos)
+  - [3.10 Gift certificates](/en/menu/certificates)
+
+- [**4. Initial Setup**](/en/pages/setup)
+- [**5. Examples and Tips**](/en/pages/examples)
+- [**6. Information on How the System Processes Workout Visits, Plan Deductions, Reminders, and More**](/en/pages/processing)
+
+- [**7. Mobile App (Client App)**](/en/mobile/mobile)
+  - [7.1 Installation and Login](/en/mobile/install)
+  - [7.2 Registration and Studio Selection](/en/mobile/registration)
+  - [7.3 Home](/en/mobile/home)
+  - [7.4 Client Card](/en/mobile/card)
+  - [7.5 Classes](/en/mobile/workouts)
+  - [7.6 Account](/en/mobile/account)
+  - [7.7 Notifications](/en/mobile/notifications)
+  - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
+  - [7.9 Ratings and Reviews](/en/mobile/ratings)
+
+- [**Support System (Support Tickets)**](/en/pages/support-system)

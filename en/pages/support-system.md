@@ -112,6 +112,7 @@ The client (admin) never sees Jira or the Pi server — communication always hap
 ## Limits
 
 - **monthly ticket limit** per studio (unlimited by default). The Super Admin role is not subject to the limit
+- **SOS priority** — a separate level for urgent requests, with **its own monthly quota**, apart from ordinary tickets. Once the SOS quota is used up the option is disabled and an explanation appears next to it.
 - **3 consecutive messages** — no more can be sent until support has replied (this does not apply to the Super Admin)
 - **5 files** maximum per message
 

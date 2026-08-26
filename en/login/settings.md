@@ -151,6 +151,16 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 
 > ⚠️ The "Receipt Header" and "Receipt Footer" fields no longer exist — they were removed together with the move to integration cards.
 
+
+### Monobank acquiring
+
+Monobank acquiring is added as its own card: a token, and for QR payments a choice of the active QR from the list pulled from Monobank. Several physical terminals can be added, each with its own name.
+
+> ⚠️ At present this is **configuration only**. Payment at the [Point of sale](/en/menu/pos) does not go through Monobank yet — the card can be filled in, but it does not affect the sale process.
+
+### Devices
+
+A toggle and the address of the local receipt-printing helper (`http://localhost:9999` by default) with a connection check. The setting applies **to this computer only**: it has to be enabled at every workstation separately.
 ### What Changes When Fiscalization Is Enabled
 
 - All sales (cash/card) are **fiscalized** through VchasnoKasa; a fiscal receipt is created for every transaction.

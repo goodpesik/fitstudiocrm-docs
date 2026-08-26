@@ -49,6 +49,14 @@
 
 ---
 
+## Checking the fiscal integrations when opening and closing
+
+Pressing **Open shift** ("Відкрити зміну") or **Close shift** ("Закрити зміну") opens a window listing the active fiscal cards: for each one it shows whether there is a connection, and what state the shift is in on the Vchasno or Checkbox side.
+
+If the state here and the state at the fiscal operator have drifted apart — the shift is already closed there but not here, say — a **Synchronise** ("Синхронізувати") button appears and brings the two into line.
+
+---
+
 ## Automatic Shift Closing
 
 If automatic closing is enabled in the studio settings, an open shift closes itself automatically every day at 23:58. An entry "Shift closed automatically" will appear in the notifications section.

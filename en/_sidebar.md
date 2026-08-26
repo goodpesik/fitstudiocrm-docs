@@ -4,6 +4,7 @@
   - [1.3.2.1 Users](/en/login/users)
   - [1.3.2.2 Settings](/en/login/settings)
   - [1.3.2.3 Information](/en/login/info)
+  - [1.4 Plan and access](/en/login/billing)
   - [Telegram Bot / Mobile Application](/en/login/telegram-bot)
 
 - [**2. Opening and Closing a Shift**](/en/pages/shifts)

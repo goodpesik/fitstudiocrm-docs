@@ -116,6 +116,12 @@ Only **Coach 2**, **Coach 3**, **Room 1**, and **Room 3** remain available.
   - *Delete* (available for deactivated workouts)
   - *Edit*
 
+### Change history
+
+A clock icon opens the workout's change log: who changed what, and when — status, payment, time, room. It is available both in the workout list and in the edit form. Useful when you need to work out why a class does not look the way you expected.
+
+---
+
 **Sorting is available by:**
 
 - Name

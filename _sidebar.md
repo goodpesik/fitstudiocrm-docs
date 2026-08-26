@@ -4,6 +4,7 @@
   - [1.3.2.1 Користувачі](/login/users)
   - [1.3.2.2 Налаштування](/login/settings)
   - [1.3.2.3 Інформація](/login/info)
+  - [1.4 Тариф і доступ](/login/billing)
   - [Телеграм-бот](/login/telegram-bot)
 
 - [**2. Зміна та сповіщення**](/pages/shifts)

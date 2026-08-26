@@ -42,4 +42,12 @@ The tab has two sub-tabs: **"Notifications"** ("Сповіщення") (history)
 
 <a href="javascript:void(0)" onclick="history.back()">⬅️ Back</a>
 
+---
+
+## When notifications stop arriving
+
+Permission for notifications sometimes goes stale — the browser or the system revokes the subscription without saying so. The app notices this itself: if notifications are switched on in the settings but there is in fact no subscription, it either quietly restores it or shows a window explaining how to unblock notifications in the browser settings. That window appears at most once per session.
+
+---
+
 [Back to home](/en/)

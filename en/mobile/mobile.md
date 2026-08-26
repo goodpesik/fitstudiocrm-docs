@@ -25,6 +25,12 @@ One login (one Telegram account) can hold several roles and belong to several st
 
 ---
 
+## Application language
+
+Next to the name in the header there is a language switch — Ukrainian or English. The choice is stored against the user and applies across every studio and role. It also decides the language of the reminders that arrive as notifications, in Telegram or by SMS.
+
+---
+
 ## 7.1 Sections
 
 - [7.1. Installation and Login](/en/mobile/install) — installing the app, viewing the list of studios without logging in, and confirming login via Telegram or SMS.

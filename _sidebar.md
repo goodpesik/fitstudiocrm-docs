@@ -35,5 +35,7 @@
   - [7.5 Тренування](/mobile/workouts)
   - [7.6 Кабінет](/mobile/account)
   - [7.7 Сповіщення](/mobile/notifications)
+  - [7.8 Публічна сторінка та запис без акаунта](/mobile/guest)
+  - [7.9 Рейтинги та відгуки](/mobile/ratings)
 
 - [**8. Підтримка**](/pages/support-system)

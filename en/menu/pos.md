@@ -102,7 +102,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
   - Card → noted in the fiscal record;
   - Personal account → the amount is returned to the client's [personal account](/en/menu/clients#_3-2-11-personal-account).
 
-> ⚠️ If a session from the plan has already been used, the refund creates a compensating entry in the plan's [history](/en/menu/clients#_3-2-5-history).
+> ⚠️ A refund **does not return a used session** to the membership. The class took place and the coach ran it, so the deduction stands — only the money comes back.
 
 ---
 

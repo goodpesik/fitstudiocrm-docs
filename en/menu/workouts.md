@@ -58,7 +58,7 @@ Only **Coach 2**, **Coach 3**, **Room 1**, and **Room 3** remain available.
 
 > For a recurring workout, the **Add exception** field is available — it lets you set dates on which the workout will not take place.
 
-> Next to it is the **Repeat workout until:** → **Choose date** toggle. When it is turned on, a date picker opens — the chosen date becomes the **last day** of the recurrence. After that date, no further occurrence of the workout is created in the calendar. Useful for term-based courses or temporary series. Turning the toggle off clears the field and returns the workout to an indefinite repeat.
+> Next to it is the **Repeat workout until:** → **Choose date** toggle. When it is turned on, a date picker opens — the chosen date is a **boundary**: classes are created up to it, but not on that date itself. If a class is needed on that day too, pick the next date in the schedule. Useful for term-based courses or temporary series. Turning the toggle off clears the field and returns the workout to an indefinite repeat.
 
 ---
 

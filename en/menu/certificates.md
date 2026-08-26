@@ -75,7 +75,7 @@ After saving:
 1. Select or create a client.
 2. Click **Redeem** ("Погасити").
 3. The certificate receives **Redeemed** status; the activation date and `clientId` are recorded automatically.
-4. A fiscal transaction with no payment is created (method **Certificate**), and the membership(s) are added to the client.
+4. The memberships from the certificate are added to the client. No separate transaction is created: the studio already took and recorded the money when the certificate was sold, so a second entry would only double the figures in the reports.
 
 ---
 

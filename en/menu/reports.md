@@ -83,7 +83,7 @@ Pressing **Edit** ("Редагувати") turns the **Working hours** field int
 - **Coach** ("Тренер") — the coach's name.
 - **Dynamic columns** — the system groups every class in the period by **category**, and each category becomes its own column. The value and the calculation type come **from the class category** ([Categories](/en/login/settings#categories)):
   - **Per person** (`PerPerson`) — `total number of clients × baseRate`.
-  - **Per class** (`PerWorkout`) — `number of classes held × baseRate`.
+  - **Per class** (`PerWorkout`) — `number of payable classes × baseRate`. A class counts as payable when at least one client attended it, or when a late cancellation was deducted for it.
 - **Total** ("Всього") — the sum of all categories for that coach.
 
 > The bottom row of the table shows the **total across all coaches**.

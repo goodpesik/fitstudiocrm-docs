@@ -30,7 +30,7 @@
   For each workout in the category, the system counts the number of clients who actually attended (status `Visited`) plus clients with status `Unvisited` whose session was deducted from the plan (canceled late). If this is fewer than the **Minimum Number of Clients** ([Settings → Features](/en/login/settings#features)), the minimum is used instead. If it is more than `workoutCapacity` and the corresponding toggle is enabled, it is capped at capacity. The sum across workouts × the category's `baseRate` = the salary for this category.
 
 - **Rate type `PerWorkout` ("Per Workout")**
-  The system counts the number of **conducted** workouts in the category (workouts with at least one client with status `Visited`). Number of workouts × the category's `baseRate` = the salary for this category.
+  The system counts the classes in the category the coach is owed for: those at least one client attended, **and** those with no attendees but with late cancellations that were deducted from a membership — the client paid and the coach waited. Number of classes × the category's `baseRate` = the salary for this category.
 
 > The total salary = the sum across all categories in which the coach had workouts during the period.
 

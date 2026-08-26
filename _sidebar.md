@@ -1,33 +1,30 @@
 - [Головна](/)
 
-- **1. Логін та користувачі**
-  - [1.1 Вхід у систему](/login/login)
-  - [1.2 Користувачі](/login/users)
-  - [1.3 Налаштування](/login/settings)
-  - [1.4 Інформація про систему](/login/info)
-  - [1.5 Телеграм-бот](/login/telegram-bot)
+- [**1. Логін та користувачі**](/login/login)
+  - [1.3.2.1 Користувачі](/login/users)
+  - [1.3.2.2 Налаштування](/login/settings)
+  - [1.3.2.3 Інформація](/login/info)
+  - [Телеграм-бот](/login/telegram-bot)
 
 - [**2. Зміна та сповіщення**](/pages/shifts)
 
-- **3. Розділи меню**
-  - [3.1 Огляд](/menu/menu)
-  - [3.2 Розклад](/menu/schedule)
-  - [3.3 Клієнти](/menu/clients)
-  - [3.4 Тренування](/menu/workouts)
-  - [3.5 Тренери](/menu/coaches)
-  - [3.6 Зали](/menu/rooms)
-  - [3.7 Абонементи](/menu/plans)
-  - [3.8 Товари](/menu/products)
-  - [3.9 Сертифікати](/menu/certificates)
-  - [3.10 Каса](/menu/pos)
-  - [3.11 Звіти](/menu/reports)
+- [**3. Розділи меню**](/menu/menu)
+  - [3.1 Розклад](/menu/schedule)
+  - [3.2 Клієнти](/menu/clients)
+  - [3.3 Тренування](/menu/workouts)
+  - [3.4 Тренери](/menu/coaches)
+  - [3.5 Зали](/menu/rooms)
+  - [3.6 Абонементи](/menu/plans)
+  - [3.7 Продукти](/menu/products)
+  - [3.8 Звіти](/menu/reports)
+  - [3.9 Каса](/menu/pos)
+  - [3.10 Сертифікати](/menu/certificates)
 
 - [**4. Перше налаштування**](/pages/setup)
 - [**5. Приклади та поради**](/pages/examples)
 - [**6. Обробка візитів і списань**](/pages/processing)
 
-- **7. Мобільний додаток**
-  - [7.0 Огляд](/mobile/mobile)
+- [**7. Мобільний додаток**](/mobile/mobile)
   - [7.1 Встановлення та вхід](/mobile/install)
   - [7.2 Реєстрація та вибір студії](/mobile/registration)
   - [7.3 Головна](/mobile/home)
@@ -38,4 +35,4 @@
   - [7.8 Публічна сторінка та запис без акаунта](/mobile/guest)
   - [7.9 Рейтинги та відгуки](/mobile/ratings)
 
-- [**8. Підтримка**](/pages/support-system)
+- [**Система підтримки**](/pages/support-system)

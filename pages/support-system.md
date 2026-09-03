@@ -203,7 +203,7 @@ HANDLER_SUPPORT_SECRET=<same secret>
 JIRA_API_TOKEN=<token>
 JIRA_BASE_URL=https://goodpesyk.atlassian.net
 JIRA_PROJECT_KEY=FC
-JIRA_ASSIGNEE=levinets@gmail.com
+JIRA_ASSIGNEE=fitshandler@gmail.com
 SLACK_SUPPORT_WEBHOOK_URL=<webhook>
 ```
 

@@ -19,7 +19,7 @@ After a successful sign-in, if access has not been granted yet (you were not inv
 
 If you are a studio employee, tell an administrator who already has access your email — so that they can add you in the [Users](/en/login/users) tab. The same email can have access to several studios; after signing in, choose the one you need.
 
-> System-level access questions (including the **Super Admin** ("Супер Адмін") role) are handled by the [system administrator](mailto:levinets@gmail.com).
+> System-level access questions (including the **Super Admin** ("Супер Адмін") role) are handled by the [system administrator](mailto:fitshandler@gmail.com).
 
 ---
 

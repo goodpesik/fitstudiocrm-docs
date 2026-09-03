@@ -76,7 +76,7 @@
 ## 7.6.6 About the App
 
 - **"Version: {version}"** ("Версія: {версія}").
-- **"Development"** ("Розробка") → fitshandler.com, **"Contacts:"** ("Контакти:") → levinets@gmail.com.
+- **"Development"** ("Розробка") → fitshandler.com, **"Contacts:"** ("Контакти:") → fitshandler@gmail.com.
 - **"For issues and suggestions about the app, please reach out"** ("З проблемами та пропозиціями щодо роботи додатку, звертайтеся") → Telegram.
 - **Admin** additionally sees **"Registered in the app:"** ("Зареєстровано у додатку:") — **"Clients: {N}"** ("Клієнтів: {N}"), **"Coaches: {N}"** ("Тренерів: {N}").
 

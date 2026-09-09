@@ -4,15 +4,46 @@
 
 # 7.1 Installation and Login
 
-> The app works as a **PWA** — it must be **installed** on the phone (added to the home screen), and then you log in via the **Telegram bot**.
+> The app is on the **App Store**, and on every other device it works as a **PWA** —
+> a page you add to the home screen. Whichever way you installed it, the login is
+> the same: through the **Telegram bot**.
 
 <!-- TODO: screenshot of the welcome / installation screen -->
 
 ---
 
-## 7.1.1 Installing the App
+## 7.1.1 Where to Get the App
 
-You can get the app link from the studio — it shows a **QR code** or sends a link (default `https://app.fitstudiocrm.com`). The studio finds these materials in [Settings → Mobile App](/en/login/settings#mobile-application).
+The studio gives you the link — it shows a **QR code** or sends the address (default
+`https://app.fitshandler.com`). That page offers whatever suits the phone: the stores
+first, and below them the install without a store.
+
+### iPhone — App Store
+
+The app is published: **Fitshandler** on the App Store. This is the main route for
+iPhone — an ordinary store install, and the icon appears on its own.
+
+> ℹ️ If you added the page to your home screen earlier (the PWA), the app reminds you
+> on every launch that an App Store version exists and offers to move. Nothing is lost:
+> the studio, the client and the bookings stay the same — they live on the server, not
+> in the app.
+
+### Android — by request for now
+
+The app is **not on Google Play yet**: it is in closed testing. Instead of the store the
+page shows a testing request form; send it and access will be opened for you. While you
+wait, the install without a store described below works and is fully featured.
+
+> ℹ️ As soon as the app is released on Google Play, that button becomes a store badge on
+> its own — nothing to do separately.
+
+### Without a store — installing the page (PWA)
+
+This route stays for everyone the stores are closed to: Android before the release, an
+old phone, an install ban in a work profile.
+
+The materials to hand out — the QR code and the link — are in
+[Settings → Mobile App](/en/login/settings#mobile-application).
 
 If the app is **not yet installed**, opening the link shows the installation screen:
 

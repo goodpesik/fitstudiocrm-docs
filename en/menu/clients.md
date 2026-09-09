@@ -113,6 +113,12 @@
 > Clicking the **Edit** button opens a window similar to the client-creation one, but with all fields pre-filled.  
 > Only the **Client card** field cannot be edited, if the number was generated automatically.
 
+> ℹ️ If the studio belongs to a **network** (a group of venues), a client known to the other
+> studios of the group carries a **"Клієнт із мережі"** (client from the network) tag at the
+> top of the form. It is a note, not a restriction: the name and the phone **can** be edited,
+> but the change reaches the shared registry and the neighbouring studios — which is exactly
+> what the tag warns about, so the edit does not surprise anyone else.
+
 ---
 
 ## 3.2.7 Sale
@@ -279,7 +285,10 @@ Example: a personal workout for 2 people, priced at **UAH 1300**. The first clie
 
 ### 3.2.11.3 Account history
 
-> The ![](../../_media/customers-transactions.png ":size=30x24") button opens the **History** modal window with two tabs: **Plans** and **Personal account**. The second tab shows all balance movements.
+> The ![](../../_media/customers-transactions.png ":size=30x24") button opens the **History**
+modal window with three tabs: **Plans**, **Personal account** and **Debts**. The second tab
+shows all balance movements, the third one every debt of the client
+(see [Debt history](#_3-2-12-3-debt-history)).
 
 ![](../../_media/client-balance-history.png ":size=500x301")
 
@@ -329,6 +338,31 @@ Example: a personal workout for 2 people, priced at **UAH 1300**. The first clie
    - **Pay** — creates a plan-sale transaction, credits the plan to the client, and closes the debt(s) at the same time.
 
 > ℹ️ If the debt is for a product (not a workout), it is usually paid in cash without purchasing a plan.
+
+### 3.2.12.3 Debt history
+
+> The **Debt payment** window is the till: it shows only what is still to be settled and
+> closes the moment the debts are paid. The whole history lives separately, in the client card.
+
+The **Debts** tab in the **History** modal (the ![](../../_media/customers-transactions.png ":size=30x24")
+button, next to plans and the personal account) shows **every** debt of the client in one
+list — created, paid and deleted — with the columns: Date • Description • Amount • Status •
+Created by • Deleted by.
+
+In the **Status** column a debt is in one of three states: **Created**, **Paid** or
+**Deleted**. Deletion outweighs payment: once a debt is deleted it shows as "Deleted",
+whatever its payment status was before.
+
+What you can do right there:
+
+- **Delete** (the bin) — any debt not deleted yet, a paid one included;
+- **Restore** (the arrow) — a debt deleted by mistake. It comes back exactly as it was:
+  the status, the amount and the list of clients were left untouched all along.
+
+> ℹ️ Deleting a debt is **reversible**: the row does not leave the database, it is only
+> marked deleted and drops out of the lists and the totals. The list shows **who** removed
+> it and **when**. Deleting again does not overwrite the date or the author — the person
+> who actually deleted it stays there.
 
 ---
 

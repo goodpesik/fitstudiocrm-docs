@@ -32,7 +32,10 @@
 - Avatar upload
 - Text field **Name** (required)
 - **Phone** field (required, numeric format)
-- A color picker to choose the coach's display color on the calendar (required field)
+- **Calendar color** (required field) — chosen from a palette of light shades,
+  a 7×5 grid. There is no free color picker any more: on light shades the text
+  on an event card stays readable whatever the color. A coach saved before the
+  palette keeps their color and is drawn with the nearest allowed shade
 - **Birthday** — date picker, optional.
 
 > ℹ️ **Coach payroll calculation:**

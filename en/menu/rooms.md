@@ -31,7 +31,10 @@
 
 - Text field **Name**
 - Numeric field **Maximum number of people**
-- A color picker to choose the room's color
+- **Room color** — the same palette of light shades (a 7×5 grid) as on the coach
+  card. A workout with no coach (a rental, for example) takes this color, so it
+  has to keep the text readable too. A room saved before the palette keeps its
+  color and is drawn with the nearest allowed shade
 
 ---
 

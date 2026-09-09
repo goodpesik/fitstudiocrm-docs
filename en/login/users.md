@@ -21,7 +21,9 @@
 - **Role** (can be changed)
 - **Actions** (**Delete** ("Видалити") and **Edit** ("Редагувати") buttons) — available only to the **Super Admin** ("Супер Адмін") and **Admin** ("Адмін") roles. A **Manager** ("Менеджер") sees the table but cannot change records.
 
-The edit form contains: **Name** ("Імʼя"), **Phone** ("Телефон"), **Hourly rate** ("Ставка за годину") — used to calculate the administrator's payroll — and **Role** ("Роль").
+The edit form contains: **Name** ("Імʼя"), **Phone** ("Телефон"), **Hourly rate**
+("Ставка за годину") — used to calculate the administrator's payroll — **Role** ("Роль"),
+and the **Earn bonuses** ("Нараховувати бонуси") toggle.
 
 ---
 
@@ -66,3 +68,18 @@ Possible actions:
 - Change or set the hourly rate (used for salary calculation).
 - Change the role.  
   **`Warning! This action can only be performed by a user with the "Super Admin" role.`**
+- Turn **Earn bonuses** ("Нараховувати бонуси") on or off.
+
+---
+
+## The **Earn bonuses** toggle
+
+> Not every administrator works on bonuses, so it is switched on per person.
+
+Switched off, that person earns nothing: neither the bonus for a sale they rang up
+themselves, nor a share of the bonus split among administrators. And the split counts
+**only** the administrators who are on bonuses — the rest share the same sum between
+them rather than losing it along with the excluded colleague.
+
+> ℹ️ The default is **on**, so nothing changes for anyone already in the system.
+> Bonuses are calculated by the payroll report, which is what reads this value.

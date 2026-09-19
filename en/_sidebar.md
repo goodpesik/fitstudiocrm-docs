@@ -36,4 +36,5 @@
   - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
 
+- [**Owner Cabinet**](/en/pages/cabinet)
 - [**Support System (Support Tickets)**](/en/pages/support-system)

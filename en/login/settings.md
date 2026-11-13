@@ -149,8 +149,6 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 - **PIN Code**, **Client Name**, **Client Version**, **License Key** — for Checkbox; all four fields are required.
 - The **Active** ("Активна") toggle enables the card. It only takes effect once the required fields are filled in, and only one card of each type can be active at a time.
 
-> ⚠️ The "Receipt Header" and "Receipt Footer" fields no longer exist — they were removed together with the move to integration cards.
-
 
 ### Monobank acquiring
 
@@ -161,6 +159,25 @@ Monobank acquiring is added as its own card: a token, and for QR payments a choi
 ### Devices
 
 A toggle and the address of the local receipt-printing helper (`http://localhost:9999` by default) with a connection check. The setting applies **to this computer only**: it has to be enabled at every workstation separately.
+
+#### Test print
+
+The **Test print** button in the row of a registered printer sends a test page to the printer.
+
+- The **Test sent** message is shown when the printing helper confirms that the page was printed.
+- The **Test print failed** message is shown in every other case. For the states in the table below, an explanation is shown under it.
+
+| State | Explanation |
+|---|---|
+| The job did not leave the Windows print queue within 4 seconds after sending | The job remained in the Windows print queue; nothing was printed |
+| The printer is offline in Windows | The printer is offline in Windows |
+| Printing on the printer is paused in Windows | Printing on this printer is paused in Windows |
+| Windows print queue error | Windows print queue error |
+| The printer is out of paper | The printer is out of paper |
+| The printer cover is open | The printer cover is open |
+
+No explanation is shown for other errors. Receipt printing during a sale is not affected by these rules.
+
 ### What Changes When Fiscalization Is Enabled
 
 - All sales (cash/card) are **fiscalized** through VchasnoKasa; a fiscal receipt is created for every transaction.

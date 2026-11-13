@@ -150,6 +150,9 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 - The **Active** ("Активна") toggle enables the card. It only takes effect once the required fields are filled in, and only one card of each type can be active at a time.
 
 
+> ⚠️ The "Receipt Header" and "Receipt Footer" fields no longer exist — they were removed together with the move to integration cards.
+
+
 ### Monobank acquiring
 
 Monobank acquiring is added as its own card: a token, and for QR payments a choice of the active QR from the list pulled from Monobank. Several physical terminals can be added, each with its own name.

@@ -28,9 +28,11 @@
 1. The person selects a class and taps to book.
 2. They enter their name and phone number.
 3. They confirm the number with a code. The code arrives **via Telegram**, and if the studio has connected SMS messaging and enabled the **"Confirm Guest Booking by SMS"** ("Підтвердження запису гостя по SMS") toggle — **SMS** can be chosen instead.
-4. Once confirmed, the booking is created, and a new client with this phone number appears at the studio.
+4. Once confirmed, a new client with this phone number appears at the studio, and the booking is submitted as a request.
 
-> ℹ️ While the waiting list of the class is not empty, the booking gets the **Waiting list** status, and the page shows "You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified." instead of "You're booked!" (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
+> ℹ️ A request from the public page must be approved by a studio administrator. Until approval the person is not booked on the class and no seat is held for them. After approval the person is booked and receives a notice: studio Telegram bot → Fitshandler Telegram account → SMS.
+
+> ℹ️ While the waiting list of the class is not empty, the booking (from an approved request or without approval) gets the **Waiting list** status, and the page shows "You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified." instead of "You're booked!". A client on the waiting list does not occupy a seat. An approved request that lands on the waiting list is notified with "Your request has been accepted. You have been added to the waiting list for the workout on <date>…" (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
 
 > ℹ️ If the number already belongs to a studio client, a new client is not created — the booking is attached to the existing card. This is exactly why the number is confirmed with a code: without it, someone could book under another person's name.
 
@@ -44,7 +46,11 @@ The **"Already a client? Log in"** ("Вже клієнт? Увійти") button 
 
 ## What the Studio Sees
 
-Guest bookings are no different from the rest: they appear immediately in the [schedule](/en/menu/schedule) and on the [client card](/en/menu/clients). There is no separate approval queue — the class slot is taken immediately.
+- The client card is created right after the number is confirmed with a code, before the request is decided.
+- The request appears among the studio notifications with approve and reject buttons. One administrator decides: a repeated decision on the same request is not executed.
+- Approval books the client on the class (status **Planned**, or **Waiting list** if the class waiting list is not empty) and sends them a notice. Rejection books nobody and sends no notice.
+- A request for a class that has already passed can only be rejected.
+- If administrator approval of requests is disabled, the booking is created immediately after the code is confirmed and appears in the [schedule](/en/menu/schedule) and on the [client card](/en/menu/clients).
 
 ---
 

@@ -67,7 +67,7 @@
 | **Attended** | Clients checked in via **Registration** (status **Attended**). |
 | **Cancelled** | Clients with status **Cancelled**, plus those marked **No-show** whose session was not deducted from their plan. |
 | **No-show** | Clients who missed the workout (status **No-show**). A session is deducted from their plan. |
-| **Waiting list** | Clients in the queue (status **Waiting list**) — they will be added automatically once a slot opens up. |
+| **Waiting list** | Clients in the queue (status **Waiting list**) — they are moved to **Planned** automatically when a spot frees up (see [Waiting list](#waiting-list)). |
 | **Spots remaining** | `workoutCapacity − (Planned + Attended)`, and if the workout has not taken place yet, reserved spots are additionally subtracted. Clients on the waiting list do not take up a spot. Shown only if a maximum capacity is set. |
 | **Reserved spots** | Clients with a repeat-booking setting configured — potentially booked automatically. Visible only for future recurring workouts. |
 | **Credited to coach** | How many clients / workouts will be credited to the coach for payroll, taking the [minimum count and capacity-cap settings](/en/login/settings#features) into account. |
@@ -144,6 +144,18 @@
 - **Reserved** → "Cancel the reservation" — the client will not be booked automatically for the selected date.
 
 > ℹ️ When **booking a client once** for a specific occurrence of a recurring workout: if the client repeats only on certain days of the week (e.g. Tuesday), then on a day that is not in their `repeatDays` (e.g. Thursday) the client has status **Paused**, but the administrator can **book them for that one occurrence** via the [Choose a client](#book-a-client) combo box — the status changes to **Planned** for that specific day only, without affecting the recurring schedule.
+
+### Waiting list
+
+- A client with the **Waiting list** status does not take up a spot. The number of free spots is calculated the same way on the server, in the client app, on the public schedule and in the admin window: `workoutCapacity − (Planned + Attended)`.
+- The queue is served in the order clients joined the waiting list: the client who joined earlier is moved first. A client who returns to the waiting list joins the end of the queue.
+- When a spot frees up on a workout that has not started and is not cancelled (a booking is cancelled, a client is removed from the workout, a status changes from **Planned** or **Attended** to another one, the capacity is increased), the system automatically moves the first client on the waiting list to the **Planned** status. This repeats while free spots and waiting clients remain.
+- The move is performed in the same way as a manual status change by an administrator: the same plan, repeat and change-log rules apply. The change log names «система» (system) as the author.
+- No automatic move is performed for a workout without a set capacity, or for a workout that has started, has ended or is cancelled.
+- A client cannot be moved twice, and the number of booked clients cannot exceed the capacity when several spots free up at the same time.
+- After the move the client receives the message "You are booked for the workout": a push notification in the app; a client whom push notifications do not reach receives it through the cascade: the studio Telegram bot → the Fitshandler Telegram account → SMS. An SMS is sent only if SMS sending is enabled for the studio and the limit is not used up.
+- The studio receives the notification «Клієнта переведено з листа очікування на тренування» (client moved from the waiting list to the workout) with the client and workout details.
+- A failure to send a message does not cancel the move.
 
 ### Reserved spots
 

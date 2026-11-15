@@ -57,7 +57,7 @@ On the **"Book"** tab, the card shows whether you can book:
 
 ### Waiting List
 
-> When all spots are taken, the class shows **"no spots available"**. If the studio uses a waiting list, your booking may get the **"Waiting List"** status — when a spot frees up, the administrator can move you to confirmed.
+> When all spots are taken, the class shows **"no spots available"**. If the studio uses a waiting list, your booking may get the **"Waiting List"** status. A place on the waiting list is not counted as a taken spot. When a spot frees up on a class that has not started, the first client in the queue automatically gets the **"Planned"** status and the message "You are booked for the workout" — as a push notification, or through Telegram or SMS if push notifications do not reach the client (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
 
 ### How to Cancel a Booking
 

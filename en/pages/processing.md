@@ -4,35 +4,35 @@
 
 ## 6.1 Workout Recurrence
 
-> If a workout is recurring, the system automatically creates a workout instance in the calendar on the recurrence date.
+> If a workout repeats, the system automatically creates a workout instance in the calendar on the repeat date.
 
-> If a client's booking is recurring, the system automatically creates a new workout booking for the client at **5:00 AM the next day** after the workout takes place.
+> The nightly job (every night) creates, for every held session of a regular workout, the next session according to the repeat schedule. Clients with a recurring booking are carried over to the next session with the **Заплановано** (Planned) or **Призупинено** (Paused) status (see [6.8](#_68-client-vacation-and-the-paused-status)).
 
-
-``` For example: The workout takes place on Tuesdays and Thursdays. The client is booked on a workout with recurrence enabled. The workout took place on Tuesday, July 8, 2025. At 5 AM on July 9, 2025, the system will automatically create a booking for the client for the same workout, which will take place on Thursday, July 10, 2025```
+``` Example: a workout takes place on Tuesdays and Thursdays. A client is booked with a repeat. The workout took place on Tuesday. The next night the system creates the client's booking for the same workout on Thursday.```
 
 ## 6.2 Deducting Workout Visits
 
-> At the moment of registering for a workout with an active plan, the system automatically deducts a number of sessions equal to the number of sessions selected for attendance.
+> On registration for a workout with an active membership, the system deducts from the membership the number of workouts equal to the number selected for attendance.
 
-> If a client does not show up for a workout, or cancels it later than the maximum allowed cancellation window, the system will automatically deduct **1 session** from the active plan for each such session.  
-> The deduction happens at **5:00 AM the next day**.
+> The nightly job sets bookings of past sessions that are still **Заплановано** to **Не відвідано** (Not visited). For each such session, **1 workout** is deducted from the active membership of the matching type (personal — for a personal workout, regular — for the others). If there is no active membership, the session is marked unpaid.
+
+> If a client cancels a booking later than the [Minimum Time Before Workout Cancellation](/en/login/settings#minimum-time-before-workout-cancellation) allows, the workout is also deducted from the membership as **Не відвідано**.
 
 ---
 
 ## 6.3 Calculating Coach Salaries
 
-> The system selects all of the coach's workouts for the current period, groups them **by workout category** (the category assigned on the workout itself), and calculates pay depending on the rate type **of that category**.
+> The system takes all of the coach's workouts for the selected period, groups them **by workout category** (the category assigned to the workout) and calculates by the rate type of **that category**.
 
-> ℹ️ **All calculation parameters (rate type + base rate) are defined exclusively on the workout category** ([Settings → Categories](/en/login/settings#categories)). There are no individual rates set on a coach or on a specific workout.
+> ℹ️ **All calculation parameters (rate type and base rate) are set only on the workout category** ([Settings → Categories](/en/login/settings#categories)). There are no individual rates for a coach or for a single workout.
 
-- **Rate type `PerPerson` ("Per Person")**
-  For each workout in the category, the system counts the number of clients who actually attended (status `Visited`) plus clients with status `Unvisited` whose session was deducted from the plan (canceled late). If this is fewer than the **Minimum Number of Clients** ([Settings → Features](/en/login/settings#features)), the minimum is used instead. If it is more than `workoutCapacity` and the corresponding toggle is enabled, it is capped at capacity. The sum across workouts × the category's `baseRate` = the salary for this category.
+- **Rate type «За людину»** (Per person, `PerPerson`)
+  For each workout of the category, the number of clients with the `Visited` status and clients with the `Unvisited` status from whom a workout was deducted (late cancellation) is counted. If the number is below the **Minimum Number of Clients** ([Settings → Features](/en/login/settings#features)), the minimum is used. If it exceeds the workout's maximum number of people and the **Враховувати максимальну к-сть людей при підрахунку зарплат** switch is on, it is capped at the maximum. Sum over workouts × the category base rate = salary for the category.
 
-- **Rate type `PerWorkout` ("Per Workout")**
-  The system counts the classes in the category the coach is owed for: those at least one client attended, **and** those with no attendees but with late cancellations that were deducted from a membership — the client paid and the coach waited. Number of classes × the category's `baseRate` = the salary for this category.
+- **Rate type «За тренування»** (Per workout, `PerWorkout`)
+  The number of workouts of the category for which the coach is paid is counted: sessions attended by at least one client, and sessions without clients that had late cancellations with a membership deduction. Number of workouts × the category base rate = salary for the category.
 
-> The total salary = the sum across all categories in which the coach had workouts during the period.
+> Total salary = the sum over all categories in which the coach had workouts during the period.
 
 ---
 
@@ -40,82 +40,185 @@
 
 > Salary = `hours worked × hourly rate` + the sum of bonuses accrued for the period.
 
-- **Hours worked** — the sum of hours from all of the admin's closed [Shifts](/en/menu/reports#_3-8-2-shifts) within the selected range. An admin can edit hours **only for their own closed** shifts.
-- **Hourly rate** — set in [Settings → Users](/en/login/settings#users) individually for each admin (the **Hourly Rate** field).
-- **Bonuses** — accrued according to the rules in [Settings → Features → Administrator Bonuses](/en/login/settings#administrator-bonuses). Each bonus is a condition (event type) × amount × filter (new client / all).
-- **Summary** — shown on the [Reports → Admin Salaries](/en/menu/reports#_3-8-5-administrator-payroll) page.
+- **Hours worked** — the sum of hours of all the administrator's closed [shifts](/en/menu/reports#_382-shifts) in the selected period.
+- **Hourly rate** — set for each user on the [Users](/en/login/users) page (field **Ставка за годину**, Hourly rate).
+- **Bonuses** — accrued by the rules in [Settings → Features → Administrator Bonuses](/en/login/settings#administrator-bonuses) to users with the **Нараховувати бонуси** switch on.
+- **The total** is shown on the [Reports → Administrator payroll](/en/menu/reports#_385-administrator-payroll) page.
 
 ---
 
 ## 6.5 Background Tasks
 
-> Some actions in the system trigger a **background task** on the server, because they may take anywhere from a few seconds to a few minutes and require updating a large number of records. While it runs, a progress modal window opens for the user.
+> Some actions start a **background task** on the server: they update a large number of records and take from a few seconds to a few minutes. While the task runs, a progress modal is open.
 
-**Examples of actions that trigger a background task:**
+**Actions that start a background task:**
 
-- Adding or removing a date in **[Studio Days Off](/en/menu/schedule#studio-closures)** — the system goes through all recurring workouts and adds/removes exceptions for the selected date, moving dependent bookings to "Canceled" status / back to "Planned".
-- Clearing workouts (via the admin panel → "Clear Workouts") — deletes all workouts that have not taken place and unbooks clients.
-- Changing the studio's time zone (potentially affects all future workouts).
+- Adding or removing a date in **[Studio closures](/en/menu/schedule#studio-closures)** — the system goes through all regular workouts, adds or removes an exception for the date and moves dependent bookings to «Відмінено» (Cancelled) or back to «Заплановано».
+- **Очистити тренування** (Clear workouts) ([Settings → Settings](/en/login/settings#settings)) — deletes all workouts not yet held and unsubscribes clients.
 
 **Progress modal:**
 
-- The title describes the type of task (for example, "Updating studio days off").
-- A progress bar shows `X / N` processed items.
-- While the task is not finished, the modal **cannot be closed**, so the user cannot leave the system in a partially processed state.
-- Once finished, a **Close** button appears, and the data on the current page is reloaded.
+- The title states the task type (for example, «Оновлення вихідних студії», Updating studio closures).
+- The progress bar shows `X / N` processed items.
+- The modal cannot be closed until the task finishes.
+- After completion the **Закрити** (Close) button appears; the data on the current page is reloaded.
 
-> ⚠️ Do not close the browser tab while the task is running — this will not stop it on the server, but you will not see when it finishes, and the corresponding data will not update automatically in your interface.
+> ⚠️ Closing the browser tab does not stop the task on the server, but the result is not shown in the interface automatically.
 
 ---
 
 ## 6.6 Class reminders
 
-> There are **two reminders, and they are independent**. This is the most important thing to know: one is set by the client for themselves, the other by the studio for everyone else.
+Reminders are sent in two independent ways.
 
 ### The in-app reminder, set by the client
 
-A client with the app installed and notifications enabled chooses how many hours in advance to be reminded — in the [Notifications](/en/mobile/notifications) section, from 1 to 24 hours. This costs the studio nothing.
+A client with the app and the **Нагадування** (Reminders) notification type on chooses how many hours in advance to be reminded — in [Notifications](/en/mobile/notifications), from 1 to 24 hours. The reminder arrives as an app notification.
 
-### The reminder for everyone else, set by the studio
+### The reminder for clients without the app, set by the studio
 
-For clients without the app there is a separate studio setting — **Remind about a visit** ("Нагадувати про візит") on the [Mobile Application](/en/login/settings#mobile-application) tab. The channel is chosen automatically:
+Clients without the app are covered by the studio's **Нагадувати про візит** (Remind about the visit) setting on the [Mobile Application](/en/login/settings#mobile-application) tab (from 0 to 24 hours, `0` — off). The setting applies when the studio's mobile app is on. The channel is chosen in the order described in [6.14](#_614-messages-to-clients): Telegram bot, Fitshandler Telegram account, SMS. After a reminder sent in Telegram, the client receives a second message «Встановіть додаток Fitshandler <link>» (Install the Fitshandler app).
 
-1. If the client has ever signed in through the Telegram bot, the message goes **to Telegram**. Free of charge.
-2. If not, and the studio has SMS enabled and monthly quota left, an **SMS** is sent. This is charged.
-3. If neither applies, no reminder is sent.
-
-> ⚠️ The studio setting **does not affect clients who have the app** — they have their own. Changing this field will therefore change nothing for anyone already using the app.
+> ⚠️ The studio setting does not apply to clients with the app.
 
 ### The night pause
 
-Reminders are not sent **between 22:00 and 06:00**, whatever the channel and whatever the client asked for. If the calculated reminder time falls inside that window, the reminder is not sent at all — it is not postponed until the morning. This matters for early classes: a "2 hours before" reminder for a 07:00 class falls at 05:00 and will not fire.
+Reminders are checked every hour from 06:00 to 22:00 Kyiv time; from 23:00 to 05:00 reminders are not sent.
+
+- A reminder for a client without the app that falls into the night pause is sent at 06:00 if the session has not started yet.
+- An in-app reminder that falls into the night pause is not sent.
 
 ### The monthly SMS limit
 
-The limit is **shared across all of the studio's SMS**: both visit reminders and the confirmation codes for guest bookings. Once it is used up, guest bookings can only be confirmed through Telegram, and SMS reminders stop being sent. The remaining amount is shown next to the "Remind about a visit" field.
+The limit is **shared by all of the studio's SMS**: reminders, confirmation codes for guests, messages about cancellations and moves, booking confirmations and rating requests. The limit is counted in SMS parts (a long message takes several SMS) and is defined by the studio's plan. Telegram messages do not count towards the limit.
+
+When the limit is used up, SMS are not sent; the guest confirmation code is offered only through Telegram. Usage is shown under the **Нагадувати про візит** field.
 
 ---
 
 ## 6.7 Membership expiry
 
-Each night the system sets a membership to **Ended** when its end date has passed or all its sessions have been used. Memberships of the "Rent" type are closed by date only.
+The nightly job ends a membership if its end date has passed (the last day included, in the studio time zone) or all workouts are used. «Оренда» (Rent) memberships end only by date.
 
-The client receives no separate notification of the expiry itself. About 12 hours beforehand one warning notification is sent, and only to clients who have the app installed. A client without the app finds out when they try to book.
+Every day at 12:00, clients with an active membership (except «Оренда») with no more than 2 workouts left or less than 4 days until the end receive an app notification: «🔔🔔🔔 Нагадування. Закінчується дія абонементу(ів)…» (Reminder. Your membership(s) are ending…). The notification is not sent if the client already has the next purchased membership; it is repeated only after a new visit. Clients without the app do not receive it.
 
 ---
 
-## 6.8 Client vacation and the "Paused" status
+## 6.8 Client vacation and the Paused status
 
-When the nightly job creates the next class of a recurring schedule and sees that the date falls within a [client's vacation](/en/menu/clients), it does not skip the client silently: the booking is created with the **Paused** status. No session is deducted from the membership and no place is taken.
-
-That is why a client may see an otherwise puzzling "Paused" status in the app — the reason is the vacation the studio entered for that date.
+When the nightly job creates the next session of a regular schedule and the date falls into the [client's vacation](/en/menu/clients#_3282-client-vacation), the booking is created with the **«Призупинено»** (Paused) status. No workout is deducted from the membership and no place is taken.
 
 ---
 
 ## 6.9 Removal from a recurring booking after misses
 
-If the corresponding rule is enabled in [Settings → Features](/en/login/settings#features), a client who misses the configured number of classes in a row is removed from the recurring booking automatically. The administrator receives a notification. After that the client can only be booked manually.
+If **Пропусків підряд** (Misses in a row) is set in [Settings → Features](/en/login/settings#features), a client who missed the given number of sessions in a row is removed from the recurring booking automatically. The administrator receives the notification «Клієнт … автоматично знятий з повторного запису: … (N пропусків підряд)» (Client … automatically removed from the recurring booking: … (N misses in a row)), and the client receives an app notification. After that the client is booked manually.
 
 ---
+
+## 6.10 Automatic registration on card scan
+
+Applies when the **Автоматична реєстрація при скануванні картки (клієнт з активним абонементом і записом на сьогодні)** switch is on in [Settings → Features](/en/login/settings#features).
+
+When a card is scanned, the **Реєстрація** (Registration) window opens with stages:
+
+1. «Пошук клієнта…» (Searching for the client…)
+2. «Реєстрація клієнта…» (Registering the client…)
+3. «Клієнта успішно зареєстровано» (Client registered successfully) — with the **Тренування** (Workout), **Час** (Time), **Зал** (Room) lines and the **OK** button.
+
+The window cannot be closed while a stage is running.
+
+**Conditions for automatic registration** (all required):
+
+- the client has no debt;
+- a booking for today with the **Заплановано** status for a workout that has not ended yet; rent is not counted;
+- an active membership of the matching type (personal — for a personal workout, regular — for the others) with more than 0 workouts left, **or**, with no active one, a single new membership of the matching type with more than 0 workouts left (it will be activated);
+- the registration requires no payment (amount due — 0).
+
+**Result:**
+
+| Situation | Behaviour |
+| --- | --- |
+| One booking meets the conditions | The client is registered and the membership deducted; message «Клієнта <full name> зареєстровано на <workout> о <time>» (Client … registered for … at …). The client receives an app notification. |
+| Several bookings meet the conditions | The **Автоматична реєстрація** (Automatic registration) window: «Клієнт <full name> має кілька записів на сьогодні. На яке тренування зареєструвати?» (The client has several bookings today. Which workout to register for?) — a button for each booking («time · name»), **Скасувати** (Cancel), **Відкрити реєстрацію** (Open registration). |
+| Conditions not met or saving failed | The regular [Registration](/en/menu/clients#_329-registration) form opens with the booking preselected. |
+
+A repeated scan while a registration is running shows «Зачекайте» (Please wait) — «Ще триває реєстрація попереднього клієнта. Відскануйте картку ще раз за мить.» (The previous client's registration is still running. Scan the card again in a moment.) A scan with the registration window open shows «Вікно реєстрації відкрите» (The registration window is open) — «Закрийте його, щоб зареєструвати іншого клієнта.» (Close it to register another client.)
+
+---
+
+## 6.11 Self check-in by QR code
+
+Applies when **Реєстрація через мобільний застосунок** (Registration through the mobile app) is on in the [Mobile Application](/en/login/settings#mobile-application) tab.
+
+**Reception banner.** The **Показати банер** (Show banner) button opens a page with the studio name, the selected rooms (or «Усі зали», All rooms) and a QR code with the caption «Відскануйте камерою телефону, щоб відмітитись на тренуванні» (Scan with your phone camera to check in for the workout). The code changes at the start of every hour; the previous code stays valid for 10 more minutes. An expired code gives «QR-код застарів. Відскануйте той, що зараз на екрані на рецепції.» (The QR code is out of date. Scan the one currently on the reception screen.) The banner should be opened on a tablet at the reception: a printed or photographed code does not work.
+
+**Registration by the client.** The client scans the code with the phone camera and sees the **Реєстрація на тренування** (Workout registration) window in the app: the workout, the membership («Абонемент: <name>»), the remaining balance after registration. The **Підтвердити** (Confirm) button registers the client: status **Відвідано** (Visited), the workout is deducted from the membership. Message: «Вас успішно зареєстровано на тренування «<name>»» (You have been registered for the workout). The administrator receives the notification «Самореєстрація в застосунку на тренування» (Self check-in in the app for the workout).
+
+**Conditions:**
+
+- the client has no debt; otherwise — «Автоматична реєстрація неможлива, зверніться до адміністратора студії» (Automatic registration is not possible, contact the studio administrator);
+- the membership follows the same rules as for [automatic registration](#_610-automatic-registration-on-card-scan); a new membership is activated («Абонемент буде активовано цим тренуванням», The membership will be activated by this workout);
+- a workout today, until it ends; rent is not counted;
+- the workout room is one of the banner rooms; otherwise — «У вас є тренування сьогодні, але в іншому залі: <rooms>.» (You have a workout today, but in another room);
+- with **Реєстрація тільки з записом** on — only workouts the client is booked for; off — today's schedule workouts with free places (except personal and rent);
+- a free place is checked at the moment of registration: «На тренуванні вже немає вільних місць» (There are no free places left on the workout).
+
+**Several clients on one phone number.** If several clients of the studio are linked to the number, the app shows the choice «Кого відмітити?» (Whom to check in?). After registration the **Обрати іншого клієнта** (Choose another client) and **Відмітити ще когось** (Check in someone else) buttons are available.
+
+**Other app messages:** «Сьогодні немає тренувань, на які ви записані» (No workouts you are booked for today), «Сьогодні немає доступних тренувань для реєстрації» (No workouts available for registration today), «Ви вже зареєстровані на це тренування» (You are already registered for this workout), «Ви ще не клієнт цієї студії. Зверніться до адміністратора студії» (You are not a client of this studio yet. Contact the studio administrator), «Студію за цим QR-кодом не знайдено» (No studio found for this QR code), «Увійдіть у застосунок, щоб зареєструватися на тренування за QR-кодом студії.» (Sign in to the app to register for a workout by the studio QR code).
+
+---
+
+## 6.12 Card payment without a terminal
+
+The **Картка** (Card) payment method is available at the Cash Register, in the [Registration](/en/menu/clients#_329-registration) window, when paying a debt and in the workout form.
+
+- If the device manager is on and a POS terminal is registered ([Settings → Integrations](/en/login/settings#integrations)), the hint «Термінал доступний — оплата пройде через нього при підтвердженні» (Terminal available — the payment will go through it on confirmation) is shown, and the amount is sent to the terminal.
+- Otherwise the card payment is recorded immediately as a sale with the **Картка** method without terminal data.
+
+With an active fiscal integration, a card payment is fiscalized as a regular sale; a receipt without a terminal contains no terminal data.
+
+---
+
+## 6.13 Debts
+
+A debt is created when **Сплатити пізніше** (Pay later) is on in the registration or sale window, and by the [no-show debt at a personal workout](/en/login/settings#features) rule.
+
+- **Сплатити пізніше:** the sold membership or product is recorded as the client's debt for the amount due; a registration without a membership creates the debt «Борг за тренування: <name>» (Debt for the workout). No cash register operation and no fiscal receipt are created when the debt is created.
+- **Paying a debt** ([Clients → Client debt](/en/menu/clients#_3212-client-debt)): creates a sale in the current shift and is fiscalized at the moment of payment (with an active fiscal integration). A payment from the personal account is not fiscalized. The debt is closed when the whole amount is paid; an amount larger than the debt is rejected with «Сума перевищує борг» (The amount exceeds the debt).
+- While the client has a debt, automatic registration and self check-in by QR code are not performed; the registration window shows «Увага!!! У клієнта є борг: <amount>» (Attention!!! The client has a debt).
+
+---
+
+## 6.14 Messages to clients
+
+Messages to clients are sent through the first available channel in this order:
+
+1. **Mobile app notification** — if the client installed the app and allowed notifications.
+2. **The studio Telegram bot** — if the client signed in through the Telegram bot.
+3. **The Fitshandler Telegram account** — a message from the Fitshandler account to the client's phone number, if the number is registered in Telegram.
+4. **SMS** — paid, within the [monthly limit](#the-monthly-sms-limit).
+
+| Message | Channels | Condition for SMS |
+| --- | --- | --- |
+| Visit reminder | App — by the client's setting; without the app — Telegram bot → Telegram account → SMS | **Нагадувати про візит** greater than 0 |
+| Session cancelled | App → Telegram bot → Telegram account → SMS | **SMS про відміну заняття** |
+| Booking cancelled by the studio | App → Telegram bot → Telegram account → SMS | **SMS про скасування запису** |
+| Session moved | App → Telegram bot → Telegram account → SMS | **SMS про перенесення заняття** |
+| Confirmation of a web page booking | App → Telegram bot → Telegram account → SMS | — |
+| Confirmation code for a guest | Telegram bot → Telegram account → SMS | — |
+| Request to rate the session | App → Telegram bot → Telegram account → SMS | **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** |
+| Booking from the waitlist by an administrator | App only | — |
+| Membership expiry | App only | — |
+| Message from the studio | App only | — |
+
+All SMS require the **Підтвердження запису гостя по SMS** switch to be on in the [Mobile Application](/en/login/settings#mobile-application) tab.
+
+**Cancellation, booking cancellation and moves.** Changes to one session are collected over a few seconds into one message: each client receives one message per session about the nearest date. If a session was moved and then cancelled, only the cancellation message is sent. A Telegram message additionally contains the workout name («Тренування: <name>») and a link to the app.
+
+**Message length.** SMS texts set by the studio are not truncated; a long message is billed as several SMS (see [Message texts](/en/login/settings#sms-notifications)). Telegram messages are sent as one message without splitting.
+
+**Telegram bot.** The bot is used for signing in to the app with a code and as a message delivery channel. Details — [Telegram bot](/en/login/telegram-bot).
 
 [Back to home](/en/)

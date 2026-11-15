@@ -6,34 +6,39 @@
 
 ## 1.2 Login Window
 
-Sign-in to the system is done through **Google Login**.  
-Access is granted **by invitation**: the studio administrator first adds your email address in the [Users](/en/login/users) ("Користувачі") tab (an invitation by email with an assigned role). After that, you sign in through Google using the same email — and you immediately get access to the studio. If you have not been invited yet, you will not have access.
+The **Логін в систему** (Sign in to the system) window contains the **Увійти** (Sign in) button; sign-in is done with a Google account.
+
+Access is granted **by invitation**: a studio administrator adds the email address on the [Users](/en/login/users) tab with a role. The person then signs in through Google with the same email and gets access to the studio.
 
 ![](../../_media/login-screenshot.png ':size=100x53')
 
 ---
 
-After a successful sign-in, if access has not been granted yet (you were not invited), a warning appears:
+If there is no access after signing in (the email was not invited or the role is **Не задано**, Not set), the message **Доступ заборонено** (Access denied) — «Зверніться до адміністратора для отримання доступу» (Contact the administrator to get access) — and the **Вийти** (Sign out) button are shown.
 
 ![](../../_media/access-denied-screenshot.png ':size=100x63')
 
-If you are a studio employee, tell an administrator who already has access your email — so that they can add you in the [Users](/en/login/users) tab. The same email can have access to several studios; after signing in, choose the one you need.
+A studio employee should give their email to an administrator who has access, so that the administrator adds it on the [Users](/en/login/users) tab. One email can have access to several studios.
 
-> System-level access questions (including the **Super Admin** ("Супер Адмін") role) are handled by the [system administrator](mailto:fitshandler@gmail.com).
+If the studio's access is suspended by the plan, the message **Акаунт деактивовано** (Account deactivated) is shown — see [Plan and access to the system](/en/login/billing).
+
+> System-level access (including the **Супер Адмін**, Super Admin, role) is granted by the [system administrator](mailto:fitshandler@gmail.com).
 
 ---
 
 ## 1.3 User Menu and Roles
 
-After a successful sign-in, a user with access sees the main interface of the system.
+After signing in, the main interface of the system is shown.
 
-> The user's avatar (from their Google account) is shown in the top right corner.  
-> Clicking it opens a context menu:
+> The user avatar (from the Google account) is shown in the top-right corner. Clicking it opens the menu:
 
-- User name (pulled from Google)
-- Profile
-- Settings (a separate item in the main menu at the top)
-- Sign out of the system
+- User name
+- **Профіль** (Profile)
+- **Змінити студію** (Switch studio) — if the user has access to several studios
+- **Вийти з системи** (Sign out of the system) — after confirmation in the [«Ви впевнені що хочете продовжити?» window](../_modals/are-you-sure-modal.md ':include')
+- **Тариф: <name>** (Plan) and **Оплатити** (Pay) — see [Plan and access to the system](/en/login/billing)
+
+The **Налаштування** (Settings) item is in the main menu at the top.
 
 ![](../../_media/header-screenshot.png ':size=100x19')
 
@@ -41,40 +46,40 @@ After a successful sign-in, a user with access sees the main interface of the sy
 
 ### 1.3.1 User Name
 
-> A text element.
+> A text element: the user's name in the system.
 
 ---
 
 ### 1.3.2 Profile
 
-> Clicking the **Profile** ("Профіль") item opens a modal window with information about the user.
+> The **Профіль** item opens a window with the user's photo and name and a form:
 
-- It is possible to add a phone number.  
-- Data is saved after clicking the **Save** ("Зберегти") button.  
-- The window's close button is in the top right corner (an X icon).
+- **Імʼя** (Name) — required («Обов’язкове поле», Required field);
+- **Телефон** (Phone) — format `0XXXXXXXXX` («Номер має бути у форматі 0XXXXXXXXX», The number must be in the format 0XXXXXXXXX).
+
+The **Зберегти** (Save) button is active when the field values are valid. The window is closed with the cross in the top-right corner.
 
 ![](../../_media/profile-screenshot.png ':size=100x27')
 
-> If you click **Save** without making changes, the ["Nothing Changed" modal window](../_modals/nothing-changed-modal.md ':include') appears.  
+> If **Зберегти** is clicked with no changes, the [«Дані не змінилися» modal](../_modals/nothing-changed-modal.md ':include') appears.
 
-> If you enter a phone number, it must match the format:  
-> `0XXXXXXXXX`  
-
-> If entered correctly, after clicking **Save**, the ["Are you sure you want to continue?" modal window](../_modals/are-you-sure-modal.md ':include') appears.
+> If the data was changed, clicking **Зберегти** opens the [«Ви впевнені що хочете продовжити?» modal](../_modals/are-you-sure-modal.md ':include').
 
 ---
 
 ### 1.3.3 Settings
 
-> The **Settings** ("Налаштування") item in the main menu opens a separate page with tabs:
+> The **Налаштування** item in the main menu opens a page with tabs:
 
 - [Users](/en/login/users)
-- [Settings → Settings](/en/login/settings#settings)
-- [Settings → Features](/en/login/settings#features)
-- [Settings → Integrations](/en/login/settings#integrations)
-- [Settings → Import](/en/login/settings#import)
-- [Settings → Information](/en/login/settings#information)
-- [Settings → Mobile Application](/en/login/settings#mobile-application)
+- [Settings](/en/login/settings#settings)
+- [Features](/en/login/settings#features)
+- [Integrations](/en/login/settings#integrations) — only for the **Супер Адмін** role
+- [Information](/en/login/info)
+- [Mobile Application](/en/login/settings#mobile-application)
+- [Reminders](/en/login/settings#reminders)
+- [Categories](/en/login/settings#categories)
+- [Studio Information](/en/login/settings#studio-information)
 
 ---
 

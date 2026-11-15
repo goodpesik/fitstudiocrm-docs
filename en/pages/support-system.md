@@ -128,7 +128,7 @@ The client (admin) never sees Jira or the Pi server — communication always hap
 - Ticket details open in the same window (messenger style: user on the right, Support Bot on the left)
 - Creation modal — subject, description, priority
 - Reply box — textarea + file attachment
-- **Reply as support** field — shown only to the Super Admin role and only for a ticket that is not closed. The reply is stored as a support message. Other roles, including Admin, must not reply on behalf of support: the server rejects such a request with 403.
+- **Reply as support** field — shown only to the Super Admin role and only for a ticket that is not closed. The reply is stored as a support message. Only the Super Admin may reply on behalf of support; a request from any other role is refused (403). The server does not check the ticket status for this request.
 
 **Poll:** `useSupportStore` polls `GET /support/unread-count` every 10 minutes. If new replies have appeared, a "Support has replied" window appears with a **Got it** button, which only closes it — there is no automatic navigation to the ticket.
 

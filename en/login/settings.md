@@ -220,15 +220,22 @@ Each paid SMS to a client has its own toggle. All toggles are off by default.
 | **SMS about a moved session** | A notice with the new date or time of the session |
 | **SMS about a confirmed booking** | A notice that a booking from the studio web page is confirmed |
 | **SMS visit reminder** | A reminder about the session, the number of hours set by the "Remind about the visit" field |
+| **Offer to rate the session by SMS (for clients without the app)** | A message with a link to rate the attended session |
+
+The **SMS visit reminder** and **SMS about a confirmed booking** toggles are off by default in every studio. Until the toggle is turned on, visit reminders and booking confirmation notices are not sent by SMS.
+
+The **Offer to rate the session by SMS (for clients without the app)** toggle is available only when **Offer to rate the session** is on. The message with the rating link is sent only when both toggles are on, and for this message they apply to every delivery channel.
 
 Delivery order of a message to a client:
 
 1. A client with the app receives a notification in the app.
-2. A client who signed in through the Telegram bot receives the message from the bot.
+2. A client whose card is linked to one Telegram bot chat receives the message from the bot.
 3. Other clients receive the message from the Fitshandler Telegram account at the phone number on the client card.
-4. An SMS is sent only when the Telegram account did not deliver the message, the matching toggle is on and the monthly SMS limit is not used up.
+4. If the Telegram account did not deliver the message, an SMS is sent, provided the matching toggle is on, the card has a phone number and the monthly SMS limit is not used up.
+5. If the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the message, the bot sends it to one of these chats.
+6. If no channel is available, the message is not sent.
 
-The app and Telegram do not depend on the SMS toggles and are not counted in the SMS limit.
+The app and Telegram do not depend on the SMS toggles, except the session rating toggles, and are not counted in the SMS limit.
 
 ### Public Studio Link
 

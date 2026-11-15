@@ -73,7 +73,7 @@ These till actions accept an operation id:
 | Code | Meaning |
 |---|---|
 | `IDEMPOTENCY_KEY_REUSED` | the id was already used for another operation; an online action gets `409` |
-| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; an online action gets `503`, retry later with the same id |
+| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; an online action gets `409` with this code, retry later with the same id |
 | `OPERATION_INTERRUPTED` | the operation stopped after a step that cannot be undone; it is not run again; an online action gets `409`; an admin's review is needed |
 | `INVALID_VERSION` | the operation version is not a whole number from 1; the operation is refused |
 | `RETRY` | the server could not apply the operation; send it later |

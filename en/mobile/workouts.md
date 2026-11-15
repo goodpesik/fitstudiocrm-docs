@@ -72,7 +72,8 @@ Limits:
 | The class has already started | the client is not added: **"Заняття вже розпочалося, запис до листа очікування недоступний"** |
 | The client is already on the waiting list of this class | a second place is not added: **"Ви вже перебуваєте в листі очікування на це заняття"** |
 | The class is cancelled | the client is not added: **"Заняття скасовано"** |
-| The client has an entry on this class with a status other than **"Cancelled"** (for example, **"Planned"** or **"Attended"**) | the client is not added to the waiting list, the existing entry is not changed: **"Ви вже записані на це заняття"** |
+| The client has no entry on this class, or has an entry with the status **"Cancelled"**, **"Not Attended"**, **"Registration Cancelled"** or **"Left the waiting list"** | joining the waiting list is allowed; the existing entry gets the **"Waiting List"** status |
+| The client has an entry on this class with the status **"Planned"**, **"Visited"** or **"Paused"** | the client is not added to the waiting list, the existing entry is not changed: **"Ви вже записані на це заняття"** |
 | A spot is free at the moment of confirmation | the client is booked into the free spot, as with the **"Book"** button |
 
 > A place on the waiting list is not counted as a taken spot. When a spot frees up on a class that has not started, the first client in the queue automatically gets the **"Planned"** status and a message about the booking — as a push notification, or through Telegram or SMS if push notifications do not reach the client. While the waiting list of a class is not empty, a new booking for that class gets the **"Waiting List"** status and joins the end of the queue, even if the class has a free spot If the booking got the **"Waiting List"** status, the app shows the **"You have been added to the waiting list"** window instead of **"You are booked for the workout"** (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).

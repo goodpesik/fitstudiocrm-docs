@@ -30,6 +30,8 @@
 3. They confirm the number with a code. The code arrives **via Telegram**, and if the studio has connected SMS messaging and enabled the **"Confirm Guest Booking by SMS"** ("Підтвердження запису гостя по SMS") toggle — **SMS** can be chosen instead.
 4. Once confirmed, the booking is created, and a new client with this phone number appears at the studio.
 
+> ℹ️ While the waiting list of the class is not empty, the booking gets the **Waiting list** status, and the page shows "You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified." instead of "You're booked!" (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
+
 > ℹ️ If the number already belongs to a studio client, a new client is not created — the booking is attached to the existing card. This is exactly why the number is confirmed with a code: without it, someone could book under another person's name.
 
 ---

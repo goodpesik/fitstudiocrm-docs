@@ -107,7 +107,7 @@ For the coach, the class card shows a summary by client: **Planned**, **Visited*
 
 - **"Change Time"** ("Змінити час") — choose another free time slot → **"Save"** ("Зберегти") → confirm. Empty → **"No time slots available"** ("Немає доступних часових слотів").
 - **"Change Room"** ("Змінити зал") — choose another free room → **"Save"** ("Зберегти") → confirm. Empty → **"No rooms available"** ("Немає доступних залів").
-- **"Cancel Class"** ("Відмінити тренування") — cancels the class for everyone booked (**"Class cancelled"** ("Тренування скасовано")). The day of the cancellation is determined in the studio time zone. If the class on that date is already cancelled or the cancellation was not performed, the message **"Could not cancel the workout. Try again."** ("Не вдалося відмінити тренування. Спробуйте ще раз.") is shown and the state of the class does not change.
+- **"Cancel Class"** ("Відмінити тренування") — cancels the class for everyone booked (**"Class cancelled"** ("Тренування скасовано")). The day of the cancellation is determined in the studio time zone. If the class on that date is already cancelled, the date is not a day on which the series takes place, or the cancellation was not performed, the message **"Could not cancel the workout. Try again."** ("Не вдалося відмінити тренування. Спробуйте ще раз.") is shown and the state of the class does not change.
 
 ---
 

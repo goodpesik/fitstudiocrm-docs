@@ -78,7 +78,9 @@
 
   > ℹ️ The day of the cancellation is determined in the studio time zone ([the "Studio Time Zone" setting](/en/login/settings#studio-time-zone)), regardless of the time zone of the computer the action is performed from. Exactly the calendar day selected in the schedule is cancelled.
 
-  > ⚠️ If the class on the selected date is already cancelled, the cancellation is not repeated: the system shows the error message **"Скасування не виконано: стан заняття на обрану дату не змінився."** ("Cancellation not performed: the state of the class on the selected date has not changed."). A success message is shown only when the class has actually been cancelled.
+  > ⚠️ If the class on the selected date is already cancelled, the cancellation is not repeated: the system shows the error message **"Заняття на обрану дату вже скасовано."** ("The class on the selected date is already cancelled."). A success message is shown only when the class has actually been cancelled.
+
+  > ⚠️ Only a date on which a class of the series takes place can be cancelled: a weekday of the series within its repeat period. For any other date the cancellation is not performed, no exclusion is recorded, and the system shows the message **"Заняття не проводиться в обрану дату."** ("The class does not take place on the selected date."). A request without a date is rejected with the message **"Не вказано дату заняття."** ("The class date is not specified.").
 
   > ⚠️ If at least one person is already checked in for the workout, it cannot be cancelled.
 

@@ -7,7 +7,7 @@ Offline mode lets a till computer with Device Handler installed work without int
 ### Enabling on a computer
 
 - Offline mode is enabled separately for each till computer.
-- A user with the **Super Admin**, **Admin** or **Manager** role, signed in on that computer, can enable offline mode.
+- A user with the **Super Admin** or **Admin** role, signed in on that computer, can enable offline mode. A user with the **Manager** role gets `403`.
 - On enabling, the computer receives a device access — a separate key bound to the studio, the user and the computer.
 - The key is passed to the computer once. The server stores only its hash; the key cannot be restored from the server data.
 - One user on one computer has one valid device access. Enabling again issues a new access; the previous one stops working.
@@ -42,7 +42,10 @@ Offline mode lets a till computer with Device Handler installed work without int
 
 - Every till action receives an operation id at the moment of the click. The id does not change when the action is sent again.
 - An action the till received no server response to (connection drop, server unavailable) is sent again with the same id — online or during the sync of the offline queue. The server applies an operation at most once: sending it again returns the stored result; no second sale, payment or booking is created.
+- The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
+- A sale, refund, debt payment or booking stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt, a write to the class roster) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an operation whose delivery did not finish within 2 minutes.
+- An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
 
@@ -70,7 +73,10 @@ These till actions accept an operation id:
 | Code | Meaning |
 |---|---|
 | `IDEMPOTENCY_KEY_REUSED` | the id was already used for another operation; an online action gets `409` |
-| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; an online action gets `409`, retry later |
+| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; an online action gets `503`, retry later with the same id |
+| `OPERATION_INTERRUPTED` | the operation stopped after a step that cannot be undone; it is not run again; an online action gets `409`; an admin's review is needed |
+| `INVALID_VERSION` | the operation version is not a whole number from 1; the operation is refused |
+| `RETRY` | the server could not apply the operation; send it later |
 | `INVALID_OPERATION_ID` | the `X-Operation-Id` header is not a UUID; response `400` |
 | `OP_VERSION_UNSUPPORTED` | the operation version is above the one the server supports; the operation stays in the queue |
 | `OP_KIND_UNSUPPORTED` | the server does not apply this operation kind yet; the operation stays in the queue |
@@ -81,7 +87,7 @@ During sync every operation gets its own result:
 |---|---|
 | `applied` | the operation is applied (or was applied earlier; the stored result is returned) |
 | `rejected` | the operation is refused; sending it again returns the same |
-| `conflict` | the operation contradicts changes made meanwhile; an admin decision is needed |
+| `conflict` | the operation contradicts changes made meanwhile, or it stopped after a step that cannot be undone; an admin decision is needed |
 | `retry` | the operation is not applied now; send it later, the next operations of the queue wait |
 | `in_progress` | another delivery is applying the operation |
 | `pending` | the operation was not looked at: an earlier operation of the queue is not applied yet |

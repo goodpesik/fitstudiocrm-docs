@@ -88,7 +88,7 @@ Pressing **Edit** ("Редагувати") turns the **Working hours** field int
 
 > The bottom row of the table shows the **total across all coaches**.
 
-**Export:** a button exports the payroll to a **TXT file** (a text report broken down by coach and category). No other export formats are available.
+**Export:** a button exports the payroll to a **TXT file** (a text report broken down by coach and category). No other export formats are available. File name: `salary DD.MM-DD.MM.txt`, where the first part is the day and month of the period start and the second part is the day and month of the period end; the day and the month are always written with two digits (for example, `salary 05.03-15.03.txt`).
 
 > ℹ️ The calculation respects the **"Take the maximum number of people into account when calculating payroll"** setting ([3.8.4.1](#_3-8-4-1-payroll-settings)) — if a class has more clients than `workoutCapacity`, only `workoutCapacity` is counted.
 

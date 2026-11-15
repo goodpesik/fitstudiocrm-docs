@@ -74,9 +74,9 @@
 
 **Main actions:**
 
-- **Cancel workout** button (in the window header, next to the gear button) — shows the ["Are you sure you want to continue?"](../_modals/are-you-sure-modal.md ':include') confirmation modal window. If confirmed, the workout is cancelled for that day. A personal training prepayment is credited to the client's personal account.
+- **Cancel workout** button (in the window header, next to the gear button) — shows the ["Are you sure you want to continue?"](../_modals/are-you-sure-modal.md ':include') confirmation modal window. If confirmed, the workout is cancelled for that day. A personal training prepayment is credited to the client's personal account under the rules of [Personal training prepayment](#personal-training-prepayment).
 
-  > ⚠️ If at least one person is already checked in for the workout, it cannot be cancelled.
+  > ⚠️ If at least one client is already checked in for the workout (the **Visited** status), the **Cancel workout** button is disabled. A prepayment does not affect whether the button is available.
 
 - **Book a client** toggle — see [Book a client](#book-a-client).
 - Settings button — see [Settings button](#settings-button).
@@ -94,9 +94,11 @@ The **Make a prepayment** button opens the **Training prepayment** window:
 
 - **Client** — the client the prepayment is made for. Only clients with the **Planned** status are available. With one such client it is selected automatically; with several the client is picked from the list.
 - **Prepayment amount, UAH** — any amount greater than 0 and not greater than **Left to pay** (the training price minus what is already paid).
-- **Payment method** — cash, card or the client's personal account; the payment can be split across several methods. A bank transfer is not available for a prepayment. No discount applies to a prepayment.
+- **Payment method** — cash, card, bank transfer or the client's personal account; the payment can be split across several methods. No discount applies to a prepayment.
 
-The **Make a prepayment** button in the window records a sale on the register: a transaction of the **Personal training prepayment** type is created, a fiscal receipt is issued, a card payment goes through the terminal. The prepayment amount is added to the amount paid for the training.
+The **Make a prepayment** button in the window first checks the prepayment on the server; only after a successful check does a card payment go through the terminal. Then a sale is recorded on the register: a transaction of the **Personal training prepayment** type is created, a fiscal receipt is issued. The prepayment amount is added to the amount paid for the training. A bank transfer is added to the amount paid for the training at once, before the transfer is confirmed in the register.
+
+If the server refuses the prepayment during the check, the terminal is not called and the system shows the reason. If with a split payment some payments are saved and a following payment is not, the system shows the sum of the saved payments and reports only the card payments for which no transaction was created.
 
 The **Make a prepayment** button on the training card is disabled when:
 
@@ -104,18 +106,27 @@ The **Make a prepayment** button on the training card is disabled when:
 |---|---|
 | The training price is not set | — (**Price not set** is shown instead of the price) |
 | No client with the **Planned** status is booked | **Add a client first** |
+| The training is cancelled | **Тренування скасовано** (The training is cancelled) |
+| The training start time has come or passed, including a past training opened in edit mode | **Тренування вже розпочалося** (The training has already started) |
 | The training is paid in full | **The training is paid in full** |
 | The shift is not open | **Open a shift first** |
 
-For a cancelled or past training the button is not shown.
+The server also refuses a prepayment for a training that has already started.
 
 **Prepayment rules:**
 
 - The total prepayment for a training cannot exceed its price. The server refuses a prepayment above the remaining amount, also when two payments are made at the same time.
 - When the client is [registered](/en/menu/clients) on a prepaid training, the client's prepayment is deducted from the price of the plan sold for the training: only the remainder is due.
-- When the training is cancelled (with **Cancel workout**, by deleting or deactivating the workout, by shortening the repeat period, by clearing the schedule), the prepayment is credited automatically to the [personal account](/en/menu/clients) of the client who made it. In the personal account history the operation is described as **Prepayment returned for a cancelled training**. The amount paid for the training is reduced by the returned amount.
-- A register refund of a prepayment transaction reduces the amount paid for the training. A prepayment already credited to the personal account cannot be refunded through the register.
-- The **Change payment method** action in the register is not available for a prepayment transaction.
+- A prepayment amount is at least 0.01 UAH, in whole kopecks.
+- When the training is cancelled (with **Cancel workout**, by deleting or deactivating the workout, by shortening the repeat period, by clearing the schedule), the prepayment is credited automatically to the [personal account](/en/menu/clients) of the client who made it. The amount paid for the training is reduced by the returned amount.
+- When a client is removed from the training, their booking is cancelled, or they are moved to another training, while the training itself is not cancelled, that client's prepayment is credited to their personal account in the same way as on a training cancel. The prepayments of other clients stay on the training.
+- When a client gets the **Не відвідано** (Not visited) status, the prepayment counts as the no-show payment. The no-show debt (see the setting for automatic no-show debt on a personal training) is created only for the difference between the training price and the prepayment; when the prepayment covers the price, no debt is created.
+- When the client holds a plan with a duration and that plan covers the prepaid training at [registration](/en/menu/clients), the prepayment is credited automatically to the client's personal account. The amount paid for the training is reduced by the credited amount.
+- A cash or card prepayment is credited to the personal account as a top-up. A prepayment from the personal account goes back to the personal account as a refund. In the personal account history the operation is described as **Повернення передоплати за персональне тренування** (Prepayment returned for a personal training).
+- A bank-transfer prepayment is credited to the personal account only when the transfer has been confirmed in the register. An unconfirmed transfer is cancelled together with the training or with the client leaving it: nothing is credited to the personal account, the register shows the payment status **Скасовано** (Cancelled), and the transfer cannot be confirmed afterwards.
+- When the client who made a prepayment is deleted from the system, the prepayment stays an open transaction in the register and can be refunded through the register.
+- A register refund of a prepayment transaction reduces the amount paid for the training. A prepayment already credited to the personal account cannot be refunded through the register. A refund and a credit of the same prepayment cannot run at the same time: the second operation sees the result of the first.
+- The **Change payment method** action in the register is available for a prepayment transaction not yet credited to the personal account and without refunds, except a prepayment from the personal account. The server checks the new transaction before the old one is refunded; when the check fails, the payment method is not changed. The new transaction stays a prepayment for the same training, including after the training has started. The credit rules on cancel follow the new payment method: for a bank transfer, only once the transfer is confirmed.
 
 ### Book a client
 

@@ -53,13 +53,13 @@ The offline till works with the data received from the server at the last connec
 | Rooms | name, capacity |
 | Workouts | recurring workout templates in effect within the schedule window, and one-time workouts of the schedule window |
 | Clients | first name, last name, type, card number, vacations (freezes), personal account balance and time of the last personal account operation; phone, email and birthday are not sent |
-| Client plans | active, not yet activated and frozen plans, including plans shared across a studio network, with sessions left and validity |
-| Debts | unpaid debts with amount, contents and clients |
+| Client plans | active, not yet activated and frozen plans, including plans shared across a studio network, with sessions left, sessions at the start of the plan (`initialWorkouts`) and validity; ended plans are not sent |
+| Debts | unpaid debts with total amount (`totalAmount`), amount left to pay (`remainingAmount`), contents and clients; the amount left to pay equals the one on the client's debt screen |
 | Certificates | active certificates within their validity only: number, description, price, plans of the certificate, validity, client, status |
-| Sales | sales and personal account top-ups of the last 3 days: lines, amount, payment method, paid from the personal account flag, top-up flag, invoice payment confirmation flag, paid through a terminal flag, refunds made, fiscalization state, fiscal card id |
-| Shifts | closed shifts of the last 3 days; the current online shift is not sent |
+| Sales | sales and personal account top-ups from the start of the day 3 days back in the studio time zone, except sales of the current online shift: lines, amount, payment method, paid from the personal account flag, top-up flag, invoice payment confirmation flag, paid through a terminal flag, refunds made, fiscalization state, fiscal card id |
+| Shifts | closed shifts from the start of the day 3 days back in the studio time zone; the current online shift is not sent |
 | Schedule | workouts from 3 days before today to 7 days after it, with booked clients and the number of taken seats; recurring workouts on dates with no workout created yet, from today on, with their regular clients |
-| Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on |
+| Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on; the state of the codes is in the `checkInCodesStatus` field |
 | Settings | studio name and time zone, shift and booking parameters, self check-in parameters, printers; fiscal and acquiring cards — id, name, type and active flag only |
 
 - Keys, tokens, cashier PIN codes, licence keys and the self check-in signing secret are not sent to the till computer.
@@ -79,8 +79,14 @@ The offline till works with the data received from the server at the last connec
 | Request | `GET /offline/snapshot`, with device access only |
 | Update | `since` parameter — the `generatedAt` of the previous package |
 | Room sets for check-in codes | `checkInRooms` parameter: sets separated by `;`, room ids in a set separated by `,`; up to 20 sets |
-| Response fields | `version`, `generatedAt`, `full`, `window` (schedule bounds), `salesFrom` (start of the sales period), `catalog` (full package only), `clients`, `clientPlans`, `clientDebts`, `certificates`, `stock`, `transactions`, `shifts`, `occurrences`, `checkInCodes` |
+| Response fields | `version`, `generatedAt`, `full`, `window` (schedule bounds), `salesFrom` (start of the sales period), `catalog` (full package only), `clients`, `clientPlans`, `clientDebts`, `certificates`, `stock`, `transactions`, `shifts`, `occurrences`, `checkInCodes`, `checkInCodesStatus` |
 | Workout with no record created | `projected: true`, `id: null` |
+
+| `checkInCodesStatus` | Meaning |
+|---|---|
+| `ready` | self check-in codes are sent in `checkInCodes` |
+| `off` | self check-in is off; `checkInCodes` is `null` |
+| `failed` | self check-in is on, the codes could not be built; `checkInCodes` is `null`; the rest of the data is sent |
 
 | Response | Meaning |
 |---|---|

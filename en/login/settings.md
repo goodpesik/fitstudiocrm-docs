@@ -200,7 +200,7 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 ### Main Toggles
 
 - **Use the mobile app for clients** — the main toggle. To turn it off, you must type the confirmation **SWITCHOFF**: along with the app, clients lose the ability to book online.
-- **Confirm a guest booking by SMS** — allows a person without an account to confirm a booking with an SMS code, not only through Telegram.
+- **Confirm a guest booking by SMS** — allows a person without an account to confirm a booking with an SMS code, not only through Telegram. The toggle applies only to the confirmation code and does not affect reminders or session notices.
 - **Offer to rate the session** — after an attended session, the client is offered the chance to leave a rating.
 
 ### Visit Reminders
@@ -208,6 +208,27 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 - **Remind about the visit** — how many hours before the session to send a reminder. A value of `0` disables the reminder.
 - Next to it, the number of SMS already used from the studio's monthly limit is shown.
 - **SMS reminder text** — the studio's own text. The date and time are inserted automatically, so only the words before and after them can be edited. A counter shows how many of the 57 characters remain: an SMS cannot hold more than that, and each additional one is billed separately.
+
+### SMS Notifications
+
+Each paid SMS to a client has its own toggle. All toggles are off by default.
+
+| Toggle | What is sent |
+|---|---|
+| **SMS about a cancelled session** | A notice that the session is cancelled |
+| **SMS about a cancelled booking** | A notice that the studio cancelled the booking |
+| **SMS about a moved session** | A notice with the new date or time of the session |
+| **SMS about a confirmed booking** | A notice that a booking from the studio web page is confirmed |
+| **SMS visit reminder** | A reminder about the session, the number of hours set by the "Remind about the visit" field |
+
+Delivery order of a message to a client:
+
+1. A client with the app receives a notification in the app.
+2. A client who signed in through the Telegram bot receives the message from the bot.
+3. Other clients receive the message from the Fitshandler Telegram account at the phone number on the client card.
+4. An SMS is sent only when the Telegram account did not deliver the message, the matching toggle is on and the monthly SMS limit is not used up.
+
+The app and Telegram do not depend on the SMS toggles and are not counted in the SMS limit.
 
 ### Public Studio Link
 

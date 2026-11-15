@@ -104,10 +104,10 @@ Each bonus is a row with three fields:
 
 The **➕ Add Bonus** and **🗑 Delete** (trash icon) buttons are available for each row.
 
-### Creating Personal Workouts via the Bot
+### Creating Personal Workouts in the Mobile App
 
-- The **"Allow coaches to create personal workouts via the bot"** toggle — enables the feature.
-- When enabled, a list of **categories** appears for which the bot allows creating workouts. A coach can only create a personal workout within these categories.
+- The **"Allow coaches to create personal workouts in the mobile app"** toggle — enables the feature.
+- When enabled, a list of **categories** appears for which the mobile app allows coaches to create workouts. A coach can only create a personal workout within these categories.
 - The **+ Add Category** button adds a row with a dropdown list of the studio's categories.
 
 ### Remind About Coach Birthdays

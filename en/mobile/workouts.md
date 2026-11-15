@@ -23,7 +23,7 @@
 
 ## 7.5.2 Booking a Class (Client)
 
-The client has two tabs: **"My Classes"** ("Моі тренування") (their bookings for the selected day) and **"Book"** ("Записатися") (all classes available for booking).
+The client has two tabs: **"My Classes"** ("Мої тренування") (their bookings for the selected day) and **"Book"** ("Записатися") (all classes available for booking).
 
 ### Statuses on the Class Card
 
@@ -78,7 +78,7 @@ On the **"Book"** tab, the card shows whether you can book:
 
 > A coach sees the **"My Classes"** and **"Schedule"** tabs.
 
-- **"My Classes"** — the coach's classes for the selected day. Empty → **"You have no classes on this day"** ("В вас немає тренувань у цей день").
+- **"My Classes"** — the coach's classes for the selected day. Empty → **"You have no classes on this day"** ("У вас немає тренувань у цей день").
 - **"Schedule"** — all of the studio's classes for the day.
 - The **"Add Schedule to Calendar"** ("Додати розклад у календар") button adds the coach's schedule to their phone's own calendar (Apple Calendar / Google Calendar).
 

@@ -4,7 +4,7 @@
 
 # 3.7 Products
 
-> The **Products** section — selling ancillary goods (water, protein, merch, etc.) and tracking stock.
+> The **Products** ("Товари") section — selling ancillary goods (water, protein, merch, etc.) and tracking stock.
 
 ![](../../_media/products.png ':size=400x241')
 
@@ -28,21 +28,27 @@ The section has two tabs:
 - **Buttons** (for the **SuperAdmin** and **Admin** roles):
   - **🗑 Delete** (trash-can icon)
   - **📦 Restock** ("Поповнити склад", box icon) — see [3.7.3](#_373-Restocking)
-  - **✎ Edit** (pencil icon) — name, price
+  - **✎ Edit** (pencil icon) — the **Edit product** ("Редагувати товар") modal with the **Name** and **Price** fields. Stock is not changed in this modal.
 
-> ℹ️ When a sale is made through [Point of sale](/en/menu/pos) or through [client registration](/en/menu/clients#_3-2-9-registration), stock is decreased automatically. If stock is 0, the sale is blocked.
+Before deleting, the system asks for confirmation (**Cancel** ("Відміна") / **Continue** ("Продовжити") buttons). After deletion the notification "Товар успішно видалено" (product deleted) is shown.
+
+The card list is paginated (10, 20 or 50 cards per page).
+
+> ℹ️ When a sale is made through [Point of sale](/en/menu/pos) or through [client registration](/en/menu/clients#_3-2-9-registration), stock is decreased automatically. In the product picker a product with stock 0 cannot be selected; when stock is below 3, "(залишилось N шт.)" (N left) is shown next to the name.
 
 ### Adding a product
 
-> The **+** button above the list of cards is available to the SuperAdmin and Admin roles regardless of whether a shift is open.
+> The **+** button above the list of cards opens the **Add product** ("Додати товар") modal. The button is available to the SuperAdmin and Admin roles regardless of whether a shift is open.
 
 ![](../../_media/add-product.png ':size=300x180')
 
 **Fields:**
 
-- **Name**
-- **Price**
-- **Quantity** — the starting stock when the product is created. Further restocking is done via [Restock](#_373-Restocking).
+- **Name** — required.
+- **Price** — integer, required.
+- **Quantity** — the starting stock, an integer from 0. Optional; shown only when creating. Further restocking is done via [Restock](#_373-Restocking).
+
+Modal buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 
 ---
 
@@ -66,17 +72,17 @@ The section has two tabs:
 
 ## 3.7.3 Restocking
 
-> Clicking the **📦 Restock** ("Поповнити склад", box icon) button on a card opens the **Restock** modal.
+> Clicking the **📦 Restock** ("Поповнити склад", box icon) button on a card opens the **Restock: <product name>** ("Поповнити склад: <назва товару>") modal.
 
 ![](../../_media/product-restock-modal.png ':size=300x181')
 
 **Fields:**
 
-- **Quantity to add** — a positive number (min. 1).
+- **Quantity to add** ("Скільки додати") — an integer, minimum 1. The **Save** button is disabled when the value is below 1.
 
-Saving immediately increases **Stock** and adds a row to the [History](#_372-Stock-history) with the reason **Restock** and the user's name.
+Saving immediately increases **Stock** and adds a row to the [History](#_372-Stock-history) with the reason **Restock** and the user's name; the notification "Склад поповнено" (stock replenished) is shown.
 
-> ⚠️ If you need to **write off** a product without a sale (damage, personal use), this is handled via a sale with refund status — there is no direct "negative" restock.
+> ⚠️ Writing off a product without a sale (damage, personal use) is not supported: stock decreases only through a sale, and restocking accepts only positive values. Refunding a sale increases stock.
 
 ---
 

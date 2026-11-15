@@ -10,8 +10,8 @@
 
 The section has two tabs:
 
-- **[Products](#_371-Products)** — the list of products and the actions available on them.
-- **[History](#_372-Stock-history)** — stock movements (who added/removed how much, and when).
+- **[Products](#_371-products)** — the list of products and the actions available on them.
+- **[History](#_372-stock-history)** — stock movements (who added/removed how much, and when).
 
 ---
 
@@ -27,14 +27,14 @@ The section has two tabs:
   - **Red (danger)** — out of stock (0)
 - **Buttons** (for the **SuperAdmin** and **Admin** roles):
   - **🗑 Delete** (trash-can icon)
-  - **📦 Restock** ("Поповнити склад", box icon) — see [3.7.3](#_373-Restocking)
+  - **📦 Restock** ("Поповнити склад", box icon) — see [3.7.3](#_373-restocking)
   - **✎ Edit** (pencil icon) — the **Edit product** ("Редагувати товар") modal with the **Name** and **Price** fields. Stock is not changed in this modal.
 
 Before deleting, the system asks for confirmation (**Cancel** ("Відміна") / **Continue** ("Продовжити") buttons). After deletion the notification "Товар успішно видалено" (product deleted) is shown.
 
 The card list is paginated (10, 20 or 50 cards per page).
 
-> ℹ️ When a sale is made through [Point of sale](/en/menu/pos) or through [client registration](/en/menu/clients#_3-2-9-registration), stock is decreased automatically. In the product picker a product with stock 0 cannot be selected; when stock is below 3, "(залишилось N шт.)" (N left) is shown next to the name.
+> ℹ️ When a sale is made through [Point of sale](/en/menu/pos) or through [client registration](/en/menu/clients#_329-registration), stock is decreased automatically. In the product picker a product with stock 0 cannot be selected; when stock is below 3, "(залишилось N шт.)" (N left) is shown next to the name.
 
 ### Adding a product
 
@@ -46,7 +46,7 @@ The card list is paginated (10, 20 or 50 cards per page).
 
 - **Name** — required.
 - **Price** — integer, required.
-- **Quantity** — the starting stock, an integer from 0. Optional; shown only when creating. Further restocking is done via [Restock](#_373-Restocking).
+- **Quantity** — the starting stock, an integer from 0. Optional; shown only when creating. Further restocking is done via [Restock](#_373-restocking).
 
 Modal buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 
@@ -80,7 +80,7 @@ Modal buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 
 - **Quantity to add** ("Скільки додати") — an integer, minimum 1. The **Save** button is disabled when the value is below 1.
 
-Saving immediately increases **Stock** and adds a row to the [History](#_372-Stock-history) with the reason **Restock** and the user's name; the notification "Склад поповнено" (stock replenished) is shown.
+Saving immediately increases **Stock** and adds a row to the [History](#_372-stock-history) with the reason **Restock** and the user's name; the notification "Склад поповнено" (stock replenished) is shown.
 
 > ⚠️ Writing off a product without a sale (damage, personal use) is not supported: stock decreases only through a sale, and restocking accepts only positive values. Refunding a sale increases stock.
 

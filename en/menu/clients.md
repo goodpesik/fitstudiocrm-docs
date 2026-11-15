@@ -11,7 +11,7 @@
 ![](../../_media/clients-table.png ":size=200x121")
 
 - **Client** ("Клієнт") — the client's surname and first name. Badges are shown next to the name:
-  - **Debt** ("Борг", red) — the client has an unpaid debt, see [Client debt](#_3-2-12-client-debt);
+  - **Debt** ("Борг", red) — the client has an unpaid debt, see [Client debt](#_3212-client-debt);
   - **Awaiting confirmation** ("Очікує підтвердження", orange) — the client card was created from a request in the mobile app or from a booking on the public page, and the studio has not confirmed the request yet.
 - **Phone**
 - **Status** — **Active** ("Активний") or **Inactive** ("Неактивний").
@@ -27,32 +27,32 @@
   - **Waiting list** ("Лист очікування") — the client is on the workout's waiting list
   - **Removed from waiting list** ("Видалено з листа очікування") — the client was taken off the waiting list
 - **Plan** — for each plan: the name, **Status** (Active / Inactive / Paused), **Ends** ("Закінчується", a date or "--") and **Sessions left** ("Залишок тренувань"); on a separate line **Single: N** ("Разові: N", the number of purchased and unused single sessions). If there are no plans, "Немає" (none) is shown.  
-  The SuperAdmin and Admin roles have the **Edit plans** ("Редагувати абонементи", pencil icon) button, which opens the [Editing plans](#_3-2-4-editing-plans) window.
+  The SuperAdmin and Admin roles have the **Edit plans** ("Редагувати абонементи", pencil icon) button, which opens the [Editing plans](#_324-editing-plans) window.
 
 ![](../../_media/clients-plans.png ":size=150x27")
 
 - **Card** — the client's card number
-- **Personal account** ("Особовий рахунок") — the [personal account](#_3-2-11-personal-account) balance in UAH; shown when the balance is above 0.
+- **Personal account** ("Особовий рахунок") — the [personal account](#_3211-personal-account) balance in UAH; shown when the balance is above 0.
 - **Actions** (SuperAdmin and Admin roles):
-  - **[Pay debt](#_3-2-12-2-paying-off-debt)** ("Сплатити борг") — shown only when there is a debt; disabled when no shift is open.
-  - **[History](#_3-2-5-history)** ![](../../_media/customers-transactions.png ":size=40x32")
-  - **[Edit](#_3-2-6-editing-a-client)** ![](../../_media/customers-edit-button.png ":size=40x35")
-  - **[Sale](#_3-2-7-sale)** ![](../../_media/customers-sell.png ":size=40x38") — only for an active client and with an open shift.
-  - **[Booking](#_3-2-8-booking)** ![](../../_media/customer-booking.png ":size=40x40") — only for an active client.
-  - **[Registration](#_3-2-9-registration)** ![](../../_media/customer-registration.png ":size=40x32") — only for an active client and with an open shift.
-  - **[Delete](#_3-2-10-deleting-a-client)** ![](../../_media/customer-remove.png ":size=40x33") — only for an inactive client.
+  - **[Pay debt](#_32122-paying-off-debt)** ("Сплатити борг") — shown only when there is a debt; disabled when no shift is open.
+  - **[History](#_325-history)** ![](../../_media/customers-transactions.png ":size=40x32")
+  - **[Edit](#_326-editing-a-client)** ![](../../_media/customers-edit-button.png ":size=40x35")
+  - **[Sale](#_327-sale)** ![](../../_media/customers-sell.png ":size=40x38") — only for an active client and with an open shift.
+  - **[Booking](#_328-booking)** ![](../../_media/customer-booking.png ":size=40x40") — only for an active client.
+  - **[Registration](#_329-registration)** ![](../../_media/customer-registration.png ":size=40x32") — only for an active client and with an open shift.
+  - **[Delete](#_3210-deleting-a-client)** ![](../../_media/customer-remove.png ":size=40x33") — only for an inactive client.
 
 For an inactive client the button tooltips explain the restriction: "Продаж доступний тільки для активного клієнта", "Запис доступний тільки для активного клієнта", "Реєстрація доступна тільки для активного клієнта" (available only for an active client), "Деактивуйте клієнта щоби видалити" (deactivate the client to delete).
 
 The table can be sorted by the **Client**, **Phone** and **Status** columns. The table is paginated (10, 20 or 50 rows per page). If no clients are found, "Не знайдено жодного клієнта" is shown.
 
-> ℹ️ Going to a client from other sections (for example, the **Go to client** ("Перейти до клієнта") button in [Registration](#_3-2-9-registration)) opens the table with this client only: instead of the search and the filter, the text "Показано 1 клієнта" (1 client shown) and the **Show all** ("Показати всі") button are displayed; the button returns the full list.
+> ℹ️ Going to a client from other sections (for example, the **Go to client** ("Перейти до клієнта") button in [Registration](#_329-registration)) opens the table with this client only: instead of the search and the filter, the text "Показано 1 клієнта" (1 client shown) and the **Show all** ("Показати всі") button are displayed; the button returns the full list.
 
 ---
 
 ## 3.2.2 Creating a client
 
-> The **+** button (add client) is at the top left; next to it are the [Excel import and export](#_3-2-14-excel-import-and-export-of-clients) buttons. The buttons are available to the SuperAdmin and Admin roles.
+> The **+** button (add client) is at the top left; next to it are the [Excel import and export](#_3214-excel-import-and-export-of-clients) buttons. The buttons are available to the SuperAdmin and Admin roles.
 
 ![](../../_media/add-customer.png ":size=230x149")
 
@@ -86,7 +86,7 @@ Window buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 > Scan the client's card with the scanner (from the physical card, a phone screen, or the mobile app).  
 > Scanning works on any page, except when the create or edit client modal window is open. While the **Card scanning** window is open (the **Scan** button in the client form), the scanned number goes into the form and registration is not opened.
 
-- If the scan succeeds — the **[Registration](#_3-2-9-registration)** modal window opens.
+- If the scan succeeds — the **[Registration](#_329-registration)** modal window opens.
 - If the data is not recognized — a message appears:
 
 ![](../../_media/wrong-scan.png ":size=180x68")
@@ -123,7 +123,7 @@ Window buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 
 ## 3.2.5 History
 
-> Clicking the **History** button opens the **History** ("Історія") modal window with three tabs: **Plans** ("Абонементи"), **Personal account** ("Особовий рахунок", [3.2.11.3](#_3-2-11-3-account-history)) and **Debts** ("Борги", [3.2.12.3](#_3-2-12-3-debt-history)).
+> Clicking the **History** button opens the **History** ("Історія") modal window with three tabs: **Plans** ("Абонементи"), **Personal account** ("Особовий рахунок", [3.2.11.3](#_32113-account-history)) and **Debts** ("Борги", [3.2.12.3](#_32123-debt-history)).
 
 ![](../../_media/client-transactions.png ":size=160x96")
 
@@ -146,7 +146,7 @@ If there are no operations, "Не знайдено жодної транзакц
 
 ## 3.2.6 Editing a client
 
-> Clicking the **Edit** button opens the **Editing a client** ("Редагування клієнта") window with the same fields as [client creation](#_3-2-2-creating-a-client); the fields hold the current data.  
+> Clicking the **Edit** button opens the **Editing a client** ("Редагування клієнта") window with the same fields as [client creation](#_322-creating-a-client); the fields hold the current data.  
 > The **Client card** field can be edited only when the **Enter card number manually** toggle is on; the number can also be read with the **Scan** button.
 
 > ℹ️ If the studio belongs to a **network** (a group of venues) and the client is known to other studios of the group, the **"Клієнт із мережі"** (client from the network) tag is shown at the top of the form. The tag does not restrict editing: the name and the phone can be changed, and the change is applied to the shared registry and to the other studios of the network.
@@ -162,7 +162,7 @@ If there are no operations, "Не знайдено жодної транзакц
 - Sale rows. In each row a type is chosen — **Plan** ("Абонемент"), **Product** ("Товар") or **Account top-up** ("Поповнення рахунку") — and then:
   - for **Plan** — a plan from the list;
   - for **Product** — a product from the list. A product with zero stock is marked "(немає в наявності)" (out of stock) and cannot be selected; when stock is below 3, "(залишилось N шт.)" is shown. Below the selected product "Залишок: N шт." (stock) is shown;
-  - for **Account top-up** — the **Top-up amount** ("Сума поповнення") field, see [3.2.11.1](#_3-2-11-1-topping-up-the-account).
+  - for **Account top-up** — the **Top-up amount** ("Сума поповнення") field, see [3.2.11.1](#_32111-topping-up-the-account).
 - A quantity control (1 to 20) for plans and products.
 - The **Add** ("Додати") button — adds one more sale row.
 - **Payment method** — Card ("Картка") / Cash ("Готівка") / Bank transfer ("Безготівкова"); when the personal account has funds, also "Особовий рахунок — X грн". The **Split payment** ("Розділити оплату") button adds another payment method.
@@ -236,7 +236,7 @@ Cancelling a repeating booking opens the **Cancel booking** ("Скасувати
 
 ## 3.2.9 Registration
 
-> The **Registration** ("Реєстрація") modal window has the heading "Клієнт: <surname and first name>" and the **Go to client** ("Перейти до клієнта") button, which opens the [client table](#_3-2-1-client-table) with this client only.
+> The **Registration** ("Реєстрація") modal window has the heading "Клієнт: <surname and first name>" and the **Go to client** ("Перейти до клієнта") button, which opens the [client table](#_321-client-table) with this client only.
 
 Warnings are shown above the data:
 
@@ -263,7 +263,7 @@ Active plans are shown in separate blocks **Current plan (group workouts)** ("П
 ![](../../_media/client-registration-3.png ":size=100x60")
 
 - The **Pay later** ("Сплатити пізніше") toggle — for deferred payment.
-- In that case a [client debt](#_3-2-12-client-debt) is created and the client gets the **Debt** badge.
+- In that case a [client debt](#_3212-client-debt) is created and the client gets the **Debt** badge.
 
 ![](../../_media/client-dept.png ":size=230x26")
 
@@ -312,14 +312,14 @@ Active plans are shown in separate blocks **Current plan (group workouts)** ("П
 
 > If a workout is for 2+ people and one of the booked clients pays **partially**, the system automatically calculates the **debt for the entire workout** and shows it to all the other booked clients. As soon as the studio has received the full workout price across all the clients combined, the debt closes automatically.
 
-Example: a personal workout for 2 people, priced at **UAH 1300**. The first client (`client 5`) pays **UAH 500** in cash. When opening [Registration](#_3-2-9-registration) for the second client (`тест бонус`) for that same workout:
+Example: a personal workout for 2 people, priced at **UAH 1300**. The first client (`client 5`) pays **UAH 500** in cash. When opening [Registration](#_329-registration) for the second client (`тест бонус`) for that same workout:
 
 - a red badge at the top of the modal window reads **"Warning!!! The client has a debt: UAH 800"** (1300 − 500);
 - the **Workout price** column also shows **UAH 800** — the amount still owed for the workout to be paid in full.
 
 ![](../../_media/client-registration-personal-2x-second-client-debt.png ":size=500x301")
 
-> ℹ️ A [Client debt](#_3-2-12-client-debt) record is created for both the first and the second client, for the same remaining amount — either of them can pay it off (in cash, by card, from the [Personal account](#_3-2-11-personal-account), or via a plan). Once paid in full, the record is automatically closed for all participants.
+> ℹ️ A [Client debt](#_3212-client-debt) record is created for both the first and the second client, for the same remaining amount — either of them can pay it off (in cash, by card, from the [Personal account](#_3211-personal-account), or via a plan). Once paid in full, the record is automatically closed for all participants.
 
 ---
 
@@ -357,7 +357,7 @@ Requirements and behaviour:
 
 ### 3.2.11.2 Paying from the account
 
-> When selling a plan or a product, or during a client's [Registration](#_3-2-9-registration), if the account balance is above 0, **"Особовий рахунок — X грн"** (personal account — X UAH) appears in the list of payment methods, where X is the current balance.
+> When selling a plan or a product, or during a client's [Registration](#_329-registration), if the account balance is above 0, **"Особовий рахунок — X грн"** (personal account — X UAH) appears in the list of payment methods, where X is the current balance.
 
 ![](../../_media/client-balance-pay.png ":size=500x301")
 
@@ -415,7 +415,7 @@ After saving, the account history gets a **Correction** row for the difference, 
 
 ### 3.2.12.1 Debt badge
 
-> Clients with an unpaid debt have a **red "Борг" (Debt) badge** next to their name in the table row. An additional **Pay debt** ("Сплатити борг", wallet icon) button appears in the **Actions** column; it is disabled when no shift is open. The [Registration](#_3-2-9-registration) window shows the warning "Увага!!! У клієнта є борг: …".
+> Clients with an unpaid debt have a **red "Борг" (Debt) badge** next to their name in the table row. An additional **Pay debt** ("Сплатити борг", wallet icon) button appears in the **Actions** column; it is disabled when no shift is open. The [Registration](#_329-registration) window shows the warning "Увага!!! У клієнта є борг: …".
 
 ### 3.2.12.2 Paying off debt
 
@@ -511,7 +511,7 @@ Only one import can run at a time ("Попереднє завантаження 
 
 ### 3.2.14.3 Export
 
-The **Save clients to Excel** button starts building the file; the **Saving started** ("Збереження запущено") window is shown. When the file is ready, the **File ready** ("Файл готовий") window opens with the **Cancel** ("Скасувати") and **Download** ("Завантажити") buttons. The file holds the **Clients** sheet with the columns listed in [3.2.14.1](#_3-2-14-1-file-format); it can be edited and loaded back through import.
+The **Save clients to Excel** button starts building the file; the **Saving started** ("Збереження запущено") window is shown. When the file is ready, the **File ready** ("Файл готовий") window opens with the **Cancel** ("Скасувати") and **Download** ("Завантажити") buttons. The file holds the **Clients** sheet with the columns listed in [3.2.14.1](#_32141-file-format); it can be edited and loaded back through import.
 
 ---
 

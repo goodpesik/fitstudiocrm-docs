@@ -114,7 +114,7 @@ Saving creates a record on the **Cash balance** tab with the matching type: **В
 - **До повернення** — the total to refund.
 - The **Підтверджую повернення** (I confirm the refund) toggle is required.
 - The **Повернути кошти** (refund money) button is disabled when the refund amount is 0, the confirmation toggle is off, or the refund amount exceeds the main account balance (message "Недостатньо коштів в касі", not enough cash); the last condition does not apply to transactions paid from the personal account.
-- Refunding a transaction paid from the personal account credits the amount to the client's [personal account](/en/menu/clients#_3-2-11-personal-account).
+- Refunding a transaction paid from the personal account credits the amount to the client's [personal account](/en/menu/clients#_3211-personal-account).
 - Refunding a sold product increases its stock.
 
 > ⚠️ A money refund **does not return the deducted session** to the plan: the deduction for the session that took place remains, only the money is returned.

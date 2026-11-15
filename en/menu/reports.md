@@ -6,12 +6,12 @@
 
 > The **Reports** page contains the following tabs:
 
-- [Statistics](#_3-8-1-statistics)
-- [Shifts](#_3-8-2-shifts)
-- [Coach payroll](#_3-8-4-coach-payroll)
-- [Administrator payroll](#_3-8-5-administrator-payroll)
-- [Rating](#_3-8-6-rating) — shown when **Пропонувати оцінити заняття** (offer to rate the class) is enabled in the settings
-- [SMS](#_3-8-7-sms)
+- [Statistics](#_381-statistics)
+- [Shifts](#_382-shifts)
+- [Coach payroll](#_384-coach-payroll)
+- [Administrator payroll](#_385-administrator-payroll)
+- [Rating](#_386-rating) — shown when **Пропонувати оцінити заняття** (offer to rate the class) is enabled in the settings
+- [SMS](#_387-sms)
 
 > ℹ️ **Categories** ("Категорії") has moved from Reports to [Settings → Categories](/en/login/settings#categories).
 
@@ -54,7 +54,7 @@
 
     ![](../../_media/reports-rozshyrenyi.png ":size=420x253")
 
-  - **Need clarification** ("Потребують уточнення") — a list of clients whose **phone field is empty** in the [client card](/en/menu/clients#_3-2-6-editing-a-client). Other fields (email, date of birth) are not considered. A client without a phone receives no SMS messages; the [Registration](/en/menu/clients#_3-2-9-registration) window shows "Увага!!! Клієнт потребує уточнення даних" for such a client.
+  - **Need clarification** ("Потребують уточнення") — a list of clients whose **phone field is empty** in the [client card](/en/menu/clients#_326-editing-a-client). Other fields (email, date of birth) are not considered. A client without a phone receives no SMS messages; the [Registration](/en/menu/clients#_329-registration) window shows "Увага!!! Клієнт потребує уточнення даних" for such a client.
 
     ![](../../_media/reports-potrebuyut-utochnennya.png ":size=420x253")
 
@@ -104,7 +104,7 @@ Pressing **Edit** ("Редагувати") turns the **Working hours** field int
 
 **Export:** the **Експорт у файл** (export to file) button downloads the text file `salary DD.MM-DD.MM.txt` broken down by coach and category.
 
-> ℹ️ The calculation respects the **"Враховувати максимальну к-сть людей при підрахунку зарплат"** (take the maximum number of people into account) setting ([3.8.4.1](#_3-8-4-1-payroll-settings)): if a class has more clients than its capacity, only the capacity is counted.
+> ℹ️ The calculation respects the **"Враховувати максимальну к-сть людей при підрахунку зарплат"** (take the maximum number of people into account) setting ([3.8.4.1](#_3841-payroll-settings)): if a class has more clients than its capacity, only the capacity is counted.
 
 ### 3.8.4.1 Payroll settings
 
@@ -126,7 +126,7 @@ The tab has the sub-tabs **Зарплата** (salary) and **Бонуси** (bon
 
 - **Admin** ("Адмін")
 - **Number of shifts** ("Кількість змін") — the number of working shifts in the period.
-- **Hours** ("Години") — total hours worked (from the [Shifts](#_3-8-2-shifts) table).
+- **Hours** ("Години") — total hours worked (from the [Shifts](#_382-shifts) table).
 - **Bonus** ("Бонус") — accrued bonuses; the column is shown when administrator bonuses are configured.
 - **Salary** ("Зарплата") — `hours × hourly rate from the administrator's profile`, without the bonus.
 - **Sum** ("Сума") — `Salary + Bonus`.

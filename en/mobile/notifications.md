@@ -27,7 +27,7 @@ The tab has two sub-tabs: **"Notifications"** ("Сповіщення") (history)
 
 - **"Enable Push Notifications"** ("Увімкнути Push сповіщення") — the main toggle. When enabled, the browser will ask for notification permission.
 - **Notification types** (the set depends on the role):
-  - **"Reminders"** ("Нагадування") — client only.
+  - **"Reminders"** ("Нагадування") — client only. A coach does not receive class reminders; the coach settings do not contain this type.
   - **"Messages from the Studio"** ("Повідомлення від студії") — client, coach.
   - **"Classes"** ("Тренування") — client, coach.
   - **"System Messages"** ("Системні повідомлення") — admin only.

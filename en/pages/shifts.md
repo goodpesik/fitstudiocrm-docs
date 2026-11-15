@@ -25,7 +25,7 @@ If, when a user with the **Адмін** role signs in, the shift is open under a
 - **Так** (Yes) — the current shift is closed and a new shift is opened under the signed-in user.
 - **Ні** (No) — the shift stays with the previous user.
 
-> Shifts are used to track working time and [administrator salaries](/en/menu/reports#_3-8-5-administrator-payroll).
+> Shifts are used to track working time and [administrator salaries](/en/menu/reports#_385-administrator-payroll).
 
 ---
 
@@ -48,7 +48,7 @@ After confirmation the **Зміну закрито** (Shift closed) modal appear
 
 > ⚠️ When the **Зміну закрито** window is closed (with **Закрити**, **Зберегти** or the cross), the system signs the user out.
 
-The hours of a closed shift can be changed later on the [Reports → Shifts](/en/menu/reports#_3-8-2-shifts) page.
+The hours of a closed shift can be changed later on the [Reports → Shifts](/en/menu/reports#_382-shifts) page.
 
 ---
 

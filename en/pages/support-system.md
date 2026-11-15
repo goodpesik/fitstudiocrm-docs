@@ -2,7 +2,7 @@
 
 ## Overview
 
-A built-in support ticket system for studio administrators. A ticket is created in the admin panel and passed to the Fitshandler support service (handler-support), which analyses the request and replies in the ticket: gives an answer, asks a clarifying question or files a defect.
+A built-in support request system for studio administrators. A request is created in the admin panel and passed to the Fitshandler support service (handler-support), which analyses the request and replies in the request: gives an answer, asks a clarifying question or files a defect.
 
 Communication with support takes place in the **Підтримка** (Support) window, opened by the button of the same name in the admin panel header.
 
@@ -10,26 +10,26 @@ Communication with support takes place in the **Підтримка** (Support) w
 
 ## The «Підтримка» window
 
-**Access:** the **Підтримка** button in the header — the **Супер Адмін** (Super Admin) and **Адмін** (Admin) roles. The button shows the number of tickets with the **Нова відповідь** (New reply) status.
+**Access:** the **Підтримка** button in the header — the **Супер Адмін** (Super Admin) and **Адмін** (Admin) roles. The button shows the number of requests with the **Нова відповідь** (New reply) status.
 
-**Ticket list** — columns **Тема** (Subject), **Статус** (Status), **Пріоритет** (Priority), **Оновлено** (Updated). Buttons **Новий тікет** (New ticket), **Посібник користувача** (User guide, opens this documentation) and **Запланувати консультацію** (Schedule a consultation).
+**Request list** — columns **Тема** (Subject), **Статус** (Status), **Пріоритет** (Priority), **Оновлено** (Updated). Buttons **Новий тікет** (New ticket), **Посібник користувача** (User guide, opens this documentation) and **Запланувати консультацію** (Schedule a consultation).
 
-**New ticket** — fields **Тема \*** («Коротко опишіть проблему», Briefly describe the problem), **Опис \*** (Description; «Детально опишіть проблему...», Describe the problem in detail...), **Пріоритет** (**Звичайний** (Normal) / **SOS**). The **Створити** (Create) button; if the subject or description is empty — «Заповніть тему та опис» (Fill in the subject and description). After creation — «Тікет створено» (Ticket created).
+**New request** — fields **Тема \*** («Коротко опишіть проблему», Briefly describe the problem), **Опис \*** (Description; «Детально опишіть проблему...», Describe the problem in detail...), **Пріоритет** (**Звичайний** (Normal) / **SOS**). The **Створити** (Create) button; if the subject or description is empty — «Заповніть тему та опис» (Fill in the subject and description). After creation — «Тікет створено» (Ticket created).
 
-**A ticket** opens in the same window as a conversation. The type of a support message is marked: **Відповідь** (Answer), **Уточнення** (Clarification), **Дефект** (Defect). The «Ваше повідомлення...» (Your message...) field, the file attachment button and **Надіслати** (Send). The **Закрити тікет** (Close ticket) button closes the ticket («Тікет закрито», Ticket closed). The **Назад** (Back) button returns to the list.
+**A request** opens in the same window as a conversation. The type of a support message is marked: **Відповідь** (Answer), **Уточнення** (Clarification), **Дефект** (Defect). The «Ваше повідомлення...» (Your message...) field, the file attachment button and **Надіслати** (Send). The **Закрити тікет** (Close ticket) button closes the request («Тікет закрито», Request closed). The **Назад** (Back) button returns to the list.
 
 A user with the **Супер Адмін** role also sees the «Відповісти як підтримка...» (Reply as support...) field and the **Надіслати як підтримка** (Send as support) button.
 
-**Ticket statuses:**
+**Request statuses:**
 
 | Status | Meaning |
 | --- | --- |
-| **Відкрито** (Open, `open`) | The ticket is waiting to be processed by support |
-| **Нова відповідь** (New reply, `awaiting_user`) | Support answered or asked a question. When the user opens the ticket, the status changes to **Відкрито** |
+| **Відкрито** (Open, `open`) | The request is waiting to be processed by support |
+| **Нова відповідь** (New reply, `awaiting_user`) | Support answered or asked a question. When the user opens the request, the status changes to **Відкрито** |
 | **Вирішено** (Resolved, `resolved`) | The request is resolved |
-| **Закрито** (Closed, `closed`) | The ticket is closed |
+| **Закрито** (Closed, `closed`) | The request is closed |
 
-**Updates.** The number of tickets with the **Нова відповідь** status is checked every 10 minutes. If it has grown, the «Вам відповіла підтримка» (Support has replied to you) window with the **Зрозуміло** (Got it) button is shown; the window only informs and does not open the ticket.
+**Updates.** The number of requests with the **Нова відповідь** status is checked every 10 minutes. If it has grown, the «Вам відповіла підтримка» (Support has replied to you) window with the **Зрозуміло** (Got it) button is shown; the window only informs and does not open the request.
 
 ---
 
@@ -37,8 +37,8 @@ A user with the **Супер Адмін** role also sees the «Відповіс�
 
 | Limit | Value | Message |
 | --- | --- | --- |
-| Tickets per month per studio | No limit | «Місячний ліміт тікетів вичерпано. Створити новий тікет можна буде наступного місяця.» (The monthly ticket limit is used up. A new ticket can be created next month.) (`TICKET_MONTHLY_LIMIT`) |
-| SOS tickets per month per studio | No limit | «Місячний ліміт SOS-звернень вичерпано. Оберіть звичайний пріоритет або зачекайте до наступного місяця.» (The monthly SOS limit is used up. Choose the normal priority or wait until next month.) (`SOS_MONTHLY_LIMIT`) |
+| Requests per month per studio | No limit | «Місячний ліміт тікетів вичерпано. Створити новий тікет можна буде наступного місяця.» (The monthly ticket limit is used up. A new ticket can be created next month.) (`TICKET_MONTHLY_LIMIT`) |
+| SOS requests per month per studio | No limit | «Місячний ліміт SOS-звернень вичерпано. Оберіть звичайний пріоритет або зачекайте до наступного місяця.» (The monthly SOS limit is used up. Choose the normal priority or wait until next month.) (`SOS_MONTHLY_LIMIT`) |
 | User messages in a row without a support reply | 3 | «Ви надіслали 3 повідомлення підряд. Дочекайтеся відповіді підтримки, щоб продовжити.» (You have sent 3 messages in a row. Wait for the support reply to continue.) (`COMMENT_CONSECUTIVE_LIMIT`) |
 | Files per message | 5 (images or PDF) | — |
 | File size | 5 MB | — |
@@ -47,10 +47,10 @@ Monthly limits are counted from the first day of the calendar month (UTC). Month
 
 ---
 
-## Ticket processing
+## Request processing
 
-- When a ticket is created and on each new user message, the studio server sends an event to the support service. Sending the same ticket again does not create a duplicate.
-- Tickets with the **SOS** priority are processed every minute and first; normal ones — every 10 minutes.
+- When a request is created and on each new user message, the studio server sends an event to the support service. Sending the same request again does not create a duplicate.
+- Requests with the **SOS** priority are processed every minute and first; normal ones — every 10 minutes.
 - Support service decisions:
 
 | Decision | Action | Message type (`kind`) |
@@ -72,11 +72,11 @@ Replies are given in the language of the request: Cyrillic text — in Ukrainian
 | Field | Type | Description |
 |------|-----|------|
 | id | UUID (PK) | |
-| subject | VARCHAR | Ticket subject |
+| subject | VARCHAR | Request subject |
 | body | TEXT | Problem description |
 | priority | ENUM | `normal`, `sos` |
 | status | ENUM | `open`, `awaiting_user`, `resolved`, `closed` |
-| createdByUserId | UUID | User who created the ticket |
+| createdByUserId | UUID | User who created the request |
 | createdAt | TIMESTAMPTZ | |
 | updatedAt | TIMESTAMPTZ | |
 | lastNotifiedAt | TIMESTAMPTZ | Time the support service was last notified |
@@ -112,21 +112,21 @@ Replies are given in the language of the request: Cyrillic text — in Ukrainian
 
 | Method | Path | Description |
 |-------|------|------|
-| GET | /support/tickets | Studio tickets |
-| GET | /support/tickets/:id | Ticket with messages and attachments |
-| GET | /support/unread-count | Number of tickets with the `awaiting_user` status |
+| GET | /support/tickets | Studio requests |
+| GET | /support/tickets/:id | Request with messages and attachments |
+| GET | /support/unread-count | Number of requests with the `awaiting_user` status |
 | GET | /support/limits | Monthly limits and remaining balance |
-| POST | /support/tickets | Create a ticket `{subject, body, priority}` |
+| POST | /support/tickets | Create a request `{subject, body, priority}` |
 | POST | /support/tickets/:id/messages | Add a message and files (up to 5) |
 | POST | /support/tickets/:id/reply-as-support | Reply on behalf of support |
-| PATCH | /support/tickets/:id/status | Change the ticket status |
+| PATCH | /support/tickets/:id/status | Change the request status |
 
 **Internal routes** (for the support service; an HMAC signature is required):
 
 | Method | Path | Description |
 |-------|------|------|
-| GET | /support-internal/ticket/:id?appId= | Full ticket |
-| POST | /support-internal/ticket/:id/comment?appId= | Support message in the ticket |
+| GET | /support-internal/ticket/:id?appId= | Full request |
+| POST | /support-internal/ticket/:id/comment?appId= | Support message in the request |
 | GET | /support-internal/attachment-data/:id?appId= | Attachment in Base64 |
 | GET | /support-internal/attachment/:id/file?appId= | Attachment file |
 | GET | /support-internal/investigate/* | Reading studio data to analyse the request |

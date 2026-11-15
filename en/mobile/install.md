@@ -6,8 +6,6 @@
 
 > The **Fitshandler** app is installed from the **App Store** (iPhone) or **Google Play** (Android). Login uses a confirmation code delivered via Telegram or by SMS.
 
-<!-- TODO: screenshot of the installation screen -->
-
 ---
 
 ## 7.1.1 Installation

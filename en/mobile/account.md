@@ -6,8 +6,6 @@
 
 > The **Account** tab contains the profile card (initials, name, role and studio), the list of sections and the **«Log out»** button. The set of sections depends on the role.
 
-<!-- TODO: screenshot of the Account tab -->
-
 | Section | Customer | Coach | Admin, Guest |
 |---|:---:|:---:|:---:|
 | **Profile** | ✔ | ✔ | ✔ |

@@ -29,8 +29,6 @@ If the user is not logged in, **«Book»** opens the login screen; after login t
 | Requests have been submitted for three different workouts | «You have already tried three different classes. Request one of them again from the home page.» |
 | The class is no longer available | «This class is no longer available. Pick another one.» |
 
-<!-- TODO: screenshot of the request on Home -->
-
 ---
 
 ## 7.2.2 Request Status

@@ -52,7 +52,7 @@ Start (**З**, From) and end (**ДО**, To) of the working day in 30-minute step
 
 A multi-line text field. The entered text is shown to clients in the mobile app under **Правила студії** (Studio rules) on the studio card.
 
-> ℹ️ The caption under the heading in the settings reads «Якщо введено, правила будуть доступні клієнтам в телеграм боті» (If entered, the rules will be available to clients in the Telegram bot). The rules are actually shown in the mobile app.
+> ℹ️ The caption under the heading in the settings reads «Якщо введено, правила будуть доступні клієнтам в телеграм боті» (If entered, the rules will be available to clients in the Telegram bot). The rules are shown to clients in the mobile app.
 
 ### Studio Time Zone
 

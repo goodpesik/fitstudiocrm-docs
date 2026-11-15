@@ -17,7 +17,7 @@
 
 > Add and configure categories.  
 > Categories can also be added or edited later.  
-> It is recommended to first create the base categories that will be used when creating workouts.
+> Before workouts are created, the categories selected in a workout must be created.
 
 ---
 
@@ -71,7 +71,7 @@
 
 > On the [Settings → Mobile Application](/en/login/settings#mobile-application) tab, turn on **Використовувати мобільний додаток для клієнтів** (Use the mobile app for clients).
 > In the **Посилання на застосунок і повідомлення** (App link and messages) section, download the QR code (**Завантажити QR код**) or the banner (**Завантажити баннер**) and print it.
-> It is recommended to place the QR code in the studio: at the reception, in the changing rooms. By scanning the code, a client installs the app, books workouts, views their plans and receives notifications.
+> The QR code is recommended to be placed in the studio: at the reception, in the changing rooms. After scanning the code, a client can install the app, book workouts, view their plans and receive notifications.
 > Fill in the [Studio Information](/en/login/settings#studio-information) tab: clients see the studio name, logo, description, photos and contacts in the app.
 
 ---

@@ -6,8 +6,6 @@
 
 > The **Notifications** tab is the notification feed of the selected studio and the notification settings. The tab icon shows a counter of unread notifications.
 
-<!-- TODO: screenshot of the Notifications tab -->
-
 ---
 
 ## 7.7.1 Notification Feed

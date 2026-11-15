@@ -6,8 +6,6 @@
 
 > The **Workouts** tab shows the studio schedule for the selected day. A client books, cancels and restores bookings and leaves the wait list; a coach and an administrator view the schedule, create workouts and manage them.
 
-<!-- TODO: screenshot of the Workouts tab (client) -->
-
 The schedule for a user without a client card in the studio is described in [7.2 Registration and Studio Selection](/en/mobile/registration#_721-booking-request).
 
 ---
@@ -46,8 +44,6 @@ The bottom of the card shows the booking state:
 Under the card of an upcoming workout the client is booked for — the **«Add to calendar»** button: adds the class to the phone calendar. Error — «Could not add the class to the calendar».
 
 Under the schedule — the note: «Important!!! If you have recurring workouts, automatic booking for them happens the day after the current workout date.»
-
-<!-- TODO: screenshot of the workout card -->
 
 ---
 

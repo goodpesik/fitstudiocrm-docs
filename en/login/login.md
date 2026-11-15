@@ -18,7 +18,7 @@ If there is no access after signing in (the email was not invited or the role is
 
 ![](../../_media/access-denied-screenshot.png ':size=100x63')
 
-A studio employee should give their email to an administrator who has access, so that the administrator adds it on the [Users](/en/login/users) tab. One email can have access to several studios.
+Access for a studio employee is granted by an administrator, who adds the employee's email on the [Users](/en/login/users) tab. One email can have access to several studios.
 
 If the studio's access is suspended by the plan, the message **Акаунт деактивовано** (Account deactivated) is shown — see [Plan and access to the system](/en/login/billing).
 

@@ -6,8 +6,6 @@
 
 > The **Home** tab shows the header of the selected studio, a greeting, upcoming workouts, the client's current plan, and for the administrator — the shift state and booking requests.
 
-<!-- TODO: screenshot of the client home screen -->
-
 ---
 
 ## 7.3.1 Studio

@@ -6,8 +6,6 @@
 
 > The **Client card** tab shows the QR code of the client card. The code is scanned at the studio front desk to find the client profile and for [automatic registration by card](/en/pages/processing#_610-automatic-registration-on-card-scan).
 
-<!-- TODO: screenshot of the screen with the card's QR code -->
-
 The **«Your client card»** screen contains:
 
 - the studio name and the **«CLIENT»** badge;

@@ -76,7 +76,7 @@ The offline till works with the data received from the server at the last connec
 
 | Parameter | Value |
 |---|---|
-| Request | `GET /offline/snapshot`, with device access only |
+| Request | `GET /offline/snapshot`, with device access only; the request only reads data and writes nothing |
 | Update | `since` parameter — the `generatedAt` of the previous package |
 | Room sets for check-in codes | `checkInRooms` parameter: sets separated by `;`, room ids in a set separated by `,`; up to 20 sets |
 | Response fields | `version`, `generatedAt`, `full`, `window` (schedule bounds), `salesFrom` (start of the sales period), `catalog` (full package only), `clients`, `clientPlans`, `clientDebts`, `certificates`, `stock`, `transactions`, `shifts`, `occurrences`, `checkInCodes`, `checkInCodesStatus` |
@@ -86,7 +86,7 @@ The offline till works with the data received from the server at the last connec
 |---|---|
 | `ready` | self check-in codes are sent in `checkInCodes` |
 | `off` | self check-in is off; `checkInCodes` is `null` |
-| `failed` | self check-in is on, the codes could not be built; `checkInCodes` is `null`; the rest of the data is sent |
+| `failed` | self check-in is on, the codes could not be built (including when the studio has no stored public code or code signing secret yet; the first opening of the online self check-in QR creates them); `checkInCodes` is `null`; the rest of the data is sent |
 
 | Response | Meaning |
 |---|---|

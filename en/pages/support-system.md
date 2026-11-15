@@ -94,6 +94,7 @@ The client (admin) never sees Jira or the Pi server — communication always hap
 | GET | /support/tickets/:id | Details + messages + attachments |
 | POST | /support/tickets | Create a ticket {subject, body, priority} |
 | POST | /support/tickets/:id/messages | Add a message + files (up to 5) |
+| POST | /support/tickets/:id/reply-as-support | Reply on behalf of support {body}. Super Admin role only; any other role gets 403 |
 | GET | /support/unread-count | Number of tickets with status awaiting_user |
 
 ### Internal Routes (without Firebase login verification)
@@ -127,6 +128,7 @@ The client (admin) never sees Jira or the Pi server — communication always hap
 - Ticket details open in the same window (messenger style: user on the right, Support Bot on the left)
 - Creation modal — subject, description, priority
 - Reply box — textarea + file attachment
+- **Reply as support** field — shown only to the Super Admin role and only for a ticket that is not closed. The reply is stored as a support message. Other roles, including Admin, must not reply on behalf of support: the server rejects such a request with 403.
 
 **Poll:** `useSupportStore` polls `GET /support/unread-count` every 10 minutes. If new replies have appeared, a "Support has replied" window appears with a **Got it** button, which only closes it — there is no automatic navigation to the ticket.
 

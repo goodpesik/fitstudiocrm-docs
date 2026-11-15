@@ -12,6 +12,8 @@ After an attended class, the home screen offers to rate the last class. This off
 
 The rating is from one to five stars, with an optional comment. The client can decline: the prompt then disappears and is not shown again for that class.
 
+A rating request by message (push, Telegram or SMS) is sent once a day at **06:00** in the studio's time zone. No requests are sent during the [night pause](/en/pages/processing#the-night-pause) from 23:00 to 06:00.
+
 ---
 
 ## When the Rating Becomes Visible

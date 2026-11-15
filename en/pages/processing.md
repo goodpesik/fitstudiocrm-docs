@@ -88,7 +88,11 @@ For clients without the app there is a separate studio setting — **Remind abou
 
 ### The night pause
 
-Reminders are not sent **between 22:00 and 06:00**, whatever the channel and whatever the client asked for. If the calculated reminder time falls inside that window, the reminder is not sent at all — it is not postponed until the morning. This matters for early classes: a "2 hours before" reminder for a 07:00 class falls at 05:00 and will not fire.
+Reminders are not sent **from 23:00 to 06:00** in the studio's time zone, on every channel: the app, Telegram and SMS.
+
+- A reminder whose calculated time falls inside the night pause is sent at **06:00**, once. Example: a "2 hours before" reminder for a 07:30 class falls at 05:30 and arrives at 06:00.
+- For a class that starts before 06:00, no reminder is sent during the night pause.
+- Rating requests are not sent during the night pause — see [Ratings and Reviews](/en/mobile/ratings).
 
 ### The monthly SMS limit
 

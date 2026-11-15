@@ -53,7 +53,7 @@
 
 ## 5.3 Registration with a Previously Purchased Single-Session Plan
 
-> Scenario: a client previously purchased a **single-session personal plan** (the session has not yet been used), and you are now registering them for a workout using this plan.
+> Scenario: a client previously purchased a **single-session personal plan** (the session has not yet been used) and is registered for a workout using this plan.
 
 **In the [Registration](/en/menu/clients#_329-registration) modal window:**
 

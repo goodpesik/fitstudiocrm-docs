@@ -76,6 +76,10 @@
 
 - **Cancel workout** button (in the window header, next to the gear button) — shows the ["Are you sure you want to continue?"](../_modals/are-you-sure-modal.md ':include') confirmation modal window. If confirmed, the workout is cancelled for that day.
 
+  > ℹ️ The day of the cancellation is determined in the studio time zone ([the "Studio Time Zone" setting](/en/login/settings#studio-time-zone)), regardless of the time zone of the computer the action is performed from. Exactly the calendar day selected in the schedule is cancelled.
+
+  > ⚠️ If the class on the selected date is already cancelled, the cancellation is not repeated: the system shows the error message **"Скасування не виконано: стан заняття на обрану дату не змінився."** ("Cancellation not performed: the state of the class on the selected date has not changed."). A success message is shown only when the class has actually been cancelled.
+
   > ⚠️ If at least one person is already checked in for the workout, it cannot be cancelled.
 
 - **Book a client** toggle — see [Book a client](#book-a-client).

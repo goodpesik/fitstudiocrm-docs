@@ -32,10 +32,10 @@ On the **"My Classes"** tab, each card has a status:
 | Status | Meaning |
 |---|---|
 | **Planned** | active booking (can be cancelled) |
-| **Visited** | class attended |
-| **Cancelled** | booking cancelled |
+| **Attended** | class attended |
+| **Canceled** | booking canceled |
 | **Paused** | booking paused |
-| **Waiting List** | you are in the queue (no spots yet) |
+| **Wait list** | you are in the queue (no spots yet) |
 
 On the **"Book"** tab, the card shows whether you can book:
 
@@ -55,9 +55,9 @@ On the **"Book"** tab, the card shows whether you can book:
 
 > ⚠️ If while you were deciding someone else took the spot — on confirmation you'll see **"This class is no longer available for booking"** ("Запис на це тренування більше не доступний").
 
-### Waiting List
+### Wait list
 
-> When all spots are taken, the class shows **"no spots available"**. If the studio uses a waiting list, your booking may get the **"Waiting List"** status — when a spot frees up, the administrator can move you to confirmed.
+> When all spots are taken, the class shows **"no spots available"**. If the studio uses a wait list, your booking may get the **"Wait list"** status — when a spot frees up, the administrator can move you to confirmed.
 
 ### How to Cancel a Booking
 
@@ -82,7 +82,7 @@ On the **"Book"** tab, the card shows whether you can book:
 - **"Schedule"** — all of the studio's classes for the day.
 - The **"Add Schedule to Calendar"** ("Додати розклад у календар") button adds the coach's schedule to their phone's own calendar (Apple Calendar / Google Calendar).
 
-For the coach, the class card shows a summary by client: **Planned**, **Visited**, **Cancelled**, **Not Attended**, **Waiting List**, **"Spots remaining"** ("Місць лишилося"), and **"Credited to coach"** ("Зараховано тренеру").
+For the coach, the class card shows a summary by client: **Planned**, **Attended**, **Canceled**, **Not attended**, **Wait list**, **"Spots left"** ("Місць лишилося"), and **"Credited to coach"** ("Зараховано тренеру").
 
 ---
 
@@ -116,7 +116,7 @@ For the coach, the class card shows a summary by client: **Planned**, **Visited*
 > On the card of an upcoming class, the admin has a **"Book Client"** ("Записати клієнта") toggle.
 
 1. Turn on the **"Book Client"** ("Записати клієнта") toggle.
-2. **"Choose Client"** ("Виберіть клієнта") — clients unavailable (booked at that time) are not shown; clients on the **waiting list** are highlighted in blue with the label **"(waiting list)"** ("(лист очікування)"), so the admin can confirm them.
+2. **"Choose Client"** ("Виберіть клієнта") — clients unavailable (booked at that time) are not shown; clients on the **wait list** are highlighted in blue with the label **"(wait list)"** ("(лист очікування)"), so the admin can confirm them.
 3. For a recurring class, you can turn on the **"Repeat"** ("Повторювати") toggle — the booking will repeat across the series.
 4. **"Book"** ("Записати") → confirm in the **"Class Booking"** ("Запис на тренування") window.
 5. **"Client booked successfully"** ("Клієнта успішно записано") appears.

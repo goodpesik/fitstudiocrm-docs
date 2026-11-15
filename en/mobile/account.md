@@ -35,7 +35,7 @@
 
 - **"Membership:"** ("Абонемент:") + name.
 - **"Classes remaining: {N}"** ("Тренувань лишилося: {N}"), **"Valid through {date}"** ("Діє до {дата} включно").
-- New membership — **"Not active. Activates on your visit to the studio"** ("Не активний. Активується під час візиту в студію").
+- New membership — the status **"New"** ("Новий").
 - Warning **"Membership is about to expire"** ("Абонемент скоро закінчує дію") (fewer than 3 days / 3 classes).
 - **"Single-visit passes: {N}"** ("Разові абонементи: {N}") — number of single-visit passes.
 - Empty → **"No current membership"** ("Немає поточного абонемента").
@@ -47,7 +47,7 @@
 > History of deductions/transactions on memberships for the selected period.
 
 - Date range filter, table with pagination (10/20/50 rows).
-- Each row: date, membership, **"Classes remaining:"** ("Залишок тренувань:"), status (**Planned / Cancelled / Registration Cancelled / Not Attended / Visited / Added to Waiting List**), **"Created:"** ("Створено:"), class, coach.
+- Each row: date, membership, **"Classes remaining:"** ("Залишок тренувань:"), status (**Planned / Canceled / Registration canceled / Missed / Attended / Wait list / Left the wait list**), **"Created:"** ("Створено:"), class, coach.
 - Empty → **"No transactions found"** ("Не знайдено жодної транзакції").
 
 ---
@@ -69,7 +69,7 @@
 > Summary of the coach's earnings for the selected period.
 
 - Date range filter, **"Total:"** ("Всього:") amount + UAH.
-- For each category: **"Amount:"** ("Сума:"), **"Total classes: {N}"** ("Всього тренувань: {N}"), **"Credited to coach: {N}"** ("Зараховано тренеру: {N}"), **"Visited: {N}"** ("Відвідано: {N}"), **"Not attended: {N}"** ("Не відвідано: {N}"), **"Cancelled: {N}"** ("Відмінено: {N}").
+- For each category: **"Amount:"** ("Сума:"), **"Total workouts: {N}"** ("Всього тренувань: {N}"), **"Credited to coach"** ("Зараховано тренеру"), **"Attended"** ("Відвідано"), **"Missed"** ("Не відвідано"), **"Canceled"** ("Відмінено") — the number is shown next to each label.
 
 ---
 

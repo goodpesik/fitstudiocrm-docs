@@ -41,6 +41,7 @@ On the **"Book"** tab, the card shows whether you can book:
 
 - **"book"** (green) — the class is available, tap to book it.
 - **"Join the waiting list"** ("Стати в лист очікування") — the class has no free spots; tap it to take a place on the waiting list (see [Waiting List](#waiting-list)).
+- **"no spots available"** — the class has no free spots while a class is chosen in a registration request to the studio; the waiting list is not available in this mode.
 - **"you are already booked for this class"**, **"you have another booking at this time"**, **"booking not available"** (past), **"cancelled"**, **"paused"** — cannot book.
 
 <!-- TODO: screenshot of a class card with the "book" status -->
@@ -71,6 +72,7 @@ Limits:
 | The class has already started | the client is not added: **"Заняття вже розпочалося, запис до листа очікування недоступний"** |
 | The client is already on the waiting list of this class | a second place is not added: **"Ви вже перебуваєте в листі очікування на це заняття"** |
 | The class is cancelled | the client is not added: **"Заняття скасовано"** |
+| The client has an entry on this class with a status other than **"Cancelled"** (for example, **"Planned"** or **"Attended"**) | the client is not added to the waiting list, the existing entry is not changed: **"Ви вже записані на це заняття"** |
 | A spot is free at the moment of confirmation | the client is booked into the free spot, as with the **"Book"** button |
 
 > A place on the waiting list is not counted as a taken spot. When a spot frees up on a class that has not started, the first client in the queue automatically gets the **"Planned"** status and a message about the booking — as a push notification, or through Telegram or SMS if push notifications do not reach the client. While the waiting list of a class is not empty, a new booking for that class gets the **"Waiting List"** status and joins the end of the queue, even if the class has a free spot If the booking got the **"Waiting List"** status, the app shows the **"You have been added to the waiting list"** window instead of **"You are booked for the workout"** (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).

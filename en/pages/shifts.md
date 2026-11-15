@@ -59,6 +59,6 @@ If the state here and the state at the fiscal operator have drifted apart — th
 
 ## Automatic Shift Closing
 
-If automatic closing is enabled in the studio settings, an open shift closes itself automatically every day at 23:58. An entry "Shift closed automatically" will appear in the notifications section.
+If automatic closing is enabled in the studio settings, an open shift is closed every day at 23:58 in the studio time zone ([Settings → Studio Time Zone](/en/login/settings#studio-time-zone); defaults to `Europe/Kyiv`). The shift is closed once; if no shift is open, nothing happens. An entry "Shift closed automatically" appears in the notifications section.
 
 [Back to home](/en/)

@@ -119,7 +119,7 @@ The **➕ Add Bonus** and **🗑 Delete** (trash icon) buttons are available for
 
 - **Notify clients about a coach substitution (App)** — if a substitute is assigned for a workout, all booked clients receive a push notification in the mobile app.
 - **Apply the maximum number of people when calculating salaries** — caps the number of clients credited to a coach at the `workoutCapacity` value.
-- **Close the shift automatically** (closes at 23:57) — under the law, a cash register shift cannot last more than 24 hours. Automatic closing avoids human error and keeps this requirement.
+- **Close the shift automatically (at 23:58 in the studio time zone)** — when enabled, an open shift is closed every day at 23:58 in the [studio time zone](#studio-time-zone); if no time zone is set, `Europe/Kyiv` applies. A cash register shift cannot last more than 24 hours.
 - **Charge a debt for a no-show on a personal (no-plan) workout and credit the coach** — when enabled: if a personal workout is marked **"Unvisited"**, and the client has **no active personal plan**, the system automatically creates a **debt** for the client equal to the cost of the workout (the price of the plan linked to the category) and **credits the coach** with that workout toward their salary. This triggers on any "Unvisited" status being set (the nightly automatic process, a late cancellation, or a manual status change by an administrator). If the workout's category has no plan with a price linked to it — no debt is created.
 
 ---

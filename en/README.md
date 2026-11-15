@@ -13,5 +13,5 @@
 - [5. Examples and tips](/en/pages/examples)
 - [6. Information on processing workout visits, plan deductions, reminders, and more](/en/pages/processing)
 - [7. Mobile app (client application)](/en/mobile/mobile)
-- [Offline mode: devices and access, one-time application of operations](/en/pages/offline-mode)
+- [Offline mode: devices and access, data without internet, one-time application of operations](/en/pages/offline-mode)
 - [8. Support](/en/pages/support-system)

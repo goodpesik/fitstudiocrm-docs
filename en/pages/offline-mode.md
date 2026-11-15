@@ -38,6 +38,56 @@ Offline mode lets a till computer with Device Handler installed work without int
 | A section the device access does not open | `403` |
 | Data of another computer than the one the access was issued to | `403`, code `DEVICE_MISMATCH` |
 
+## Data available without internet
+
+The offline till works with the data received from the server at the last connection. The offline banner shows when the data was received: "Data as of …".
+
+### Contents
+
+| Data | What is sent |
+|---|---|
+| Plans | every plan of the studio with its price, number of sessions and duration |
+| Categories | every workout category |
+| Products | name, price, stock |
+| Coaches | name, colour, categories; phone and birthday are not sent |
+| Rooms | name, capacity |
+| Workouts | recurring workout templates in effect within the schedule window, and one-time workouts of the schedule window |
+| Clients | first name, last name, type, card number, vacations (freezes), personal account balance and time of the last personal account operation; phone, email and birthday are not sent |
+| Client plans | active, not yet activated and frozen plans, including plans shared across a studio network, with sessions left and validity |
+| Debts | unpaid debts with amount, contents and clients |
+| Certificates | active certificates within their validity only: number, description, price, plans of the certificate, validity, client, status |
+| Sales | sales and personal account top-ups of the last 3 days: lines, amount, payment method, paid from the personal account flag, top-up flag, invoice payment confirmation flag, paid through a terminal flag, refunds made, fiscalization state, fiscal card id |
+| Shifts | closed shifts of the last 3 days; the current online shift is not sent |
+| Schedule | workouts from 3 days before today to 7 days after it, with booked clients and the number of taken seats; recurring workouts on dates with no workout created yet, from today on, with their regular clients |
+| Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on |
+| Settings | studio name and time zone, shift and booking parameters, self check-in parameters, printers; fiscal and acquiring cards — id, name, type and active flag only |
+
+- Keys, tokens, cashier PIN codes, licence keys and the self check-in signing secret are not sent to the till computer.
+- A self check-in code from the till's data is the code the server accepts in that hour. The server accepts the previous hour's code for 10 more minutes after the hour changes.
+
+### Full package and updates
+
+- The full package contains all the data in the table.
+- An update (a request with the `since` parameter) contains all the data except plans, categories, products (name and price), coaches, rooms, workouts and settings. Product stock is sent in an update as a separate list.
+- Every list of an update is complete: the till replaces its list with the one received. A record missing from an update list (a redeemed or expired certificate, a paid or deleted debt, an ended plan) is removed by the till.
+- A product sale, a personal account payment, a certificate redemption and a refund made online or in the app appear in the offline till after the next update.
+
+### Technical parameters
+
+| Parameter | Value |
+|---|---|
+| Request | `GET /offline/snapshot`, with device access only |
+| Update | `since` parameter — the `generatedAt` of the previous package |
+| Room sets for check-in codes | `checkInRooms` parameter: sets separated by `;`, room ids in a set separated by `,`; up to 20 sets |
+| Response fields | `version`, `generatedAt`, `full`, `window` (schedule bounds), `salesFrom` (start of the sales period), `catalog` (full package only), `clients`, `clientPlans`, `clientDebts`, `certificates`, `stock`, `transactions`, `shifts`, `occurrences`, `checkInCodes` |
+| Workout with no record created | `projected: true`, `id: null` |
+
+| Response | Meaning |
+|---|---|
+| `403`, code `DEVICE_TOKEN_REQUIRED` | request without device access |
+| `400`, code `INVALID_SINCE` | `since` is not a date or is later than the server time |
+| `400`, code `TOO_MANY_ROOM_SETS` | more than 20 sets in `checkInRooms` |
+
 ## One-time application of operations
 
 - Every till action receives an operation id at the moment of the click. The id does not change when the action is sent again.

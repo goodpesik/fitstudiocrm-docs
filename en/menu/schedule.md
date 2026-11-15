@@ -74,12 +74,48 @@
 
 **Main actions:**
 
-- **Cancel workout** button (in the window header, next to the gear button) — shows the ["Are you sure you want to continue?"](../_modals/are-you-sure-modal.md ':include') confirmation modal window. If confirmed, the workout is cancelled for that day.
+- **Cancel workout** button (in the window header, next to the gear button) — shows the ["Are you sure you want to continue?"](../_modals/are-you-sure-modal.md ':include') confirmation modal window. If confirmed, the workout is cancelled for that day. A personal training prepayment is credited to the client's personal account.
 
   > ⚠️ If at least one person is already checked in for the workout, it cannot be cancelled.
 
 - **Book a client** toggle — see [Book a client](#book-a-client).
 - Settings button — see [Settings button](#settings-button).
+
+### Personal training prepayment
+
+> For a personal training the window shows the training price and the prepayment state.
+
+| Field | What it shows |
+|---|---|
+| **Training price** | The price of the plan set in the training's [category](/en/login/settings#categories). If the category has no plan or the plan price is 0, **Price not set** is shown instead. |
+| **Prepayment** | `X of Y UAH`, where X is the amount already paid for this training and Y is the training price. With no payments — **none**. |
+
+The **Make a prepayment** button opens the **Training prepayment** window:
+
+- **Client** — the client the prepayment is made for. Only clients with the **Planned** status are available. With one such client it is selected automatically; with several the client is picked from the list.
+- **Prepayment amount, UAH** — any amount greater than 0 and not greater than **Left to pay** (the training price minus what is already paid).
+- **Payment method** — cash, card or the client's personal account; the payment can be split across several methods. A bank transfer is not available for a prepayment. No discount applies to a prepayment.
+
+The **Make a prepayment** button in the window records a sale on the register: a transaction of the **Personal training prepayment** type is created, a fiscal receipt is issued, a card payment goes through the terminal. The prepayment amount is added to the amount paid for the training.
+
+The **Make a prepayment** button on the training card is disabled when:
+
+| Condition | Hint above the button |
+|---|---|
+| The training price is not set | — (**Price not set** is shown instead of the price) |
+| No client with the **Planned** status is booked | **Add a client first** |
+| The training is paid in full | **The training is paid in full** |
+| The shift is not open | **Open a shift first** |
+
+For a cancelled or past training the button is not shown.
+
+**Prepayment rules:**
+
+- The total prepayment for a training cannot exceed its price. The server refuses a prepayment above the remaining amount, also when two payments are made at the same time.
+- When the client is [registered](/en/menu/clients) on a prepaid training, the client's prepayment is deducted from the price of the plan sold for the training: only the remainder is due.
+- When the training is cancelled (with **Cancel workout**, by deleting or deactivating the workout, by shortening the repeat period, by clearing the schedule), the prepayment is credited automatically to the [personal account](/en/menu/clients) of the client who made it. In the personal account history the operation is described as **Prepayment returned for a cancelled training**. The amount paid for the training is reduced by the returned amount.
+- A register refund of a prepayment transaction reduces the amount paid for the training. A prepayment already credited to the personal account cannot be refunded through the register.
+- The **Change payment method** action in the register is not available for a prepayment transaction.
 
 ### Book a client
 
@@ -107,7 +143,7 @@
 
 > The gear button opens a popup with actions for the workout:
 
-- **Cancel workout** — cancels this workout for this day (returns the deducted session to the plan of booked clients).
+- **Cancel workout** — cancels this workout for this day (returns the deducted session to the plan of booked clients; credits a personal training prepayment to the client's personal account — see [Personal training prepayment](#personal-training-prepayment)).
 - **Substitute coach** — opens a select field with coaches; after choosing one, a **Save substitute coach** button appears. While a substitute is active, a **Remove substitute** button is available.
 
   ![](../../_media/substitute-2.png ':size=300x181')

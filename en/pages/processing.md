@@ -90,9 +90,12 @@ For clients without the app there is a separate studio setting — **Remind abou
 
 Reminders are not sent **from 23:00 to 06:00** in the studio's time zone, on every channel: the app, Telegram and SMS.
 
+- A reminder whose calculated time falls between 22:00 and 23:00 is sent at **22:00**. Example: a "1 hour before" reminder for a 23:30 class falls at 22:30 and arrives at 22:00.
 - A reminder whose calculated time falls inside the night pause is sent at **06:00**, once. Example: a "2 hours before" reminder for a 07:30 class falls at 05:30 and arrives at 06:00.
-- For a class that starts before 06:00, no reminder is sent during the night pause.
+- A reminder for a class that starts during the night pause is sent only when its calculated time comes before 23:00. Otherwise no reminder is sent. Example: a "2 hours before" reminder for a 02:00 class falls at 00:00 and is not sent.
+- A reminder not sent on its due hourly run is sent on the next run outside the night pause, provided the class has not started. A reminder about the same class is not sent to the same client twice.
 - Rating requests are not sent during the night pause — see [Ratings and Reviews](/en/mobile/ratings).
+- The app message about an automatic removal from a recurring booking (see [Remove Recurring Booking After Missed Workouts](/en/login/settings#remove-recurring-booking-after-missed-workouts)) is not sent during the night pause: it arrives on the first hourly run after the pause, at 06:00.
 
 ### The monthly SMS limit
 

@@ -90,6 +90,7 @@ A text field on the **Studio Information** tab. Used in the Telegram bot and on 
 
 - **Number of misses** — a number.
 - If a client has a duplicate (recurring) booking for a workout and misses N consecutive sessions (status **Unvisited**) — the system automatically removes them from the recurring booking.
+- A client with the app receives a message about the removal. During the [night pause](/en/pages/processing#the-night-pause) the message is not sent: it arrives at 06:00 in the studio's time zone.
 - `0` or an empty field → disables the feature.
 
 ### Administrator Bonuses

@@ -89,7 +89,13 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved).
 - **Actions** (available while the shift is open):
   - **❌ Issue a refund** ("Зробити повернення", red x-in-circle icon) — opens the [refund modal window](#_3941-refunds).
-  - **💵 Change payment method** ("Змінити метод оплати", banknote icon) — for correcting a cashier's mistake right after a sale. Disabled if the payment was made from the client's personal account.
+  - **💵 Change payment method** ("Змінити метод оплати", banknote icon) — for correcting a cashier's mistake right after a sale. Available for a sale paid by cash, card or cashless transfer, personal-account top-ups included. Disabled if the payment was made from the client's personal account.
+    - The list offers every payment method except the current one: **Cash**, **Card**, **Cashless**.
+    - The system refunds the transaction with its current method and creates a new transaction for the same amount with the new method.
+    - Cash balance: if the current method is **Cash**, a **Refund** operation for the transaction amount is recorded in the register; if the new method is **Cash**, a **Sale** operation for the same amount is recorded. A change between **Card** and **Cashless** does not change the cash balance.
+    - Fiscalization: if the original transaction is fiscalized, a fiscal refund receipt is issued for it; the new transaction is fiscalized under the current PRRO settings, as a regular sale.
+    - A new transaction with the **Cashless** method gets the **Awaiting confirmation** status.
+    - For a personal-account top-up the client's balance does not change: the refund does not debit it and the new transaction does not credit it again. The payment method of a top-up can be changed once.
 
 ### 3.9.4.1 Refunds
 

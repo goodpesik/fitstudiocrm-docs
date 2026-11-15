@@ -304,7 +304,7 @@ Active plans are shown in separate blocks **Current plan (group workouts)** ("П
 **Specifics:**
 
 - The **Workout price** column shows the **amount still owed** for this workout — not the plan price, but the actual remaining balance for that specific session.
-- The amount field next to **Payment method** allows **free-form entry** — the cashier enters whatever amount the client is paying right now (for example, a partial amount).
+- The amount field next to the **Payment method** field accepts any amount (for example, part of the price).
 
 ![](../../_media/client-registration-personal-2x-partial-payment.png ":size=500x301")
 

@@ -101,8 +101,9 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
   - Cash → from the Default account;
   - Card → noted in the fiscal record;
   - Personal account → the amount is returned to the client's [personal account](/en/menu/clients#_3-2-11-personal-account).
+- **Cash balance limit** applies to cash refunds only: when the refund amount exceeds the Default account balance, the window shows the message "Insufficient funds in the register" ("Недостатньо коштів в касі") and the **Refund** ("Повернути кошти") button is disabled. Card and personal-account refunds are not limited by the cash balance and do not change it.
 
-> ⚠️ A refund **does not return a used session** to the membership. The class took place and the coach ran it, so the deduction stands — only the money comes back.
+> ⚠️ A refund **does not return a used session** to the membership: the deduction stands, only the amount is returned.
 
 ---
 

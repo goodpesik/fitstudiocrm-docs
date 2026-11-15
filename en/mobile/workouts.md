@@ -31,7 +31,7 @@ On the **"My Classes"** tab, each card has a status:
 
 | Status | Meaning |
 |---|---|
-| **Planned** | active booking (can be cancelled) |
+| **Planned** | active booking (can be canceled) |
 | **Attended** | class attended |
 | **Canceled** | booking canceled |
 | **Paused** | booking paused |
@@ -40,7 +40,7 @@ On the **"My Classes"** tab, each card has a status:
 On the **"Book"** tab, the card shows whether you can book:
 
 - **"book"** (green) — the class is available, tap to book it.
-- **"you are already booked for this class"**, **"no spots available"**, **"you have another booking at this time"**, **"booking not available"** (past), **"cancelled"**, **"paused"** — cannot book.
+- **"you are already booked for this class"**, **"no spots available"**, **"you have another booking at this time"**, **"booking not available"** (past), **"canceled"**, **"paused"** — cannot book.
 
 <!-- TODO: screenshot of a class card with the "book" status -->
 
@@ -64,7 +64,7 @@ On the **"Book"** tab, the card shows whether you can book:
 1. On the **"My Classes"** tab, find a booking with the **"Planned"** status.
 2. Tap the menu icon on the card → **"Cancel Booking"** ("Скасувати запис").
 3. In the **"Class Cancellation"** ("Відміна тренування") window, confirm → **"Continue"** ("Продовжити").
-4. **"Booking cancelled"** ("Запис на тренування скасовано") appears.
+4. **"Workout booking canceled"** ("Запис на тренування скасовано") appears.
 
 > ⚠️ **A late cancellation deducts the class.** If you cancel later than the time before the start set by the studio (the [minimum time to cancel a class](/en/login/settings#minimum-time-before-workout-cancellation) parameter), the class will be deducted from the membership as **"Not Attended"**. Check with the studio for how much time you have to cancel free of charge.
 
@@ -107,7 +107,7 @@ For the coach, the class card shows a summary by client: **Planned**, **Attended
 
 - **"Change Time"** ("Змінити час") — choose another free time slot → **"Save"** ("Зберегти") → confirm. Empty → **"No time slots available"** ("Немає доступних часових слотів").
 - **"Change Room"** ("Змінити зал") — choose another free room → **"Save"** ("Зберегти") → confirm. Empty → **"No rooms available"** ("Немає доступних залів").
-- **"Cancel Class"** ("Відмінити тренування") — cancels the class for everyone booked (**"Class cancelled"** ("Тренування скасовано")).
+- **"Cancel Class"** ("Відмінити тренування") — cancels the class for everyone booked (**"Workout canceled"** ("Тренування скасовано")).
 
 ---
 

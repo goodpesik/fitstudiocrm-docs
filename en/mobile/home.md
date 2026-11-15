@@ -41,9 +41,9 @@ For more on the class card and the actions available on it, see [Classes](/en/mo
 - Membership name.
 - **"Classes remaining: {N}"** ("Тренувань лишилося: {N}").
 - **"Valid through {date}"** ("Діє до {дата} включно").
-- If the membership is new — **"Not active. Activates on your visit to the studio"** ("Не активний. Активується під час візиту в студію").
-- Warning **"Warning!!! Membership is about to expire"** ("Увага!!! Абонемент скоро закінчує дію") — when fewer than 3 days or fewer than 3 classes remain.
-- If there is no membership — **"No current membership"** ("Немає поточного абонемента").
+- If the plan is new — **"Not active. It will be activated during your visit to the studio"** ("Не активний. Активується під час візиту в студію").
+- Warning **"Attention! Your plan is expiring soon."** ("Увага! Абонемент скоро завершить дію.") — when fewer than 3 days or fewer than 3 classes remain.
+- If there is no plan — **"No current plan."** ("Немає поточного абонемента").
 
 ---
 

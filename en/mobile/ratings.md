@@ -8,7 +8,7 @@
 
 ## How a Client Leaves a Rating
 
-After an attended class, the home screen offers to rate the last class. This offer is shown only to a client whose class is marked **Visited**, and only if the studio has not disabled the **"Offer to Rate a Class"** ("Пропонувати оцінити заняття") toggle on the [Settings → Mobile App](/en/login/settings#mobile-application) tab.
+After an attended class, the home screen offers to rate the last class. This offer is shown only to a client whose class is marked **Attended**, and only if the studio has not disabled the **"Offer to Rate a Class"** ("Пропонувати оцінити заняття") toggle on the [Settings → Mobile App](/en/login/settings#mobile-application) tab.
 
 The rating is from one to five stars, with an optional comment. The client can decline: the prompt then disappears and is not shown again for that class.
 

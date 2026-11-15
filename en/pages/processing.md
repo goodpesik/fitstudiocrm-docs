@@ -96,6 +96,8 @@ Reminders are not sent **from 23:00 to 06:00** in the studio's time zone, on eve
 - A reminder not sent on its due hourly run is sent on the next run outside the night pause, provided the class has not started. A reminder about the same class is not sent to the same client twice.
 - Rating requests are not sent during the night pause — see [Ratings and Reviews](/en/mobile/ratings).
 - The app message about an automatic removal from a recurring booking (see [Remove Recurring Booking After Missed Workouts](/en/login/settings#remove-recurring-booking-after-missed-workouts)) is not sent during the night pause: it arrives on the first hourly run after the pause, at 06:00.
+- The app message "Your subscription(s) are expiring" is not sent during the night pause: it arrives on the first hourly run after the pause, at 06:00.
+- A message held for the night pause is sent once. If sending fails, it is retried on the following hourly runs. After 6 failed attempts, or 24 hours after it was created, the message is not sent.
 
 ### The monthly SMS limit
 

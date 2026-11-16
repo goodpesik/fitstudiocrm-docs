@@ -123,7 +123,7 @@ Saving creates a record on the **Cash balance** tab with the matching type: **В
 - The discount field (**Знижка (сума знижки)**, or **Знижка (%)** with the **Відсотки %** toggle) reduces the refund amount.
 - **До повернення** — the total to refund.
 - The **Підтверджую повернення** (I confirm the refund) toggle is required.
-- The **Повернути кошти** (refund money) button is disabled when the refund amount is 0, the confirmation toggle is off, or the refund amount exceeds the main account balance (message "Недостатньо коштів в касі", not enough cash); the last condition does not apply to transactions paid from the personal account.
+- The **Повернути кошти** (refund money) button is disabled when the refund amount is 0, the confirmation toggle is off, or a cash refund amount exceeds the main account balance (message "Недостатньо коштів в касі", not enough cash). Card and personal account refunds are not limited by the cash balance and do not change it.
 - Refunding a transaction paid from the personal account credits the amount to the client's [personal account](/en/menu/clients#_3211-personal-account).
 - Refunding a sold product increases its stock.
 

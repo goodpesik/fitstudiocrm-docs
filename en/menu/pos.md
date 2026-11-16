@@ -87,6 +87,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - **Client** — client's name (for a certificate sale this shows **Certificate**).
 - **Created by** — name of the user who processed the transaction.
 - **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved). A bank-transfer payment made without internet has the **Awaiting confirmation** status after the sync regardless of the data the computer sent.
+- **Receipt** ("Чек") — the **Show** ("Показати") button opens the transaction's receipt; the **Fiscalize** ("Фіскалізувати") button creates the fiscal receipt of a saved transaction without a receipt (see [Fiscalizing a transaction](#_3942-fiscalizing-a-transaction)).
 - **Offline** ("Офлайн") — the mark of a transaction created during the sync of an operation made on a computer without internet. The **Date** of such a transaction is the operation time on the computer. See [Sales sync](/en/pages/offline-mode#sales-sync).
 - **Actions** (available while the shift is open):
   - **❌ Issue a refund** ("Зробити повернення", red x-in-circle icon) — opens the [refund modal window](#_3941-refunds).
@@ -104,6 +105,38 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
   - Personal account → the amount is returned to the client's [personal account](/en/menu/clients#_3-2-11-personal-account).
 
 > ⚠️ A refund **does not return a used session** to the membership. The class took place and the coach ran it, so the deduction stands — only the money comes back.
+
+### 3.9.4.2 Fiscalizing a transaction
+
+> The **Fiscalize** ("Фіскалізувати") button in the **Receipt** column creates the fiscal receipt of a saved transaction that has no receipt (the fiscal provider returned an error, or the operation was interrupted after it was saved).
+
+**Access:** the SuperAdmin, Admin and Manager roles.
+
+**The button is shown when all conditions are met:**
+
+- the transaction is a sale (type **Sale** or no type), a debt payment included;
+- the payment is not from the personal account;
+- the transaction was created online, not by the sync of an operation made on a computer without internet;
+- the transaction has no fiscal receipt;
+- the studio has an active fiscal integration (enabled and configured).
+
+**Execution:**
+
+- After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through the first active fiscal integration, as during a sale. The transaction id is passed to the provider as the receipt id.
+- Before the receipt is created, the transaction is locked and the conditions are checked again. At most one receipt is created for a transaction: a repeated click or a simultaneous action of another user is refused with `RECEIPT_ALREADY_ISSUED`.
+- Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
+- Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
+
+**Error codes:**
+
+| HTTP | Code | Message | Condition |
+|---|---|---|---|
+| 403 | — | — | the user's role is not SuperAdmin, Admin or Manager |
+| 404 | `TRANSACTION_NOT_FOUND` | «Транзакцію не знайдено» | the transaction does not exist |
+| 400 | `TRANSACTION_NOT_FISCAL_KIND` | «Для цієї транзакції фіскальний чек не створюється» | a refund, a personal-account payment, or a transaction created by the sync of an offline operation |
+| 409 | `RECEIPT_ALREADY_ISSUED` | «Фіскальний чек для цієї транзакції вже створено» | the transaction already has a fiscal receipt |
+| 400 | `FISCALIZATION_NOT_ENABLED` | «Фіскалізацію не налаштовано» | the studio has no active fiscal integration |
+| 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
 
 ---
 

@@ -300,6 +300,7 @@ The computer's shift is kept for the shifts report apart from the server's shift
 - While a payment is applied, the debt and the debt's class are locked until the transaction ends. An online payment of the same debt locks the same records: two payments of one debt run one after the other.
 - After the lock, an online payment checks the debt and its remaining sum again, before the first write. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
 - The fiscal receipt of an online debt payment is created after the payment is saved. When the fiscal provider returns an error, the payment stays saved and its transaction is not fiscalized, as a sale whose receipt could not be created.
+- A debt payment saved without a fiscal receipt (a fiscal provider error or an interruption after the save) stays saved. Sending it again does not create the receipt. The receipt is created manually with the **Fiscalize** ("Фіскалізувати") button on the transaction (see [Fiscalizing a transaction](/en/menu/pos#_3942-fiscalizing-a-transaction)).
 - An offline payment is applied only when the debt is not paid off and the payment does not exceed the remaining debt.
 - An offline payment not applied gets the `conflict` result; an admin's decision is needed. The debt is not paid a second time.
 - A payment equal to the remaining debt pays the debt off.

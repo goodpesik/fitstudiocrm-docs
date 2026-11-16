@@ -82,7 +82,7 @@ Login is possible only in the context of a studio: the confirmation code is issu
    - **"The code cannot be sent by SMS right now. Please try later."** ("Наразі неможливо надіслати код SMS-повідомленням. Спробуйте пізніше.") — the studio's monthly SMS limit is used up, or the request rate limit applies;
    - **"Couldn't send the code. Please try again."** ("Не вдалося надіслати код. Спробуйте ще раз.") — any other sending error.
 
-   After a failed send, another attempt is available in 5 seconds; until then the button is inactive and shows **"You can try again in N s"** ("Повторити спробу можна через N с").
+   After a failed send, another attempt is available in 5 seconds; until then the **"Send code"** ("Надіслати код") button is inactive and shows **"You can try again in N s"** ("Повторити спробу можна через N с") instead of its label.
 
 ### Entering the Code
 

@@ -35,7 +35,8 @@ The bottom of the card shows the booking state:
 | **Book** (button) | Booking is available. |
 | **You are booked ✓** | The client is booked; the card menu has **«Cancel booking»**. |
 | **Wait list** | The client is on the wait list; the card menu has **«Leave the wait list»**. |
-| **No seats left** | There are no free seats. |
+| **Стати в лист очікування** (Join the waiting list, button) | There are no free seats; the button adds the client to the waiting list, see [7.5.5](#_755-wait-list). |
+| **No seats left** | There are no free seats while a workout is chosen in a [registration request to the studio](/en/mobile/registration); the waiting list is not available in this mode. |
 | **you have another booking at this time** | The client has a booking for a workout that overlaps in time. |
 | **paused** | The booking is paused for this day (client vacation). |
 | **canceled** | The workout was cancelled by the studio or the client's booking for it was cancelled; if the booking can be restored, the card menu has **«Restore booking»**. |
@@ -83,7 +84,18 @@ If the server refuses the booking (no seats, the client is already booked, the w
 
 ## 7.5.5 Wait List
 
-- A client gets on the wait list when an administrator books them for a workout without free seats (see [Schedule](/en/menu/schedule)). A full workout shows **«No seats left»**.
+- A client gets on the wait list when an administrator books them for a workout without free seats (see [Schedule](/en/menu/schedule)), or by themselves from the app.
+- **Joining the wait list:** for a workout without free seats the card shows the **«Стати в лист очікування»** (Join the waiting list) button → the **«Запис до листа очікування»** (Joining the waiting list) window → **«Continue»**. The **«Вас додано до листа очікування»** (You have been added to the waiting list) window is shown with the text «На занятті немає вільних місць. Вас додано до листа очікування. Після звільнення місця Вас буде записано автоматично.» (The class has no free seats. You have been added to the waiting list. Once a seat becomes free, you will be booked automatically.) and the class details; the booking gets the **Waiting list** status. No administrator confirmation is required; the studio receives the «Запис до листа очікування» notification.
+
+| Condition | Result |
+|---|---|
+| The class has already started | The client is not added: «Заняття вже розпочалося, запис до листа очікування недоступний» (The class has already started; joining the waiting list is not available). |
+| The client is already on the wait list of this class | A second place is not added: «Ви вже перебуваєте в листі очікування на це заняття» (You are already on the waiting list for this class). |
+| The class is cancelled | The client is not added: «Заняття скасовано» (The class is cancelled). |
+| The client has no booking on this class, or has a booking with the status **Canceled**, **Missed**, **Registration canceled** or **Left the waiting list** | Joining the wait list is allowed; the existing booking gets the **Waiting list** status. |
+| The client has a booking on this class with the status **Planned**, **Attended** or **Paused** | The client is not added to the wait list, the existing booking is not changed: «Ви вже записані на це заняття» (You are already booked for this class). |
+| A seat is free at the moment of confirmation | The client is booked into the free seat, as with the **«Book»** button. |
+
 - While the wait list of a workout is not empty, a new booking by the client for that workout gets the **Waiting list** status and joins the end of the queue, even if the workout has a free seat.
 - A client on the wait list does not take a seat in the workout's seat count.
 - **Leaving the wait list:** card menu → **«Leave the wait list»** → the **«Leave the wait list»** window: «Leave the wait list for this class? Your place in the queue will be released.» → **«Continue»**. Result — «You have left the wait list»; error — «Could not leave the wait list. Try again or contact the studio.» The client's history gets an entry with the **Left the waiting list** status.

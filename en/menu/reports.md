@@ -102,7 +102,7 @@ Pressing **Edit** ("Редагувати") turns the **Working hours** field int
 
 > The bottom row **Всього:** shows the total across all coaches.
 
-**Export:** the **Експорт у файл** (export to file) button downloads the text file `salary DD.MM-DD.MM.txt` broken down by coach and category.
+**Export:** the **Експорт у файл** (export to file) button downloads a text file broken down by coach and category. The button is unavailable until both period dates are selected. File name: `salary DD.MM-DD.MM.txt`, where the first part is the day and month of the period start and the second part is the day and month of the period end; the day and the month are always written with two digits (for example, `salary 05.03-15.03.txt`).
 
 > ℹ️ The calculation respects the **"Враховувати максимальну к-сть людей при підрахунку зарплат"** (take the maximum number of people into account) setting ([3.8.4.1](#_3841-payroll-settings)): if a class has more clients than its capacity, only the capacity is counted.
 

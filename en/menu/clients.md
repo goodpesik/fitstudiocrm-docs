@@ -228,6 +228,8 @@
 **Specifics:**
 
 - The **Workout price** column shows the **amount still owed** for this workout — not the plan price, but the actual remaining balance for that specific session.
+- If the client made a [prepayment](/en/menu/schedule#personal-training-prepayment) for this training, its amount is deducted from the price of the plan sold for the training: only the remainder is due.
+- If a plan with a duration covers the prepaid training, the prepayment is credited automatically to the client's personal account after the registration.
 - The amount field next to **Payment method** allows **free-form entry** — the cashier enters whatever amount the client is paying right now (for example, a partial amount).
 
 ![](../../_media/client-registration-personal-2x-partial-payment.png ":size=500x301")

@@ -40,7 +40,7 @@ The full description of the tab is on the [Users](/en/login/users) page.
 
 ![](../../_media/admin-panel-settings.png ":size=600x362")
 
-While a shift is open, the message «Деякі налаштування недоступні коли зміна відкрита» (Some settings are unavailable while the shift is open) is shown at the top of the tab.
+While a shift is open, the message «Деякі налаштування недоступні коли зміна відкрита» (Some settings are unavailable while the shift is open) is shown at the top of the tab. The parameters of this tab can be changed regardless of the shift state: an open shift locks none of them.
 
 > The studio name and logo are set on the [Studio Information](#studio-information) tab.
 
@@ -179,6 +179,16 @@ Settings of the local device manager through which the system works with POS ter
 - Printers — **Зареєструвати** (Register), **Тестовий друк** (Test print), **Видалити реєстрацію** (Remove registration); **Принтер для чеків** (Receipt printer), **Принтер цінників** (Label printer), switch **Друкувати чек після оплати** (Print a receipt after payment).
 
 If a POS terminal is registered and the device manager is on, payment with the **Картка** (Card) method goes through the terminal. Otherwise a card payment is recorded without a terminal — see [Card payment without a terminal](/en/pages/processing#_612-card-payment-without-a-terminal).
+
+### Open Shift
+
+While a shift is open:
+
+- the fiscal integration cards **Вчасно Каса (фіскалізація)** and **Checkbox (фіскалізація)** are locked: they cannot be activated, deactivated or changed;
+- the warning «Зміна відкрита — налаштування фіскальних інтеграцій заблоковані» (The shift is open — fiscal integration settings are locked) is shown above the fiscal integration cards;
+- an attempt to save changes to a fiscal integration is not executed, and the message «Закрийте зміну перш ніж змінювати фіскальні інтеграції» (Close the shift before changing fiscal integrations) is shown.
+
+The **Пристрої (менеджер пристроїв)** (Devices) and **Monobank Acquiring** cards can be changed regardless of the shift state.
 
 ### Fiscalization of Operations
 

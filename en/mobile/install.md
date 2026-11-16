@@ -86,9 +86,9 @@ Login is possible only in the context of a studio: the confirmation code is issu
 
 ### Entering the Code
 
-1. The **"Enter the code"** ("Введіть код") screen states where the code was sent: **"We sent the code to you on Telegram. Enter it here."** ("Код надіслано вам у Telegram. Введіть його тут.") or **"Enter the code from the SMS."** ("Введіть код з SMS."). If a repeated code request fails, the hint keeps the channel of the last code that was sent.
+1. The **"Enter the code"** ("Введіть код") screen states where the code was sent: **"We sent the code to you on Telegram. Enter it here."** ("Код надіслано вам у Telegram. Введіть його тут.") or **"Enter the code from the SMS."** ("Введіть код з SMS."). If a repeated code request fails, the hint keeps the channel of the last code that was sent. After returning to the app (for example, from Telegram or Messages), the code entry screen shows the same hint.
 2. Enter the 6 digits and press **"Log In"** ("Вхід") (the button is active only once exactly 6 digits are entered). The code can be pasted from the message as a whole.
-3. If the code did not arrive — press **"Request another code"** ("Запросити ще один код"). A repeated request is available 60 seconds after the previous one; until then a countdown is shown in place of the button.
+3. If the code did not arrive — press **"Request another code"** ("Запросити ще один код"). A repeated request is available 60 seconds after the previous one; until then a countdown is shown in place of the button. If a repeated request fails, the button is inactive for 5 seconds and shows **"You can try again in N s"** ("Повторити спробу можна через N с").
 4. The **"Back"** ("Назад") button returns to the phone number entry.
 
 > ℹ️ The code is valid for 10 minutes and is checked together with the number it was sent to. There is no password, Google login or Telegram bot login in the client app.

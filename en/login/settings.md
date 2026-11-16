@@ -40,7 +40,7 @@ The full description of the tab is on the [Users](/en/login/users) page.
 
 ![](../../_media/admin-panel-settings.png ":size=600x362")
 
-While a shift is open, the message «Деякі налаштування недоступні коли зміна відкрита» (Some settings are unavailable while the shift is open) is shown at the top of the tab. The parameters of this tab can be changed regardless of the shift state: an open shift locks none of them.
+The parameters of this tab can be changed regardless of the shift state: an open shift locks none of them.
 
 > The studio name and logo are set on the [Studio Information](#studio-information) tab.
 

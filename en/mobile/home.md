@@ -47,7 +47,7 @@ The **«Current plan»** block shows one plan: the active one; if there is none 
 - **«Plan · {studio name}»** and the status: **Active**, **New**, **Ended** or **Suspended**;
 - the plan size («{N} workouts») and **«Used {X} of {N}»**; a ring with the number of workouts left (**«left»**). For a plan without a number of workouts, the plan name and **«Workouts remaining: {N}»** are shown instead of the size;
 - for a new plan — «Not active. It will be activated during your visit to the studio»;
-- the warning «Attention!!! Your plan is expiring soon.» — when fewer than 3 days or fewer than 3 workouts are left;
+- the warning «Attention! Your plan is expiring soon.» — when fewer than 3 days or fewer than 3 workouts are left;
 - **«Valid until (inclusive)»** and the end date;
 - the **«Client card»** button — opens the [Client Card](/en/mobile/card).
 

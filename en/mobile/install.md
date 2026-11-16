@@ -76,7 +76,7 @@ Login is possible only in the context of a studio: the confirmation code is issu
 2. Once the full number is entered, the **"Send code"** ("Надіслати код") button becomes active.
 3. Pressing **"Send code"** sends a **6-digit confirmation code**. The system chooses the delivery channel:
    - **Telegram** — if the person already chats with the Fitshandler bot or can be found in Telegram by the number;
-   - **SMS** — in other cases. The login code is sent by SMS regardless of the **"SMS reminders and client notices"** ("SMS-нагадування та сповіщення клієнтам") toggle.
+   - **SMS** — in other cases.
 4. If the code is not sent, one of the following messages is shown:
    - **"We could not send the code to this number. Please contact the studio administrator."** ("Не вдалося надіслати код на цей номер. Зверніться до адміністратора студії.") — the studio has no SMS messaging connected, and the code cannot be delivered via Telegram;
    - **"The code cannot be sent by SMS right now. Please try later."** ("Наразі неможливо надіслати код SMS-повідомленням. Спробуйте пізніше.") — the studio's monthly SMS limit is used up, or the request rate limit applies;

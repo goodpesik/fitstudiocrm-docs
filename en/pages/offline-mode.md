@@ -134,7 +134,8 @@ Printing rules for the offline till:
 - An action the till received no server response to (connection drop, server unavailable) is sent again with the same id — online or during the sync of the offline queue. The server applies an operation at most once: sending it again returns the stored result; no second sale, payment or booking is created.
 - The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
-- A sale, refund or debt payment stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an operation whose delivery did not finish within 2 minutes.
+- An online sale, refund or debt payment stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
+- A sale and a debt payment applied by the offline queue sync save all their records together with the journal record in one transaction. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
@@ -172,7 +173,7 @@ A class booking sent with the `X-Operation-Id` header and its offline operation 
 |---|---|
 | Online action header | `X-Operation-Id`, UUID |
 | Offline queue sync | `POST /offline/sync`, up to 200 operations per request |
-| Operation fields | `id` (UUID), `kind`, `version`, `occurredAt` (ISO 8601), `payload` |
+| Operation fields | `id` (UUID), `kind`, `version`, `occurredAt` (ISO 8601), `payload`, `dependsOn` (UUIDs of earlier queue operations, optional) |
 | Operation time | not earlier than 30 days and not later than 5 minutes from the server time |
 
 | Code | Meaning |
@@ -199,111 +200,137 @@ During sync every operation gets its own result:
 
 ## Sales sync
 
-Sales, debt payments and shifts made on a computer without internet are applied by the server during the sync of the offline queue (`POST /offline/sync`). Each operation is applied in one database transaction: all its records (till transactions, client plans, stock movement, debt, cash ledger rows, the offline operation journal record) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Each operation is applied in one database transaction: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift, the offline operation journal record) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation kinds
 
 | Kind | Operation | Records |
 |---|---|---|
-| `sale` | a sale with one payment method; the content is the same as in the online sale request | till transaction; stock deduction; cash ledger row for cash |
-| `combined_sale` | a sale of plans and products to one client with one or more payments and, when needed, a debt for the rest of the sum | client plans; a till transaction per payment; one stock deduction for the whole sale; debt; cash ledger rows for cash payments |
-| `debt_payment` | payment of an existing debt | till transaction linked to the debt; paid sum of the class (for a class debt); debt status; cash ledger row for cash |
-| `shift_open` | a shift opened on the computer; content `{ openingCash }` | offline operation journal record |
-| `shift_close` | a shift closed on the computer; content `{ closingCash }` | offline operation journal record |
+| `sale` | a sale of plans and goods to one client or without a client: by one payment method, by several payments, with a debt for the rest of the sum, or wholly on debt | client plans; a register transaction per payment; one stock deduction for the whole sale; a debt; cash ledger rows for cash payments |
+| `debt_payment` | a payment of an existing debt | a register transaction linked to the debt; the class's paid sum (for a class debt); the debt status; a cash ledger row for cash |
+| `shift_open` | a shift opened on the computer | the computer's shift |
+| `shift_close` | a shift closed on the computer | the close data in the computer's shift |
 
-The records of an operation are saved in this order: client plans, till transactions, stock deduction, debt, cash ledger rows, the offline operation journal record. A failure at any step cancels all records of the operation.
+The records of a sale are saved in this order: client plans, register transactions, stock deduction, debt, cash ledger rows, offline operation journal record. A failure at any step cancels all records of the operation.
 
-Fields of the `combined_sale` operation:
+The `dependsOn` field of an operation holds the ids of the earlier queue operations this one was made after (for example, a sale after the `shift_open` of its shift). Queue operations are applied in queue order.
+
+Fields of the `sale` operation:
 
 | Field | Meaning |
 |---|---|
 | `clientId` | client UUID; required when plans are sold or a debt remains |
-| `clientName` | client name; when the client is found on the server, the transaction keeps the full name from the client card |
+| `clientName` | client name; when the client is found on the server, the transaction stores the full name from the card |
 | `plans` | plans: `planId`, `planName`, `price` (unit price), `quantity` |
-| `products` | products: `productId`, `productName`, `price` (unit price), `quantity` |
+| `products` | goods: `productId`, `productName`, `price` (unit price), `quantity` |
 | `workoutsIds` | ids of the classes the sale belongs to |
-| `discount` | discount text, e.g. `10%` or `200 грн` |
-| `total` | sum to pay after the discount |
-| `payments` | payments, up to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData` (terminal response) |
-| `debtAmount` | sum that remains a debt; `0` or a missing field — no debt |
+| `discount` | discount text, for example `10%` or `200 грн` |
+| `price` | the sale sum after the discount |
+| `paymentMethod` | payment method of a sale not split into several payments |
+| `acquiringPosData` | the terminal's answer for a card payment |
+| `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData` |
+| `partialAmount` | the sum paid now; the rest of `price` remains a debt |
+| `onDebt` | `true` — the sale is wholly on debt |
+| `total` | the sum the till received |
+| `receiptNo` | the number of the computer's paper receipt, up to 32 characters |
+| `shiftOperationId` | the id of the `shift_open` operation of the computer's shift |
 
-- The sum of payments and `debtAmount` must equal `total` to the kopeck; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
-- A sale without payments whose `debtAmount` equals `total` is a "pay later" sale: a debt for the whole sum is created, no till transactions are created.
-- A sale must contain at least one plan or product.
-- The debt is created for the client of the sale, contains the plans and products of the sale and has the `debtAmount` sum.
+- The sum paid now: the sum of `payments`, otherwise `partialAmount`, otherwise `price`; for a sale with `onDebt: true` — `0`.
+- The sum of `payments` must equal `partialAmount` (when given) or `price` to the kopeck; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
+- `partialAmount` may not exceed `price`; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
+- A sale with `onDebt: true` may not contain `payments` or `partialAmount`; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
+- When the sum paid now is less than `price`, a debt for the difference is created: on the client of the sale, with the plans and goods of the sale.
+- A sale wholly on debt creates no register transactions.
+- A sale must contain at least one plan or product, or a client name.
+- Each plan of the sale is created in the client's card: one per unit of `quantity`.
+- `receiptNo` and `shiftOperationId` are stored in every register transaction of the sale.
 
 Payment methods (`paymentMethod`) accepted in offline operations:
 
 | Value | Method |
 |---|---|
 | `0` | cash |
-| `1` | bank transfer (account payment) |
+| `1` | bank transfer (payment by account) |
 | `2` | card |
 
 ### Operation time
 
-- A till transaction, a stock movement, a debt and a client plan keep the operation time. For an offline operation it is the computer's time at the moment of the action (`occurredAt`); for an online action — the time of the write on the server.
-- The date of a till transaction created during the sync equals the operation time.
-- Transactions of a day, transactions of a period, the till transaction list and the till report for a period are selected and ordered by operation time. A sale made at 23:50 and synced the next day is shown in the report for the day of the sale.
-- A plan with a duration sold offline starts at the beginning of the day of the sale in the studio time zone; the end date is calculated from the start date. The purchase date equals the operation time.
-- A one-time plan sold offline is saved with the "Ended" status and no classes left.
-- The cash ledger row of a cash payment is created with the sync time.
+- A register transaction, a stock move, a debt and a client plan store the operation time. For an offline operation it is the computer's time at the moment of the action (`occurredAt`); for an online action it is the time of the server write.
+- The date of a register transaction created during the sync equals the operation time.
+- Transactions of a day, transactions of a period, the register transaction list and the period cash report are selected and ordered by the operation time. A sale made at 00:30 and synced later is shown in the report of the sale day in the studio time zone.
+- A plan with a duration sold offline starts at the beginning of the sale day in the studio time zone; its end date is computed from the start date. The purchase date equals the operation time.
+- A one-time plan sold offline is stored with the «Завершений» status and no classes left.
+- The cash ledger row of a cash payment is stored with the operation time. When the ledger of the same account already has later rows, the balance of each of them up to the next balance reset is increased by the payment sum. The opening and closing balance of the period cash report follow the ledger rows ordered by the operation time.
 
 ### Shift
 
-- A shift opened and closed on a computer without internet does not open or close a shift on the server. The opening and the closing are kept in the offline operation journal.
-- The automatic shift closing closes only the current online shift and does not affect the computer's shift.
-- An offline sale and an offline debt payment go into the online shift open at the moment of the operation. When there is none — into a shift of the same day in the studio time zone: the last one opened before the moment of the operation, otherwise the first one opened after it.
-- When the day had no shift, the server creates a shift marked "Офлайн" (Offline): opened and closed at the moment of the first operation of that day, with no working hours, author "Офлайн". Later offline operations of that day go into this shift. A shift marked "Офлайн" never becomes the current shift.
+- A shift opened and closed on a computer without internet does not open or close a shift on the server.
+- The automatic shift close closes only the current online shift and does not affect the computer's shift.
+- An offline sale and an offline debt payment land in the online shift open at the moment of the operation, whatever day it was opened. When there is none — in a shift of the same day in the studio time zone: the last one opened before the moment of the operation, otherwise the first one opened after it.
+- When the day had no shift, the server creates a shift marked «Офлайн»: opened and closed at the moment of the first operation of that day, with no working hours, signed «Офлайн». Further offline operations of that day land in this shift. A shift marked «Офлайн» never becomes the current shift.
 
-### Prices, stock and marks
+The computer's shift is kept for the shifts report apart from the server's shifts. Its id is the id of the `shift_open` operation.
 
-- Prices and sums of an operation are taken from the computer.
+| Operation | Fields | Records |
+|---|---|---|
+| `shift_open` | `openingCash` — cash at the start of the shift | the computer's shift: open time, user, device, opening cash |
+| `shift_close` | `closingCash` — cash at the end of the shift (required); `openOperationId` — the id of the `shift_open` operation; `zReports` — Z-reports: `fiscalNumber`, `register`, `cashRegisterNum`, `at` | close time, closing cash, Z-reports, the id of the close operation |
+
+- A Z-report without `fiscalNumber` is not stored; up to 20 Z-reports are stored, each field up to 128 characters.
+- When the `shift_open` operation is not on the server, the computer's shift is created from the close: the open time is the time of the first sale of that shift, otherwise the close time; the opening cash is not known.
+- A close without `openOperationId` belongs to a shift opened online and does not change any computer's shift.
+
+### Prices, stock and flags
+
+- Prices and sums of the operation are taken from the computer.
 - Product stock may become negative during the sync; the sale is not refused.
-- A difference from the server data does not cancel the operation: the operation is applied, and the offline operation journal record keeps a mark (the `flags` field).
+- A difference from the server data does not cancel the operation: the operation is applied, and the offline operation journal record stores a flag (the `flags` field).
 
-| Mark | Condition |
+| Flag | Condition |
 |---|---|
-| `price_mismatch` | the price of at least one line differs from the server price of the plan or product at the time of the sync |
+| `price_changed` | the price of at least one line differs from the server's plan or product price at the time of the sync |
 | `negative_stock` | after the deduction the stock of at least one product of the operation is below zero |
+| `total_mismatch` | `total` differs from the sum of the sale's register transactions by more than a kopeck |
+
+- A plan, product or client of the sale that is not on the server is a conflict: the operation is not applied, no records are created.
 
 ### Debt payment
 
-- While a payment is applied, the debt is locked until the transaction ends; an online payment of the same debt waits for it to end.
-- A payment is applied only when the debt is not paid off and the payment sum does not exceed the debt remainder.
-- When the debt is already paid off or its remainder is smaller than the payment sum, the operation is not applied and gets the `conflict` result with the `DEBT_ALREADY_PAID` code; an admin's decision is needed. The debt is not paid a second time.
-- When the debt was deleted, the operation gets the `conflict` result with the `DEBT_NOT_FOUND` code.
-- A payment equal to the debt remainder pays the debt off.
+- While a payment is applied, the debt and the debt's class are locked until the transaction ends. An online payment of the same debt locks the same records: two payments of one debt run one after the other.
+- After the lock, an online payment checks the debt and its remaining sum again, before the fiscal receipt and before the first write. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
+- An offline payment is applied only when the debt is not paid off and the payment does not exceed the remaining debt.
+- An offline payment not applied gets the `conflict` result; an admin's decision is needed. The debt is not paid a second time.
+- A payment equal to the remaining debt pays the debt off.
 
 ### Bank transfer payment
 
-- A transaction paid by bank transfer (`paymentMethod` = `1`), including a debt payment, is saved with the "Awaiting confirmation" status regardless of the data the computer sent. It is confirmed only in the online admin.
-- Transactions paid in cash or by card are saved with the "Confirmed" status.
+- A transaction paid by bank transfer (`paymentMethod` = `1`), a debt payment included, is stored with the «Очікує на підтвердження» status whatever the computer sent. It is confirmed only in the online admin.
+- Transactions paid by cash or card are stored with the «Підтверджено» status.
 
 ### What is not done during the sync
 
 - Receipt fiscalization.
 - Client notifications: Telegram, push notifications, SMS.
-- Admin notifications about products running out.
-- The first-plan bonus.
+- The admin notification about a product running out.
+- The first plan bonus.
 
-After the operation is saved, plans sold through `combined_sale` are registered in the studio network. A registration failure does not cancel the operation; such a plan stays without the network mark and is registered by the next network fill.
+After the operation is saved, plans sold by `sale` are registered in the studio network. A registration failure does not cancel the operation; such a plan stays without the network mark and is registered by the next network fill.
 
 ### Operations not accepted offline
 
-The server refuses these operations with the `rejected` result and the `OFFLINE_OPERATION_NOT_SUPPORTED` code, even when the computer sent them. No data is changed.
+The server refuses these operations with the `rejected` result and the `OFFLINE_OPERATION_NOT_SUPPORTED` code, even when the computer sent them. No data changes.
 
-| Operation | Kind or flag |
+| Operation | Kind or sign |
 |---|---|
-| Payment from the personal account | `isPersonalAccount: true` in a sale, in a `combined_sale` payment or in a debt payment |
+| Payment from the personal account | `isPersonalAccount: true` in a sale, in one of a sale's `payments` or in a debt payment |
 | Certificate sale and redemption | `certificate_sale`, `certificate_redeem`; `isCertificate: true` in a sale |
 | Refund | `refund`; `type: "Refund"` in a sale |
 | Personal account top-up | `balance_top_up`; `isBalanceTopUp: true` in a sale |
 | Personal account correction | `balance_correction` |
 | Bonuses | `bonus` |
-| Bank transfer payment confirmation | `payment_approve` |
-| Transaction editing | `transaction_edit` |
-| Transaction deletion | `transaction_delete` |
+| Bank transfer confirmation | `payment_approve` |
+| Transaction edit | `transaction_edit` |
+| Transaction delete | `transaction_delete` |
 | Monobank acquiring | `mono_acquiring` |
 
 ### Sales sync codes
@@ -312,7 +339,10 @@ The server refuses these operations with the `rejected` result and the `OFFLINE_
 |---|---|---|
 | `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |
 | `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
-| `DEBT_ALREADY_PAID` | `conflict` | the debt is paid off or its remainder is smaller than the payment sum |
-| `DEBT_NOT_FOUND` | `conflict` | the debt was deleted |
-| `PLAN_NOT_FOUND` | `conflict` | the plan from `combined_sale` is missing on the server |
-| `CLIENT_NOT_FOUND` | `conflict` | the client from `combined_sale` is missing on the server |
+| `DEBT_ALREADY_PAID` | `conflict` | the debt is paid off in full |
+| `DEBT_OVERPAYMENT` | `conflict` | the remaining debt is less than the payment |
+| `DEBT_FORGIVEN` | `conflict` | the debt is forgiven: deleted, or closed without the full payment |
+| `DEBT_NOT_FOUND` | `conflict` | the debt is not on the server |
+| `PLAN_NOT_FOUND` | `conflict` | a plan of the sale is not on the server |
+| `PRODUCT_NOT_FOUND` | `conflict` | a product of the sale is not on the server |
+| `CLIENT_NOT_FOUND` | `conflict` | the client of the sale is not on the server |

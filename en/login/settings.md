@@ -232,9 +232,6 @@ If clients or coaches of the studio are already registered in the app, turning i
 | --- | --- |
 | **Онлайн запис із веб сторінки** (Online booking from the web page) | If off, the studio's public page shows «Онлайн запис тимчасово недоступний» (Online booking is temporarily unavailable); the schedule stays visible. |
 | **Підтверджувати записи з веб сторінки** (Confirm bookings from the web page) | A booking from the web page first reaches the administrator as a notification with the **Підтвердити** (Confirm) / **Відхилити** (Reject) buttons. Until confirmed, the seat is not counted for the person; after confirmation the person receives a message. Bookings from the app are not affected. On by default. |
-| **Підтвердження запису гостя по SMS** (Guest booking confirmation by SMS) | A guest confirms the number with an SMS code (paid). Confirmation through Telegram is always available. |
-
-> ℹ️ The **Підтвердження запису гостя по SMS** switch applies only to the confirmation code for a guest and does not affect reminders or session notices.
 
 **Публічне посилання на студію** (Public studio link) — the link to the studio's public page (`<app link>/s/<studio identifier>`), the **Копіювати** (Copy) button and a QR code. Through the link clients view the studio and the schedule without registering, then sign in to book.
 

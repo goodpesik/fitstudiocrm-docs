@@ -96,9 +96,9 @@ Reminders are not sent **from 23:00 to 06:00** in the studio time zone, on every
 
 ### The monthly SMS limit
 
-The limit is **shared by all of the studio's SMS**: reminders, confirmation codes for guests, messages about cancellations and moves, booking confirmations and rating requests. The limit is counted in SMS parts (a long message takes several SMS) and is defined by the studio's plan. Telegram messages do not count towards the limit.
+The limit is **shared by all of the studio's SMS**: reminders, app login codes and confirmation codes for guests, messages about cancellations and moves, booking confirmations and rating requests. The limit is counted in SMS parts (a long message takes several SMS) and is defined by the studio's plan. Telegram messages do not count towards the limit.
 
-When the limit is used up, SMS are not sent; the guest confirmation code is offered only through Telegram. Usage is shown under the **Нагадувати про візит** field.
+When the limit is used up, SMS are not sent; login codes and guest booking confirmation codes are sent only through Telegram. If the code cannot be delivered through Telegram, the app shows «Наразі неможливо надіслати код SMS-повідомленням. Спробуйте пізніше.» (The code cannot be sent by SMS right now. Try again later.) Usage is shown under the **Нагадувати про візит** field.
 
 ---
 
@@ -221,12 +221,12 @@ Messages to clients are sent through the first available channel in this order:
 | Membership expiry | App only | — |
 | Message from the studio | App only | — |
 
-The **Підтвердження запису гостя по SMS** switch on the [Mobile Application](/en/login/settings#mobile-application) tab applies only to the confirmation code for a guest. The app and Telegram do not depend on the SMS switches, except the session rating switches, and are not counted in the SMS limit.
+Login codes and guest booking confirmation codes have no separate switch. The app and Telegram do not depend on the SMS switches, except the session rating switches, and are not counted in the SMS limit.
 
 **Cancellation, booking cancellation and moves.** Changes to one session are collected over a few seconds into one message: each client receives one message per session about the nearest date. If a session was moved and then cancelled, only the cancellation message is sent. A Telegram message additionally contains the workout name («Тренування: <name>») and a link to the app.
 
 **Message length.** SMS texts set by the studio are not truncated; a long message is billed as several SMS (see [Message texts](/en/login/settings#sms-notifications)). Telegram messages are sent as one message without splitting.
 
-**Telegram bot.** The bot is used for signing in to the app with a code and as a message delivery channel. Details — [Telegram bot](/en/login/telegram-bot).
+**Telegram bot.** The bot is used as a delivery channel for app login codes and messages; signing in through the bot is not available in the app. Details — [Telegram bot](/en/login/telegram-bot).
 
 [Back to home](/en/)

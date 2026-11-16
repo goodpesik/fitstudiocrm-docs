@@ -50,11 +50,10 @@ On the page:
 
 The **«Book»** button opens the **«Book a class»** window:
 
-1. **Confirmation method** — «Confirm your phone number to book.»: **«Via Telegram»** or **«Via SMS»**. The **«Via SMS»** button is shown if the studio has turned on the **«Підтвердження запису гостя по SMS»** (Guest booking confirmation by SMS) switch and the monthly SMS limit is not used up.
-2. **Phone number** (for SMS) → **«Send code»**. For Telegram no number is entered: the app opens the bot, the person shares the contact, the bot sends the code. The code is delivered through the first available channel: the Telegram bot, the Fitshandler Telegram account, SMS; the hint above the code field matches the channel.
-3. **Code** — 6 digits → **«Confirm»**. The **«Another way»** button returns to the method choice. The code is valid for 10 minutes; a wrong or expired code — «Invalid or expired code.»
-4. **First and last name** — the **First name** and **Last name** fields → **«Next»**. If the number already belongs to a client of the studio, the step is skipped, and the next step shows «You are already a client of this studio. Booking as {name}.»
-5. **«Check your booking»** — client, class, coach, room, date, time; buttons **«Cancel»** and **«Book»**.
+1. **Phone number** — «Confirm your phone number to book.», the **Phone number** field → **«Send code»**. The person does not choose the code delivery channel: the system sends a six-digit code **via Telegram** if the person can be found there, otherwise **by SMS**. The messages about a failed send and the 5-second pause before another attempt are the same as when [logging in to the app](/en/mobile/install#phone-number).
+2. **Code** — 6 digits → **«Confirm»**. The hint above the code field matches the channel: «Код надіслано вам у Telegram. Введіть його тут.» (The code was sent to you in Telegram. Enter it here.) or «Введіть код з SMS.» (Enter the code from the SMS.) **«Request another code»** is available 60 seconds after the previous send; **«Change number»** returns to the number entry. The code is valid for 10 minutes; a wrong or expired code — «Invalid or expired code.»
+3. **First and last name** — the **First name** and **Last name** fields → **«Next»**. If the number already belongs to a client of the studio, the step is skipped, and the next step shows «You are already a client of this studio. Booking as {name}.»
+4. **«Check your booking»** — client, class, coach, room, date, time; buttons **«Cancel»** and **«Book»**.
 
 Result:
 

@@ -77,7 +77,7 @@ A client with the app and the **Нагадування** (Reminders) notificatio
 
 ### The reminder for clients without the app, set by the studio
 
-Clients without the app are covered by the studio's **Нагадувати про візит** (Remind about the visit) setting on the [Mobile Application](/en/login/settings#mobile-application) tab (from 0 to 24 hours, `0` — off). The setting applies when the studio's mobile app is on. The channel is chosen in the order described in [6.14](#_614-messages-to-clients): Telegram bot, Fitshandler Telegram account, SMS. After a reminder sent in Telegram, the client receives a second message «Встановіть додаток Fitshandler <link>» (Install the Fitshandler app).
+Clients without the app are covered by the studio's **Нагадувати про візит** (Remind about the visit) setting on the [Mobile Application](/en/login/settings#mobile-application) tab (from 0 to 24 hours, `0` — off). The setting applies when the studio's mobile app is on. The channel is chosen in the order described in [6.14](#_614-messages-to-clients): Telegram bot, Fitshandler Telegram account, SMS. An SMS reminder is sent only when the **SMS-нагадування про візит** (SMS visit reminder) switch is on; the switch is off by default. After a reminder sent in Telegram, the client receives a second message «Встановіть додаток Fitshandler <link>» (Install the Fitshandler app).
 
 > ⚠️ The studio setting does not apply to clients with the app.
 
@@ -196,24 +196,26 @@ A debt is created when **Сплатити пізніше** (Pay later) is on in 
 Messages to clients are sent through the first available channel in this order:
 
 1. **Mobile app notification** — if the client installed the app and allowed notifications.
-2. **The studio Telegram bot** — if the client signed in through the Telegram bot.
-3. **The Fitshandler Telegram account** — a message from the Fitshandler account to the client's phone number, if the number is registered in Telegram.
-4. **SMS** — paid, within the [monthly limit](#the-monthly-sms-limit).
+2. **The studio Telegram bot** — if the client card is linked to one Telegram bot chat.
+3. **The Fitshandler Telegram account** — a message from the Fitshandler account to the phone number on the client card, if the number is registered in Telegram.
+4. **SMS** — paid, if the Telegram account did not deliver the message, the matching SMS switch is on, the card has a phone number and the [monthly limit](#the-monthly-sms-limit) is not used up.
+5. **The studio Telegram bot in one of the chats** — if the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the message.
+6. If no channel is available, the message is not sent.
 
 | Message | Channels | Condition for SMS |
 | --- | --- | --- |
-| Visit reminder | App — by the client's setting; without the app — Telegram bot → Telegram account → SMS | **Нагадувати про візит** greater than 0 |
+| Visit reminder | App — by the client's setting; without the app — Telegram bot → Telegram account → SMS | **Нагадувати про візит** greater than 0 and **SMS-нагадування про візит** |
 | Session cancelled | App → Telegram bot → Telegram account → SMS | **SMS про відміну заняття** |
 | Booking cancelled by the studio | App → Telegram bot → Telegram account → SMS | **SMS про скасування запису** |
 | Session moved | App → Telegram bot → Telegram account → SMS | **SMS про перенесення заняття** |
-| Confirmation of a web page booking | App → Telegram bot → Telegram account → SMS | — |
+| Confirmation of a web page booking | App → Telegram bot → Telegram account → SMS | **SMS про підтвердження запису** |
 | Confirmation code for a guest | Telegram bot → Telegram account → SMS | — |
-| Request to rate the session | App → Telegram bot → Telegram account → SMS | **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** |
-| Booking from the waitlist by an administrator | App only | — |
+| Request to rate the session | App → Telegram bot → Telegram account → SMS; sent to any channel only with both **Пропонувати оцінити заняття** and **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** on | **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** |
+| Move from the waiting list | App → Telegram bot → Telegram account → SMS | — |
 | Membership expiry | App only | — |
 | Message from the studio | App only | — |
 
-All SMS require the **Підтвердження запису гостя по SMS** switch to be on in the [Mobile Application](/en/login/settings#mobile-application) tab.
+The **Підтвердження запису гостя по SMS** switch on the [Mobile Application](/en/login/settings#mobile-application) tab applies only to the confirmation code for a guest. The app and Telegram do not depend on the SMS switches, except the session rating switches, and are not counted in the SMS limit.
 
 **Cancellation, booking cancellation and moves.** Changes to one session are collected over a few seconds into one message: each client receives one message per session about the nearest date. If a session was moved and then cancelled, only the cancellation message is sent. A Telegram message additionally contains the workout name («Тренування: <name>») and a link to the app.
 

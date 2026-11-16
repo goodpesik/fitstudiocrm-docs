@@ -233,7 +233,7 @@ If clients or coaches of the studio are already registered in the app, turning i
 | **Підтверджувати записи з веб сторінки** (Confirm bookings from the web page) | A booking from the web page first reaches the administrator as a notification with the **Підтвердити** (Confirm) / **Відхилити** (Reject) buttons. Until confirmed, the seat is not counted for the person; after confirmation the person receives a message. Bookings from the app are not affected. On by default. |
 | **Підтвердження запису гостя по SMS** (Guest booking confirmation by SMS) | A guest confirms the number with an SMS code (paid). Confirmation through Telegram is always available. |
 
-> ⚠️ The **Підтвердження запису гостя по SMS** switch is also a general condition for all paid SMS of the studio: if it is off, SMS reminders, SMS about cancellation, booking cancellation and moves, booking confirmations and rating requests are not sent.
+> ℹ️ The **Підтвердження запису гостя по SMS** switch applies only to the confirmation code for a guest and does not affect reminders or session notices.
 
 **Публічне посилання на студію** (Public studio link) — the link to the studio's public page (`<app link>/s/<studio identifier>`), the **Копіювати** (Copy) button and a QR code. Through the link clients view the studio and the schedule without registering, then sign in to book.
 
@@ -242,7 +242,7 @@ If clients or coaches of the studio are already registered in the app, turning i
 | Switch | Effect |
 | --- | --- |
 | **Пропонувати оцінити заняття** (Offer to rate the session) | After a visited session the client sees an offer in the app to rate it (stars and a review). The rating is shown in [Reports](/en/menu/reports). |
-| **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** (Offer to rate the session by SMS (for clients without the app)) | After the session the client receives a message with a rating link. Channels — see [Messages to clients](/en/pages/processing#_614-messages-to-clients). Active only with **Пропонувати оцінити заняття** on. |
+| **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** (Offer to rate the session by SMS (for clients without the app)) | After the session the client receives a message with a rating link. Channels — see [Messages to clients](/en/pages/processing#_614-messages-to-clients). Active only with **Пропонувати оцінити заняття** on. The message with the rating link is sent only when both switches are on; for this message they apply to every delivery channel. |
 | **Показувати рейтинг клієнтам** (Show the rating to clients) | Studio stars, reviews and the rating in the studio list. If off, clients do not see the rating; ratings are still collected and shown in Reports. Active only with **Пропонувати оцінити заняття** on. |
 
 ### SMS Notifications
@@ -252,9 +252,22 @@ If clients or coaches of the studio are already registered in the app, turning i
 | **SMS про відміну заняття** (SMS about a cancelled session) | A paid SMS to clients without the app when the studio cancelled a session. |
 | **SMS про скасування запису** (SMS about a cancelled booking) | A paid SMS when the studio cancelled the client's booking. No message is sent about a cancellation made by the client in the app. |
 | **SMS про перенесення заняття** (SMS about a moved session) | A paid SMS when the date or time of a session changed. |
+| **SMS про підтвердження запису** (SMS about a confirmed booking) | A paid SMS that a booking from the studio web page is confirmed. |
+| **SMS-нагадування про візит** (SMS visit reminder) | A paid SMS reminder about the session, the number of hours set by the **Нагадувати про візит** field. |
 | **Нагадувати про візит** (Remind about the visit) | Field **Годин** (Hours), from `0` to `24`: how many hours before the session to remind clients without the app. `0` turns reminders off. The value is saved automatically. |
 
-The three SMS switches are off by default. They concern only paid SMS: app notifications and Telegram messages are sent regardless of them.
+Each paid SMS to a client has its own switch. All SMS switches are off by default; until a switch is turned on, the matching SMS is not sent.
+
+Delivery order of a message to a client:
+
+1. A client with the app receives a notification in the app.
+2. A client whose card is linked to one Telegram bot chat receives the message from the bot.
+3. Other clients receive the message from the Fitshandler Telegram account at the phone number on the client card.
+4. If the Telegram account did not deliver the message, an SMS is sent, provided the matching switch is on, the card has a phone number and the monthly SMS limit is not used up.
+5. If the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the message, the bot sends it to one of these chats.
+6. If no channel is available, the message is not sent.
+
+The app and Telegram do not depend on the SMS switches, except the session rating switches, and are not counted in the SMS limit.
 
 Under the **Нагадувати про візит** field, SMS usage is shown: «SMS цього періоду: <sent> / <limit> (залишилось <N>)» (SMS this period: … (N left)) or «SMS цього періоду: без ліміту» (SMS this period: no limit).
 

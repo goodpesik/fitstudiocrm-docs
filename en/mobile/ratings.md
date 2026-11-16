@@ -25,6 +25,8 @@ The **«Rate the class»** window: the class date, the coach, a rating from 1 to
 | The class has already been rated | «Thank you, you have already rated this class» — «A second rating is not needed.» |
 | The link has expired | «The link no longer works» — «A rating request lives for a limited time. You can rate the class in the app — the prompt appears there by itself.» |
 
+A rating request by message (push, Telegram or SMS) is sent once a day at **06:00** in the studio's time zone. No requests are sent during the [night pause](/en/pages/processing#the-night-pause) from 23:00 to 06:00.
+
 ---
 
 ## Rating Visibility

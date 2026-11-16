@@ -94,6 +94,7 @@ Field **Годин** (Hours) — the number of hours of inactivity after which t
 - Field **Пропусків підряд** (Misses in a row) — an integer from `1`; an empty field turns the rule off.
 - If a client with a recurring booking misses the given number of sessions in a row (status **Не відвідано**), the system removes the recurring booking. A visit resets the counter. A cancellation, including a late one, is not a miss.
 - The administrator receives a notification. See [Removal from a recurring booking after misses](/en/pages/processing#_69-removal-from-a-recurring-booking-after-misses).
+- A client with the app receives a message about the removal from the recurring booking. During the [night pause](/en/pages/processing#the-night-pause) the message is not sent: it arrives at 06:00 in the studio time zone.
 
 ### Administrator Bonuses
 

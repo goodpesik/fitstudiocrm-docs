@@ -83,10 +83,16 @@ Clients without the app are covered by the studio's **Нагадувати пр�
 
 ### The night pause
 
-Reminders are checked every hour from 06:00 to 22:00 Kyiv time; from 23:00 to 05:00 reminders are not sent.
+Reminders are not sent **from 23:00 to 06:00** in the studio time zone, on every channel: the app, Telegram and SMS.
 
-- A reminder for a client without the app that falls into the night pause is sent at 06:00 if the session has not started yet.
-- An in-app reminder that falls into the night pause is not sent.
+- A reminder whose calculated time falls between 22:00 and 23:00 is sent at **22:00**. Example: a "1 hour before" reminder for a 23:30 session falls at 22:30 and arrives at 22:00.
+- A reminder whose calculated time falls inside the night pause is sent at **06:00**, once, if the session has not started yet. Example: a "2 hours before" reminder for a 07:30 session falls at 05:30 and arrives at 06:00.
+- A reminder for a session that starts during the night pause is sent only when its calculated time comes before 23:00; otherwise no reminder is sent. Example: a "2 hours before" reminder for a 02:00 session falls at 00:00 and is not sent.
+- A reminder not sent on its due hourly run is sent on the next run outside the night pause, provided the session has not started. A reminder about the same session is not sent to the same client twice.
+- Rating requests are not sent during the night pause — see [Ratings and Reviews](/en/mobile/ratings).
+- The app message about an automatic removal from a recurring booking (see [6.9](#_69-removal-from-a-recurring-booking-after-misses)) is not sent during the night pause: it arrives on the first hourly run after the pause, at 06:00.
+- The app message «Закінчується дія абонементу(ів)» (membership expiring) is not sent during the night pause: it arrives on the first hourly run after the pause, at 06:00.
+- A message held for the night pause is sent once. If sending fails, it is retried on the following hourly runs. After 6 failed attempts, or 24 hours after it was created, the message is not sent.
 
 ### The monthly SMS limit
 

@@ -86,10 +86,20 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - **Type** — badge **Sale** / **Refund**.
 - **Client** — client's name (for a certificate sale this shows **Certificate**).
 - **Created by** — name of the user who processed the transaction.
-- **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved).
-- **Actions** (available while the shift is open):
+- **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved). A transaction with the **Awaiting confirmation** status has the **Confirm** button ("Підтвердити", wallet icon); confirming a personal-account top-up credits its amount to the client's account once.
+- **Actions** (shown while the shift is open):
   - **❌ Issue a refund** ("Зробити повернення", red x-in-circle icon) — opens the [refund modal window](#_3941-refunds).
-  - **💵 Change payment method** ("Змінити метод оплати", banknote icon) — for correcting a cashier's mistake right after a sale. Disabled if the payment was made from the client's personal account.
+  - **💵 Change payment method** ("Змінити метод оплати", banknote icon) — for correcting a cashier's mistake right after a sale. Available for a sale with no refunds paid by cash, card or cashless transfer, personal-account top-ups and debt payments included. Disabled if the payment was made from the client's personal account or the transaction has a refund.
+    - The list offers every payment method except the current one: **Cash**, **Card**, **Cashless**. The **Replace** button ("Замінити") is disabled while the request is processed.
+    - The system refunds the transaction with its current method and creates a new transaction for the same amount with the new method. The refund, the new transaction, the register operations, the stock movements and the personal-account credit are recorded together: if the change is not completed, the original transaction stays unchanged and the action can be repeated.
+    - After the change the original transaction has a refund, so its payment method cannot be changed again. The payment method of the new transaction can be changed with the same action.
+    - Cash balance: if the current method is **Cash**, a **Refund** operation for the transaction amount is recorded in the register; if the new method is **Cash**, a **Sale** operation for the same amount is recorded. For a personal-account top-up both operations have the description "Поповнення особового рахунку". A change between **Card** and **Cashless** does not change the cash balance.
+    - Fiscalization: if the original transaction is fiscalized, a fiscal refund receipt is issued for it. The new transaction is fiscalized as a regular sale only when the refund receipt is issued. If the original transaction is not fiscalized or the refund receipt is not issued, the new transaction is not fiscalized.
+    - Payment terminal data (RRN, card mask) is carried over only to a transaction with the **Card** method.
+    - A new transaction with the **Cashless** method gets the **Awaiting confirmation** status.
+    - Debt payment: the new transaction stays linked to the debt, and the debt stays paid.
+    - A personal-account top-up whose amount is already credited: the client's balance does not change, the refund does not debit it and the new transaction does not credit it again, including after a new **Cashless** transaction is confirmed.
+    - A **Cashless** top-up not yet confirmed: the amount is credited to the personal account when the method is changed to **Cash** or **Card**.
 
 ### 3.9.4.1 Refunds
 

@@ -271,7 +271,11 @@ Example: a personal workout for 2 people, priced at **UAH 1300**. The first clie
 
 ![](../../_media/client-balance-topup.png ":size=500x301")
 
-> ℹ️ A top-up is fiscalized as a regular transaction (if PRRO is active). The amount is credited immediately.
+> ℹ️ A top-up is fiscalized as a regular transaction (if PRRO is active). The amount of a **Cash** or **Card** top-up is credited immediately; the amount of a **Cashless** top-up is credited after the payment is confirmed.
+
+- A top-up with the **Cashless** method gets the **Awaiting confirmation** payment status, like other cashless transactions. Until it is confirmed, the amount is not credited to the personal account. Confirming it with the **Confirm** button in the [POS](/en/menu/pos) credits the amount once; a repeated confirmation credits nothing.
+- A top-up with the **Cash** method increases the register cash balance by the top-up amount; the **Card** and **Cashless** methods do not change the cash balance.
+- A top-up cannot be refunded. Its payment method is changed with the **Change payment method** action in the [POS](/en/menu/pos); the rules of the change, including for an unconfirmed **Cashless** top-up, are given in the description of that action.
 
 ### 3.2.11.2 Paying from the account
 

@@ -91,6 +91,17 @@ The card colour is the coach's colour, and for a workout without a coach — the
 
 - The **Cancel workout** button opens the [confirmation window](../_modals/are-you-sure-modal.md ':include'). After confirmation, "Тренування успішно оновлено" (workout updated) is shown.
 - For a regular workout only this date is cancelled; a one-time workout is deleted.
+- The cancellation day is determined in the studio time zone ([Studio Time Zone](/en/login/settings#studio-time-zone)), regardless of the time zone of the computer the action is made from. The calendar day selected in the schedule is cancelled.
+- The success message is shown only when the workout is actually cancelled. In the other cases no exception is recorded, the workout state does not change, and the system shows a message:
+
+| Situation | Message |
+|---|---|
+| The workout on the selected date is already cancelled | «Заняття на обрану дату вже скасовано.» (The class on the selected date is already cancelled.) |
+| After the cancellation the workout on the selected date does not have the «Скасовано» (cancelled) status | «Не вдалося скасувати заняття на обрану дату. Спробуйте ще раз.» (Could not cancel the class on the selected date. Try again.) |
+| The selected date is not a day the series runs on (the series weekday within the repeat period) | «Заняття не проводиться в обрану дату.» (The class does not run on the selected date.) |
+| A request without a date | «Не вказано дату заняття.» (The class date is not specified.) |
+| A request to cancel one date of a one-time workout | «Заняття не є регулярним.» (The class is not recurring.) |
+| The workout is not found (for example, it was deleted) | «Заняття не знайдено.» (The class is not found.) |
 - The button is disabled when at least one client is checked in, and is not shown for an already cancelled workout. A prepayment does not affect whether the button is available.
 - A personal training prepayment is credited to the client's personal account under the rules of [Personal training prepayment](#personal-training-prepayment).
 - Booked clients are sent a class cancellation notice, see [Client notifications](#client-notifications).

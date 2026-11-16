@@ -137,7 +137,7 @@ The gear button on the card opens the **«Workout actions»** window. For a coac
 
 - **«Change time»** — free time slots → **«Save»** → the **«Change workout time»** confirmation (with the new time). Result — «Workout time changed». Empty — «No available time slots».
 - **«Change room»** — free rooms → **«Save»** → the **«Change workout room»** confirmation (with the new room). Result — «Workout room changed». Empty — «No available rooms».
-- **«Cancel workout»** — the **«Cancel workout»** window with the class details → **«Cancel workout»**. Result — «Workout canceled»; error — «Could not cancel the workout. Try again.» Booked clients receive a cancellation message (see [Messages to clients](/en/pages/processing#_614-messages-to-clients)).
+- **«Cancel workout»** — the **«Cancel workout»** window with the class details → **«Cancel workout»**. Result — «Workout canceled»; error — «Could not cancel the workout. Try again.» The cancellation day is determined in the studio time zone. If the class on this date is already cancelled, the date is not a day the series runs on, or the cancellation is not executed, the error is shown and the workout state does not change. Booked clients receive a cancellation message (see [Messages to clients](/en/pages/processing#_614-messages-to-clients)).
 
 ---
 

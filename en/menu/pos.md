@@ -86,7 +86,8 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - **Type** — badge **Sale** / **Refund**.
 - **Client** — client's name (for a certificate sale this shows **Certificate**).
 - **Created by** — name of the user who processed the transaction.
-- **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved).
+- **Payment status** — **Confirmed** / **Awaiting confirmation** (for bank-transfer payments under PRRO whose payment has not yet been approved). A bank-transfer payment made without internet has the **Awaiting confirmation** status after the sync regardless of the data the computer sent.
+- **Offline** ("Офлайн") — the mark of a transaction created during the sync of an operation made on a computer without internet. The **Date** of such a transaction is the operation time on the computer. See [Sales sync](/en/pages/offline-mode#sales-sync).
 - **Actions** (available while the shift is open):
   - **❌ Issue a refund** ("Зробити повернення", red x-in-circle icon) — opens the [refund modal window](#_3941-refunds).
   - **💵 Change payment method** ("Змінити метод оплати", banknote icon) — for correcting a cashier's mistake right after a sale. Disabled if the payment was made from the client's personal account.

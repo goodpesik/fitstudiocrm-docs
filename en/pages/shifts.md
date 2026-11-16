@@ -61,4 +61,6 @@ If the state here and the state at the fiscal operator have drifted apart — th
 
 If automatic closing is enabled in the studio settings, an open shift closes itself automatically every day at 23:58. An entry "Shift closed automatically" will appear in the notifications section.
 
+The automatic closing does not affect the shift of a computer working without internet. A shift marked "Офлайн" (Offline), created by the server for sales made without internet, is closed from its creation. See [Sales sync](/en/pages/offline-mode#shift).
+
 [Back to home](/en/)

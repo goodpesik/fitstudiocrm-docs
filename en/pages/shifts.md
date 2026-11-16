@@ -78,7 +78,7 @@ On closing, the Z-reports received from the integrations are saved with the shif
 
 ## 2.4 Automatic Shift Closing
 
-If the **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) switch is on in [Settings → Functions](/en/login/settings#features), an open shift is closed every day at 23:58 Kyiv time. The record «Зміну закрито автоматично» (Shift closed automatically) appears in the notifications.
+If the **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) switch is on in [Settings → Functions](/en/login/settings#features), an open shift is closed every day at 23:58 in the studio time zone ([Settings → Studio Time Zone](/en/login/settings#studio-time-zone); defaults to `Europe/Kyiv`). The shift is closed once; if no shift is open, nothing happens. The record «Зміну закрито автоматично» (Shift closed automatically) appears in the notifications.
 
 ---
 

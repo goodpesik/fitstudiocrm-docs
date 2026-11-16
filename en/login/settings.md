@@ -131,7 +131,7 @@ The section titled **Створення персональних тренува�
 | --- | --- |
 | **Повідомляти клієнтам про заміну тренера (Додаток)** (Notify clients about a coach substitution (App)) | When a substitute coach is assigned, booked clients receive a mobile app notification. |
 | **Враховувати максимальну к-сть людей при підрахунку зарплат** (Take the maximum number of people into account in salaries) | The number of clients credited to the coach does not exceed the workout's maximum number of people. |
-| **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) | An open shift is closed every day at 23:58 Kyiv time. See [Automatic Shift Closing](/en/pages/shifts#_24-automatic-shift-closing). |
+| **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) | An open shift is closed every day at 23:58 in the [studio time zone](#studio-time-zone); if no time zone is set, `Europe/Kyiv` applies. See [Automatic Shift Closing](/en/pages/shifts#_24-automatic-shift-closing). |
 | **Нараховувати борг за неявку на персональне (без абонемента) та зараховувати тренеру** (Charge a debt for a no-show at a personal workout (without a membership) and credit the coach) | See below. |
 | **Автоматична реєстрація при скануванні картки (клієнт з активним абонементом і записом на сьогодні)** (Automatic registration on card scan (client with an active membership and a booking for today)) | See [Automatic registration on card scan](/en/pages/processing#_610-automatic-registration-on-card-scan). |
 

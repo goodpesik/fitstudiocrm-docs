@@ -18,7 +18,7 @@ Communication with support takes place in the **Підтримка** (Support) w
 
 **A request** opens in the same window as a conversation. The type of a support message is marked: **Відповідь** (Answer), **Уточнення** (Clarification), **Дефект** (Defect). The «Ваше повідомлення...» (Your message...) field, the file attachment button and **Надіслати** (Send). The **Закрити тікет** (Close ticket) button closes the request («Тікет закрито», Request closed). The **Назад** (Back) button returns to the list.
 
-A user with the **Супер Адмін** role also sees the «Відповісти як підтримка...» (Reply as support...) field and the **Надіслати як підтримка** (Send as support) button.
+The «Відповісти як підтримка...» (Reply as support...) field and the **Надіслати як підтримка** (Send as support) button are shown only to the **Супер Адмін** role and only for a ticket that is not closed. The reply is recorded as a support message. Only the **Супер Адмін** role can reply on behalf of support; a request from any other role is rejected with code 403. The server does not check the ticket status for this request.
 
 **Request statuses:**
 
@@ -118,7 +118,7 @@ Replies are given in the language of the request: Cyrillic text — in Ukrainian
 | GET | /support/limits | Monthly limits and remaining balance |
 | POST | /support/tickets | Create a request `{subject, body, priority}` |
 | POST | /support/tickets/:id/messages | Add a message and files (up to 5) |
-| POST | /support/tickets/:id/reply-as-support | Reply on behalf of support |
+| POST | /support/tickets/:id/reply-as-support | Reply on behalf of support `{body}`. Only the Супер Адмін role; any other role gets 403 |
 | PATCH | /support/tickets/:id/status | Change the request status |
 
 **Internal routes** (for the support service; an HMAC signature is required):

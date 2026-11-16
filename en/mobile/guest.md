@@ -26,7 +26,7 @@
 ## How Booking Works
 
 1. The person selects a class and taps to book.
-2. They enter the phone number and press **"Send code"** ("Надіслати код"). The system sends a six-digit code **via Telegram** if the person can be found there, otherwise **by SMS**. SMS is sent only if the studio has connected SMS messaging and enabled the **"Confirm Guest Booking by SMS"** ("Підтвердження запису гостя по SMS") toggle. If the code cannot be sent, **"We could not send the code to this number. Please contact the studio administrator."** is shown.
+2. They enter the phone number and press **"Send code"** ("Надіслати код"). The system sends a six-digit code **via Telegram** if the person can be found there, otherwise **by SMS**. The code is sent by SMS regardless of the **"SMS reminders and client notices"** ("SMS-нагадування та сповіщення клієнтам") toggle. The messages about a failed send and the pause before another attempt are the same as when [logging in to the app](/en/mobile/install#phone-number).
 3. They enter the code and press **"Confirm"** ("Підтвердити"). **"Request another code"** ("Запросити ще один код") is available 60 seconds after the previous sending; **"Change number"** ("Змінити номер") returns to the phone number entry.
 4. **Only after the code is confirmed** they enter the first and last name and press **"Book"** ("Записатися") — only then is the booking created, and a new client with this phone number appears at the studio.
 

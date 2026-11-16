@@ -76,12 +76,17 @@ Login is possible only in the context of a studio: the confirmation code is issu
 2. Once the full number is entered, the **"Send code"** ("Надіслати код") button becomes active.
 3. Pressing **"Send code"** sends a **6-digit confirmation code**. The system chooses the delivery channel:
    - **Telegram** — if the person already chats with the Fitshandler bot or can be found in Telegram by the number;
-   - **SMS** — in other cases, if the studio has connected SMS messaging.
-4. If the code cannot be sent, the message **"We could not send the code to this number. Please contact the studio administrator."** ("Не вдалося надіслати код на цей номер. Зверніться до адміністратора студії.") is shown.
+   - **SMS** — in other cases. The login code is sent by SMS regardless of the **"SMS reminders and client notices"** ("SMS-нагадування та сповіщення клієнтам") toggle.
+4. If the code is not sent, one of the following messages is shown:
+   - **"We could not send the code to this number. Please contact the studio administrator."** ("Не вдалося надіслати код на цей номер. Зверніться до адміністратора студії.") — the studio has no SMS messaging connected, and the code cannot be delivered via Telegram;
+   - **"The code cannot be sent by SMS right now. Please try later."** ("Наразі неможливо надіслати код SMS-повідомленням. Спробуйте пізніше.") — the studio's monthly SMS limit is used up, or the request rate limit applies;
+   - **"Couldn't send the code. Please try again."** ("Не вдалося надіслати код. Спробуйте ще раз.") — any other sending error.
+
+   After a failed send, another attempt is available in 5 seconds; until then the button is inactive and shows **"You can try again in N s"** ("Повторити спробу можна через N с").
 
 ### Entering the Code
 
-1. The **"Enter the code"** ("Введіть код") screen states where the code was sent: **"We sent the code to you on Telegram. Enter it here."** ("Код надіслано вам у Telegram. Введіть його тут.") or **"Enter the code from the SMS."** ("Введіть код з SMS.").
+1. The **"Enter the code"** ("Введіть код") screen states where the code was sent: **"We sent the code to you on Telegram. Enter it here."** ("Код надіслано вам у Telegram. Введіть його тут.") or **"Enter the code from the SMS."** ("Введіть код з SMS."). If a repeated code request fails, the hint keeps the channel of the last code that was sent.
 2. Enter the 6 digits and press **"Log In"** ("Вхід") (the button is active only once exactly 6 digits are entered). The code can be pasted from the message as a whole.
 3. If the code did not arrive — press **"Request another code"** ("Запросити ще один код"). A repeated request is available 60 seconds after the previous one; until then a countdown is shown in place of the button.
 4. The **"Back"** ("Назад") button returns to the phone number entry.

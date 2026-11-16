@@ -81,7 +81,7 @@ A client with the app installed and notifications enabled chooses how many hours
 For clients without the app there is a separate studio setting — **Remind about a visit** ("Нагадувати про візит") on the [Mobile Application](/en/login/settings#mobile-application) tab. The channel is chosen automatically:
 
 1. If the client has ever signed in through the Telegram bot, the message goes **to Telegram**. Free of charge.
-2. If not, and the studio has SMS enabled and monthly quota left, an **SMS** is sent. This is charged.
+2. If not, and the studio has SMS messaging connected, the **"SMS reminders and client notices"** ("SMS-нагадування та сповіщення клієнтам") toggle enabled and monthly quota left, an **SMS** is sent. This is charged.
 3. If neither applies, no reminder is sent.
 
 > ⚠️ The studio setting **does not affect clients who have the app** — they have their own. Changing this field will therefore change nothing for anyone already using the app.
@@ -92,7 +92,7 @@ Reminders are not sent **between 22:00 and 06:00**, whatever the channel and wha
 
 ### The monthly SMS limit
 
-The limit is **shared across all of the studio's SMS**: both visit reminders and the confirmation codes for guest bookings. Once it is used up, guest bookings can only be confirmed through Telegram, and SMS reminders stop being sent. The remaining amount is shown next to the "Remind about a visit" field.
+The limit is **shared across all of the studio's SMS**: both visit reminders and the confirmation codes for guest bookings. Once it is used up, login and guest booking codes are sent only through Telegram (if that is not possible, **"The code cannot be sent by SMS right now. Please try later."** is shown), and SMS reminders stop being sent. The remaining amount is shown next to the "Remind about a visit" field.
 
 ---
 

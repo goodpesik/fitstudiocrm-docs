@@ -200,7 +200,7 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 ### Main Toggles
 
 - **Use the mobile app for clients** — the main toggle. To turn it off, you must type the confirmation **SWITCHOFF**: along with the app, clients lose the ability to book online.
-- **Confirm a guest booking by SMS** — allows the login and booking confirmation code to be sent by SMS to those who cannot receive it in Telegram. If the toggle is off, such people do not receive the code.
+- **SMS reminders and client notices** ("SMS-нагадування та сповіщення клієнтам") — allows class reminders and client notices to be sent by SMS (charged) to clients who cannot be notified in the app or via Telegram. Notices of individual types are additionally enabled by their own toggles. The app login code and the guest booking confirmation code are sent by SMS regardless of this toggle.
 - **Offer to rate the session** — after an attended session, the client is offered the chance to leave a rating.
 
 ### Visit Reminders

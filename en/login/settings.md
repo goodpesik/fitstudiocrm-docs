@@ -200,7 +200,6 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 ### Main Toggles
 
 - **Use the mobile app for clients** — the main toggle. To turn it off, you must type the confirmation **SWITCHOFF**: along with the app, clients lose the ability to book online.
-- **SMS reminders and client notices** ("SMS-нагадування та сповіщення клієнтам") — allows class reminders and client notices to be sent by SMS (charged) to clients who cannot be notified in the app or via Telegram. Notices of individual types are additionally enabled by their own toggles. The app login code and the guest booking confirmation code are sent by SMS regardless of this toggle.
 - **Offer to rate the session** — after an attended session, the client is offered the chance to leave a rating.
 
 ### Visit Reminders
@@ -208,6 +207,34 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 - **Remind about the visit** — how many hours before the session to send a reminder. A value of `0` disables the reminder.
 - Next to it, the number of SMS already used from the studio's monthly limit is shown.
 - **SMS reminder text** — the studio's own text. The date and time are inserted automatically, so only the words before and after them can be edited. A counter shows how many of the 57 characters remain: an SMS cannot hold more than that, and each additional one is billed separately.
+
+### SMS Notifications
+
+Each paid SMS to a client has its own toggle. All toggles are off by default.
+
+| Toggle | What is sent |
+|---|---|
+| **SMS about a cancelled session** | A notice that the session is cancelled |
+| **SMS about a cancelled booking** | A notice that the studio cancelled the booking |
+| **SMS about a moved session** | A notice with the new date or time of the session |
+| **SMS about a confirmed booking** | A notice that a booking from the studio web page is confirmed |
+| **SMS visit reminder** | A reminder about the session, the number of hours set by the "Remind about the visit" field |
+| **Offer to rate the session by SMS (for clients without the app)** | A message with a link to rate the attended session |
+
+The **SMS visit reminder** and **SMS about a confirmed booking** toggles are off by default in every studio. Until the toggle is turned on, visit reminders and booking confirmation notices are not sent by SMS.
+
+The **Offer to rate the session by SMS (for clients without the app)** toggle is available only when **Offer to rate the session** is on. The message with the rating link is sent only when both toggles are on, and for this message they apply to every delivery channel.
+
+Delivery order of a message to a client:
+
+1. A client with the app receives a notification in the app.
+2. A client whose card is linked to one Telegram bot chat receives the message from the bot.
+3. Other clients receive the message from the Fitshandler Telegram account at the phone number on the client card.
+4. If the Telegram account did not deliver the message, an SMS is sent, provided the matching toggle is on, the card has a phone number and the monthly SMS limit is not used up.
+5. If the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the message, the bot sends it to one of these chats.
+6. If no channel is available, the message is not sent.
+
+The app and Telegram do not depend on the SMS toggles, except the session rating toggles, and are not counted in the SMS limit.
 
 ### Public Studio Link
 

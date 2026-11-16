@@ -80,9 +80,11 @@ A client with the app installed and notifications enabled chooses how many hours
 
 For clients without the app there is a separate studio setting — **Remind about a visit** ("Нагадувати про візит") on the [Mobile Application](/en/login/settings#mobile-application) tab. The channel is chosen automatically:
 
-1. If the client has ever signed in through the Telegram bot, the message goes **to Telegram**. Free of charge.
-2. If not, and the studio has SMS messaging connected, the **"SMS reminders and client notices"** ("SMS-нагадування та сповіщення клієнтам") toggle enabled and monthly quota left, an **SMS** is sent. This is charged.
-3. If neither applies, no reminder is sent.
+1. If the client card is linked to one Telegram bot chat, the message goes **to Telegram from the bot**. Free of charge.
+2. If not, the message is sent **from the Fitshandler Telegram account** to the phone number on the client card. Free of charge.
+3. If the Telegram account did not deliver the message, the **SMS visit reminder** toggle is on and monthly quota is left, an **SMS** is sent. This is charged. The toggle is off by default in every studio; until it is turned on, reminders are not sent by SMS.
+4. If the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the reminder, the bot sends it to one of these chats. Free of charge.
+5. If no channel is available, no reminder is sent.
 
 > ⚠️ The studio setting **does not affect clients who have the app** — they have their own. Changing this field will therefore change nothing for anyone already using the app.
 

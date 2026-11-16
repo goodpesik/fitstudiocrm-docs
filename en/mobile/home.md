@@ -4,64 +4,77 @@
 
 # 7.3 Home
 
-> The **Home** tab is the welcome screen. It shows a greeting, upcoming classes, and the current membership. It's also where you switch studio and role.
-
-<!-- TODO: screenshot of the client home screen -->
+> The **Home** tab shows the header of the selected studio, a greeting, upcoming workouts, the client's current plan, and for the administrator — the shift state and booking requests.
 
 ---
 
-## 7.3.1 Top Section
+## 7.3.1 Studio
 
-- Greeting **"Welcome, {name}"** ("Вітаю, {імʼя}") (for a guest — "Guest").
-- **Studio header**: logo, name, address, city and phone number (the phone number is clickable), an **"About Us"** ("Про нас") button with the studio's description and photos, and a star with the average rating and number of reviews — it appears once the studio has collected enough ratings, and opens client reviews.
-- **Menu panel** with buttons (shown conditionally):
-  - **"Update"** ("Оновити") — updates the app to the latest version.
-  - **"Studio Rules"** ("Правила студії") — opens a panel with the studio's rules (if the studio has filled them in under [Settings](/en/login/settings#studio-rules)).
-  - **"Choose Studio"** ("Вибір студії") — always available. Lets you switch to any studio operating in the app, even if you are not yet its client: your first booking will automatically create your client card.
-  - **"Choose Client"** ("Вибір клієнта") — shown if you have more than one role/client.
+- The **«Select studio»** button above the studio header opens the **«Select a studio»** window. It lists all studios that work in the app. For a studio where the user has no profile, Home of that studio opens in the **Guest** role (see [7.2](/en/mobile/registration)).
+- **Studio header**: logo, name, address (opens the route in maps), phone (call), the **«About us»** button with the studio description, photos, a map, the **«Route»** and **«Call»** buttons and reviews, and a star with the average rating and the number of reviews (see [7.9](/en/mobile/ratings)).
+- Buttons in the studio header (when applicable):
+  - **«Studio rules»** — opens the studio rules if the studio has filled them in [Settings](/en/login/settings#studio-rules);
+  - **«Select client»** — opens the **«Select a client»** window; shown if the user has more than one profile.
 
 ---
 
-## 7.3.2 Upcoming Classes
+## 7.3.2 Greeting
 
-> For **client** and **coach**, a list of upcoming classes is shown as cards.
-
-- **Client** sees classes for the next **6 days**.
-- **Coach** sees classes for the next **4 hours**.
-- If there are no classes — **"You have no upcoming classes"** ("У вас немає тренувань на найближчий час").
-
-For more on the class card and the actions available on it, see [Classes](/en/mobile/workouts).
+- **«Hello, {name}»**. Next to the name — the **Coach** or **Admin** role badge; no badge is shown for a client.
+- For a guest — **«Welcome to the studio»**. If the guest is not logged in, the **«Log in»** button is shown under the greeting; if logged in — the **«Upcoming workouts»** block with the booking request state (see [7.2.2](/en/mobile/registration#_722-request-status)) or «You have no workouts in the near future».
 
 ---
 
-## 7.3.3 Current Membership (Client)
+## 7.3.3 Upcoming Workouts
 
-> The client sees a card for the current membership:
+For a **client** and a **coach** — the **«Upcoming workouts»** block with workout cards:
 
-- Membership name.
-- **"Classes remaining: {N}"** ("Тренувань лишилося: {N}").
-- **"Valid through {date}"** ("Діє до {дата} включно").
-- If the membership is new — **"Not active. Activates on your visit to the studio"** ("Не активний. Активується під час візиту в студію").
-- Warning **"Warning!!! Membership is about to expire"** ("Увага!!! Абонемент скоро закінчує дію") — when fewer than 3 days or fewer than 3 classes remain.
-- If there is no membership — **"No current membership"** ("Немає поточного абонемента").
+- A **client** sees their own bookings for the next **6 days** (144 hours).
+- A **coach** sees their own workouts for the next **4 hours**; next to the heading — their own average rating and number of ratings.
+- The client's booking requests, if any, are shown above the bookings (see [7.2.2](/en/mobile/registration#_722-request-status)).
+- If there are no workouts and no requests — «You have no workouts in the near future».
 
----
+A client who has attended a class sees the **«Rate your last class»** offer above the block (see [7.9](/en/mobile/ratings)).
 
-## 7.3.4 Admin Panel
-
-> For the **Admin** role, Home shows the shift status and a counter:
-
-- Badge **"Shift Open"** ("Зміну відкрито") (green) / **"Shift Closed"** ("Зміну закрито") (red); if open — **"On shift: {name}"** ("На зміні: {імʼя}").
-- **"Total clients today: {N}"** ("Загальна кількість клієнтів сьогодні: {N}").
+The workout card and its actions are described in [Workouts](/en/mobile/workouts).
 
 ---
 
-## 7.3.5 Prompt to Enable Notifications
+## 7.3.4 Current Plan (Client)
 
-> On first login (if push is not yet enabled), a window appears:
+The **«Current plan»** block shows one plan: the active one; if there is none — the new one; if there is none either — an ended plan whose validity period has not yet passed. The plan card:
 
-- **"Enable notifications?"** ("Увімкнути сповіщення?") — "To receive reminders and stay up to date, we recommend enabling notifications. You can do this later in Notifications → Settings" ("Щоби отримувати нагадування та бути в курсі всіх оновлень, рекомендується увімкнути сповіщення. Ви можете зробити це пізніше в розділі Сповіщення → Налаштування").
-- **"Enable"** ("Увімкнути") — subscribes the device to push. **"Cancel"** ("Відміна") — you can enable it later in [Notifications](/en/mobile/notifications).
+- **«Plan · {studio name}»** and the status: **Active**, **New**, **Ended** or **Suspended**;
+- the plan size («{N} workouts») and **«Used {X} of {N}»**; a ring with the number of workouts left (**«left»**). For a plan without a number of workouts, the plan name and **«Workouts remaining: {N}»** are shown instead of the size;
+- for a new plan — «Not active. It will be activated during your visit to the studio»;
+- the warning «Attention! Your plan is expiring soon.» — when fewer than 3 days or fewer than 3 workouts are left;
+- **«Valid until (inclusive)»** and the end date;
+- the **«Client card»** button — opens the [Client Card](/en/mobile/card).
+
+Tapping the card opens [Account → History](/en/mobile/account#_763-history-client). If there is no plan — «No current plan.»
+
+---
+
+## 7.3.5 Administrator Panel
+
+For the **Admin** role:
+
+- the badge **«Shift open · {name}»** or **«Shift closed»**;
+- **«Total clients today:»** — the number of clients with the **Attended** status in today's workouts;
+- the **«Booking requests»** card with the caption «Waiting for a decision: {N}» — shown if there are requests waiting for a decision. The card opens the request list: client, workout, date and time, the **«Approve»** and **«Reject»** buttons. An empty list — «No requests are waiting for a decision»; a loading error — «Could not read the requests. Try again.»
+
+A request is also decided with the **«Approve»** / **«Reject»** buttons on the notification card in the [Notifications](/en/mobile/notifications) tab and in the admin panel. For a request already reviewed or a class that has passed, the reason for the refusal is shown.
+
+---
+
+## 7.3.6 Offer to Enable Notifications
+
+After login, if notifications are off on the device, the **«Enable notifications?»** window is shown with the text «To receive reminders and stay up to date with all updates, we recommend enabling notifications. You can do this later in the Notifications => Settings section».
+
+- **«Enable»** — subscribes the device to notifications.
+- **«Cancel»** — closes the window; notifications are turned on later in [Notifications](/en/mobile/notifications).
+
+The window is shown once. If notification permission is blocked in the phone or browser settings, the **«Notifications blocked»** window is shown with an explanation of how to allow notifications.
 
 ---
 

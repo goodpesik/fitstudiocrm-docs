@@ -4,7 +4,7 @@
 
 # 3.10 Gift certificates
 
-> **Gift certificates** are vouchers the studio can issue or sell. A certificate holds prepaid sessions / memberships and has a unique number and a QR code. A client redeems a certificate through an administrator, who opens the redemption window either directly from the certificates list or by scanning the QR code.
+> **Certificates** ("Сертифікати") — gift certificates that the studio sells. A certificate holds prepaid memberships and has a unique number and a QR code. A certificate is redeemed by an administrator: from the certificates table, with the scanner, or by number.
 
 ![](../../_media/certificates-overview.png ':size=400x241')
 
@@ -16,79 +16,92 @@
 
 | Column | Description |
 |---|---|
-| **Certificate number** | A unique code in the form `CRT…`. Next to it, buttons to copy (`pi-copy`) and show the QR code (`pi-qrcode`). |
-| **Price** | Cost of the certificate in UAH. |
-| **Memberships** | List of memberships the client will receive upon activation (`--` until activated). |
-| **Status** | Active / Redeemed / Expired. |
-| **Date used** | Date the client activated it (`--` if not used). |
-| **Client who used it** | Name of the client who activated the certificate. |
-| **Date sold** | When the certificate was sold. |
-| **Expiration date** | Date after which the certificate becomes Expired. Editable directly in the table via the **Edit** (pencil icon) column in the certificate's row. |
-| **Comment** | Optional text, added on the sale form. |
-| **Actions** | **Redeem** (activate), **Delete** (delete), **Row Edit** (edit the expiration date). |
+| **Certificate number** ("Номер сертифікату") | A unique code of the form `CRT…`. Next to it: copy the number (notification "Скопійовано", copied) and show the QR code. |
+| **Price** ("Ціна") | The certificate price in UAH. |
+| **Memberships** ("Абонементи") | The memberships the client receives on redemption (`--` when there are none). |
+| **Status** ("Статус") | **Активний** (active) / **Погашено** (redeemed) / **Прострочено** (expired). |
+| **Date used** ("Дата використання") | Redemption date (`--` if not redeemed). |
+| **Client who used it** ("Клієнт що використав") | The client the certificate was redeemed for. |
+| **Date of sale** ("Дата продажу") | The date the certificate was sold. |
+| **Expiration date** ("Дата закінчення дії") | The date after which the certificate becomes expired. Edited in the table (the **Редагувати** (edit) column, SuperAdmin and Admin roles). |
+| **Comment** ("Коментар") | Text from the sale form or `--`. |
+| **Actions** ("Дії") | **Погасити** (redeem, only for an active certificate) and **Видалити** (delete, requires confirmation); SuperAdmin and Admin roles. |
 
-**Search** — by number, client, or comment — a field at the top of the table.
+**Search** — the **Пошук** field above the table. The table is paginated (10, 20 or 50 rows). If there are no certificates, "Не знайдено жодного сертифікату" is shown.
 
 ---
 
 ## 3.10.2 Creating a certificate
 
-> The **+** button is only available when the **shift is open** and the user has the **SuperAdmin** or **Admin** role.
+> The **+** button is available only while a **shift is open**, to the **SuperAdmin** and **Admin** roles.
 
 ![](../../_media/cert-add-modal.png ':size=400x241')
 
-**Fields in the "Create certificate" modal:**
+**Fields of the "Створення Сертифікату" (create certificate) window:**
 
-- **Certificate validity (months)** ("Термін дії сертифікату (міс.)") — how many months the certificate is valid for from the date of sale. After this period, its status automatically becomes **Expired**.
-- **Comment** — optional (for example, "Подарунок на 8 березня" — "Gift for March 8").
-- **Payment method** — Cash / Card / Bank transfer. The **Split payment** ("Розділити оплату") button lets you add an additional payment method (split pay).
-- **Discount (discount amount)** ("Знижка (сума знижки)") + the **Percent %** ("Відсотки %") toggle — a fixed or percentage discount off the price.
+- **Memberships** — rows with the **Виберіть абонемент** (choose a membership) field and a quantity (1 to 20); the **Додати абонемент** (add membership) button adds a row. The certificate price is the sum of the selected memberships' prices times their quantities.
+- **Certificate validity (months)** ("Термін дії сертифікату (міс.)") — the number of months from the date of sale; 3 by default, at least 1 ("Значення не може бути меньшим за 1").
+- **Comment** ("Коментар") — optional (for example, "Подарунок на 8 березня" — "Gift for March 8").
+- **Payment method** — Card / Cash / Bank transfer. The **Split payment** ("Розділити оплату") button adds another payment method.
+- **Discount (discount amount)** ("Знижка (сума знижки)") and the **Відсотки %** (percent) toggle — a fixed or percentage discount.
 - **Amount due** ("До сплати") — the final amount after the discount.
 
-After saving:
-- a sale transaction is created (fiscalized if PRRO is active),
-- the certificate receives a unique number (format `CRT…`),
-- it appears in the table with **Active** status,
-- the memberships (`plans`) remain empty — the admin assigns them when the client [redeems](#_3104-Activation-Redeem) the certificate.
+Buttons: **Close** ("Закрити"), **Save** ("Зберегти").
 
-> ℹ️ The expiration date can be changed later via **Edit** (`pi-pencil` icon) in the certificate's row.
+After saving:
+
+- a register sale transaction is created (in the [Point of sale](/en/menu/pos) the client is shown as **Сертифікат**); with an active fiscal integration it is fiscalized with a receipt line "Подарунковий сертифікат" (gift certificate);
+- the certificate gets a unique number (format `CRT…`) and appears in the table with the **Active** status.
 
 ---
 
 ## 3.10.3 QR code
 
-> Clicking the **🔳 QR** button (QR code icon) in a certificate's row opens a modal window with the certificate's QR code.
+> The QR-code button in a certificate's row opens the **QR Code** window with the certificate's QR code.
 
 ![](../../_media/cert-qr-modal.png ':size=260x157')
 
 - **Copy** ("Скопіювати") — copies the QR code as an image to the clipboard, for sending to the client.
-- The QR code contains the certificate number — the client shows it upon activation, and the admin scans it with the card scanner.
+- The QR code holds the certificate number; on redemption it is read with the scanner.
 
 ---
 
-## 3.10.4 Activation (Redeem)
+## 3.10.4 Redemption
 
-> The **🎟 Redeem** ("Погасити", ticket icon) button in a certificate's row, or scanning the QR code, opens a separate redemption window pre-loaded with the memberships from the certificate.
+> The **Погасити** (redeem) button in a certificate's row, scanning the QR code, or the **Сертифікат** (certificate) button in the [Registration](/en/menu/clients#_329-registration) window opens the **Погашення Сертифікату** (certificate redemption) window.
 
 **Process:**
 
-1. Select or create a client.
-2. Click **Redeem** ("Погасити").
-3. The certificate receives **Redeemed** status; the activation date and `clientId` are recorded automatically.
-4. The memberships from the certificate are added to the client. No separate transaction is created: the studio already took and recorded the money when the certificate was sold, so a second entry would only double the figures in the reports.
+1. Scan or enter the certificate number (the **Відскануйте або введіть номер сертифікату** field) and click **Шукати сертифікат** (find certificate), unless the window was opened from a table row.
+2. Choose a client (**Виберіть клієнта**) or create a new one with the **Новий клієнт** (new client) button.
+3. Click **Погасити** (redeem).
+
+Result:
+
+- Each membership of the certificate (with its quantity) is added to the client with the **Неактивний** (inactive) status.
+- The certificate gets the **Redeemed** status; the redemption date and the client are recorded automatically.
+- No register transaction is created on redemption: the payment was made when the certificate was sold.
+
+**Search errors:**
+
+| Message | Condition |
+|---|---|
+| Сертифікат за номером <number> не знайдено !!! | The number does not exist |
+| Сертифікат прострочено!!! | The certificate has the **Expired** status |
+| Сертифікат вже погашено!!! | The certificate has the **Redeemed** status |
 
 ---
 
 ## 3.10.5 Statuses
 
-| Status | Color (badge) | Condition |
+| Status | Colour | Condition |
 |---|---|---|
-| **Active** | green (success) | The certificate has not been used and has not expired. |
-| **Redeemed** | orange (warn) | The client has activated the certificate. |
-| **Expired** | red (danger) | The current date has passed the expiration date. |
+| **Active** ("Активний") | green | The certificate is neither redeemed nor expired. |
+| **Redeemed** ("Погашено") | orange | The certificate has been redeemed for a client. |
+| **Expired** ("Прострочено") | red | The current date is later than the expiration date. |
 
-> ℹ️ Expiration is calculated automatically by a nightly job that runs daily at 02:00 — the same time for all studios, regardless of their time zone.
-> ℹ️ Deleting (`Delete`) permanently removes the certificate from the system — there is no separate "Canceled" status.
+> ℹ️ The **Expired** status is set by a nightly job every day at 02:00 server time — the same for all studios, regardless of their time zones.
+> ℹ️ **Delete** removes the certificate from the system permanently; there is no separate "Cancelled" status.
 
 ---
 

@@ -4,93 +4,74 @@
 
 # 7.1 Installation and Login
 
-> The app is on the **App Store**, and on every other device it works as a **PWA** —
-> a page you add to the home screen. Whichever way you installed it, the login is
-> the same: through the **Telegram bot**.
-
-<!-- TODO: screenshot of the welcome / installation screen -->
+> The **Fitshandler** app is installed from the **App Store** (iPhone) or **Google Play** (Android). Login uses the phone number and a confirmation code delivered via Telegram or by SMS.
 
 ---
 
-## 7.1.1 Where to Get the App
+## 7.1.1 Installation
 
-The studio gives you the link — it shows a **QR code** or sends the address (default
-`https://app.fitshandler.com`). That page offers whatever suits the phone: the stores
-first, and below them the install without a store.
+The studio provides the app link as a QR code or the address `https://app.fitshandler.com`. Materials for handing out — the QR code, the link and the banner — are in [Settings → Mobile Application](/en/login/settings#mobile-application).
 
-### iPhone — App Store
+If the link is opened in a browser, the installation screen is shown:
 
-The app is published: **Fitshandler** on the App Store. This is the main route for
-iPhone — an ordinary store install, and the icon appears on its own.
+- **«Hi!»**, «I'm your **Fitshandler**», «To get started, you need to install me»;
+- the **«Install the app»** block with the **App Store** and **Google Play** badges, which open the app page in the store.
 
-> ℹ️ If you added the page to your home screen earlier (the PWA), the app reminds you
-> on every launch that an App Store version exists and offers to move. Nothing is lost:
-> the studio, the client and the bookings stay the same — they live on the server, not
-> in the app.
+On the studio's public page in a browser, the same badges are opened by the **«Install»** button in the header; the **«Back»** button returns to the studio page.
 
-### Android — by request for now
-
-The app is **not on Google Play yet**: it is in closed testing. Instead of the store the
-page shows a testing request form; send it and access will be opened for you. While you
-wait, the install without a store described below works and is fully featured.
-
-> ℹ️ As soon as the app is released on Google Play, that button becomes a store badge on
-> its own — nothing to do separately.
-
-### Without a store — installing the page (PWA)
-
-This route stays for everyone the stores are closed to: Android before the release, an
-old phone, an install ban in a work profile.
-
-The materials to hand out — the QR code and the link — are in
-[Settings → Mobile App](/en/login/settings#mobile-application).
-
-If the app is **not yet installed**, opening the link shows the installation screen:
-
-- Title **"Hi!"** ("Привіт!") and the text **"I'm your Fitshandler app. To get started, you need to install me"** ("Я твій додаток Fitshandler. Для початку роботи вам потрібно встановити мене").
-- If the browser supports automatic installation — the **"Install App"** ("Встановити додаток") button launches the system dialog.
-- If automatic installation is not available (typically iPhone/Safari or Telegram's built-in browser) — a step-by-step guide is shown.
-
-> ⚠️ **Important: open the site in a real browser** (Chrome or Safari), not inside Telegram. Installation will not work in Telegram's built-in browser.
-
-### Manual Installation
-
-- **Android / Chrome:** the **"Share"** icon (or three dots) → **"Add to Home screen"**.
-- **iPhone / Safari:** the **"Share"** icon at the bottom → **"Add to Home Screen"**.
-
-> ℹ️ The installation screen has a **"Show detailed instructions…"** ("Показати детальну інструкцію…") button with step-by-step screenshots for Chrome and Safari.
+> ⚠️ From 1 November 2026 the web version of the app added to the phone home screen (PWA) does not work on iPhone and Android: a window with a button to the App Store or Google Play is shown instead. The user's data (studios, profiles, bookings, plans) is stored on the server and is available in the store app after logging in with the same phone number.
 
 ---
 
-## 7.1.2 Login via Telegram
+## 7.1.2 First Launch
 
-After installation, the login screen opens:
+If the user is not logged in, the app opens the **«Choose a studio»** studio list (see [7.8](/en/mobile/guest#studio-list)). Browsing studios and schedules does not require logging in. Login is offered by the **«Sign in»** / **«Log in»** buttons — in the studio list («Already have an account? Sign in»), on Home and on the studio page.
 
-- **"Hi! I'm your Fitshandler app. To get started, you need to log in"** ("Привіт! Я твій додаток Fitshandler. Для початку роботи вам потрібно увійти").
-- The **"Log in via Telegram"** ("Вхід через Telegram") button opens the studio's Telegram bot.
-- In the bot, you need to share your phone number — the bot will send a **6-digit code**.
+---
 
-<!-- TODO: screenshot of the login screen with the code field -->
+## 7.1.3 Login
+
+Login uses only the phone number and a confirmation code. The user does not choose the code delivery channel: the system defines it. The client app has no password, no Google login and no Telegram bot login.
+
+Login is possible only in the context of a studio: the confirmation code is issued by the selected studio. If no studio is selected, the login screen shows **«To log in, pick a studio first.»** («Щоб увійти, спершу оберіть студію.») and the **«Browse studios»** button.
+
+### Phone Number
+
+1. The login screen shows **«Hi!»**, the name of the selected studio, the hint «Enter your phone number. The confirmation code will arrive in Telegram or by SMS.», a field in the format `+38 (0__) ___-__-__` and the **«Browse studios»** link.
+2. Once the full number is entered, the **«Send code»** button becomes active.
+3. **«Send code»** sends a 6-digit confirmation code:
+   - via **Telegram** — if the user already talks to the bot or the number can be found in Telegram;
+   - by **SMS** — in other cases.
+4. If the code is not sent, one of the following messages is shown:
+
+| Message | Condition |
+|---|---|
+| «Не вдалося надіслати код на цей номер. Зверніться до адміністратора студії.» (The code could not be sent to this number. Contact the studio administrator.) | The studio has no SMS messaging connected, and the code cannot be delivered via Telegram |
+| «Наразі неможливо надіслати код SMS-повідомленням. Спробуйте пізніше.» (The code cannot be sent by SMS right now. Try again later.) | The studio's monthly SMS limit is used up, or the request rate limit applies |
+| «Не вдалося надіслати код. Спробуйте ще раз.» (Could not send the code. Try again.) | Any other sending error |
+
+After a failed send, the **«Send code»** button is inactive for 5 seconds and shows «You can try again in N s» («Повторити спробу можна через N с») instead of its label.
 
 ### Entering the Code
 
-1. Return to the app — a **"Enter the code you received"** ("Введіть отриманий код") field appears.
-2. Enter the 6 digits from the bot and press **"Log In"** ("Вхід") (the button is only active once exactly 6 characters are entered).
-3. If the code did not arrive or has expired — press **"Request another code"** ("Запросити ще один код") (this reopens the bot).
+1. The **«Enter the code»** screen shows the channel the code was sent through: «Код надіслано вам у Telegram. Введіть його тут.» (The code was sent to you in Telegram. Enter it here.) or «Введіть код з SMS.» (Enter the code from the SMS.) If a repeated code request fails, the hint keeps the channel of the last code sent. After returning to the app (for example, from Telegram or Messages) and after the screen is restored, the hint is the same.
+2. The user enters the 6 digits and taps **«Log in»**. The button is active only after all 6 digits are entered. The code can be pasted from the message as a whole.
+3. The line «No code? **Request another code**» is available 60 seconds after the previous send; until then «You can request another code in N s» is shown. If a repeated request fails, the button is inactive for 5 seconds and shows «You can try again in N s».
+4. The **«Back»** button returns to the number entry.
 
-> ℹ️ You can log in with **a code from Telegram** or **a code by SMS**, if the studio has enabled SMS messaging. The SMS confirmation option appears only after a studio has been selected. There is no password or Google login in the client app. The code is valid for a limited time, so enter it right away.
+> ℹ️ The code is valid for 10 minutes and is checked together with the number it was sent to.
 
-> ℹ️ The start screen also has a **"Browse Studios"** ("Переглянути студії") button — it opens the list of studios without logging in. From there you can open a studio's page, view its schedule, and book a class without having an account.
+> ℹ️ If the app is closed or restarted while the code is awaited, within 20 minutes after the code was sent the login screen opens directly on the code entry with the same number.
 
-> The session is kept for a long time — you do not need to log in again every time you open the app.
+> ℹ️ The session is stored on the device: logging in again on every launch is not required.
 
 ---
 
-## 7.1.3 What's Next
+## 7.1.4 After Login
 
-- If you are already a client of a studio — after logging in, select the studio and role (see [Home](/en/mobile/home)).
-- If you are **not yet registered** with any studio — the app will offer you [registration](/en/mobile/registration).
-- On first login, the app will offer to **enable notifications** — we recommend accepting, so you receive reminders (you can change this later in [Notifications](/en/mobile/notifications)).
+- A user with profiles in studios selects a studio and a profile (see [7.2.3](/en/mobile/registration#_723-studio-and-profile-selection)).
+- A user without a client card in the selected studio sees Home in the **Guest** role and can submit a booking request (see [7.2](/en/mobile/registration)).
+- If notifications are off, the app offers to turn them on (see [7.3.6](/en/mobile/home#_736-offer-to-enable-notifications)).
 
 ---
 

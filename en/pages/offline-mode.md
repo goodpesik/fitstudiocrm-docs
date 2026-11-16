@@ -58,7 +58,7 @@ The offline till works with the data received from the server at the last connec
 | Coaches | name, colour, categories; phone and birthday are not sent |
 | Rooms | name, capacity |
 | Workouts | recurring workout templates in effect within the schedule window, and one-time workouts of the schedule window |
-| Clients | first name, last name, type, card number, vacations (freezes), personal account balance and time of the last personal account operation; phone, email and birthday are not sent |
+| Clients | first name, last name, type, card number, vacations (freezes), phone (`phone`), personal account balance and time of the last personal account operation; email and birthday are not sent |
 | Client plans | active, not yet activated and frozen plans, including plans shared across a studio network, with sessions left, sessions at the start of the plan (`initialWorkouts`) and validity; ended plans are not sent |
 | Debts | unpaid debts with total amount (`totalAmount`), amount left to pay (`remainingAmount`), contents and clients; the amount left to pay equals the one on the client's debt screen |
 | Certificates | active certificates within their validity only: number, description, price, plans of the certificate, validity, client, status |
@@ -66,10 +66,38 @@ The offline till works with the data received from the server at the last connec
 | Shifts | closed shifts from the start of the day 3 days back in the studio time zone; the current online shift is not sent |
 | Schedule | workouts from 3 days before today to 7 days after it, with booked clients and the number of taken seats; recurring workouts on dates with no workout created yet, from today on, with their regular clients |
 | Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on; the state of the codes is in the `checkInCodesStatus` field |
-| Settings | studio name and time zone, shift and booking parameters, self check-in parameters, printers; fiscal and acquiring cards — id, name, type and active flag only |
+| Settings | studio name and time zone, shift and booking parameters, self check-in parameters, printers, studio receipt header (`receiptHeader`); fiscal cards — id, name, type, active flag and receipt header (`receiptHeader`); acquiring cards — id, name, type and active flag only |
 
 - Keys, tokens, cashier PIN codes, licence keys and the self check-in signing secret are not sent to the till computer.
 - A self check-in code from the till's data is the code the server accepts in that hour. The server accepts the previous hour's code for 10 more minutes after the hour changes.
+
+### Client phone and search by phone
+
+| Field | Type | Presence | Format |
+|---|---|---|---|
+| `clients[].phone` | string \| null | always | `0XXXXXXXXX` (0 and 9 digits) — the form the server stores and compares with in the online search by phone |
+
+- `+380…` and `380…` numbers are given as `0…`; spaces, dashes and brackets are removed.
+- A client without a usable phone number: `phone` is `null`.
+- The offline client search by phone must bring the entered number to the same form before comparing; the search result matches the online client search by the same number.
+
+### Receipt header
+
+| Field | Type | Value |
+|---|---|---|
+| `catalog.settings.receiptHeader` | string \| null | the [studio receipt header](/en/login/settings#receipt-header) without leading and trailing spaces; `null` when no text is set |
+| `catalog.settings.fiscal[].receiptHeader` | string \| null | the effective receipt header of the card: the [card's](/en/login/settings#connection) text without leading and trailing spaces when set, otherwise the studio text without leading and trailing spaces; `null` when neither is set |
+
+- An empty value or a value of spaces only is the same as no value.
+- No length limit.
+
+Printing rules for the offline till:
+
+- A receipt with a fiscal card must print that card's `receiptHeader` from `catalog.settings.fiscal[]`.
+- A receipt without a fiscal card must print `catalog.settings.receiptHeader`.
+- The text is printed at the top of the receipt; line breaks must be kept.
+- A `null` value — no receipt header is printed.
+- The receipt header is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
 
 ### Full package and updates
 

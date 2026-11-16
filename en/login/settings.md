@@ -62,6 +62,16 @@ A text field on the **Studio Information** tab. Used in the Telegram bot and on 
 
 > A text field that supports multi-line text. Shown to clients in the mobile app (**Account → Information → Rules** tab).
 
+### Receipt Header
+
+> A multi-line text field ("Верхня частина чека") below the **Studio Rules** field. The text is printed at the top of receipts issued by the [offline till](/en/pages/offline-mode#receipt-header): on receipts without a fiscal card and on receipts of a fiscal card that has no [receipt header](#connection) of its own.
+
+- No length limit; line breaks are kept.
+- An empty value or a value of spaces only means the text is not set.
+- Only the **Super Admin** role can change the field. Other roles see it read-only; they save the other general settings as usual.
+- The server refuses a change of the field from other roles (`403`) and a value that is not text (`400`).
+- The text is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
+
 ### Studio Time Zone
 
 > A dropdown list of IANA time zones (defaults to `Europe/Kyiv`). Affects ALL dates and reports.
@@ -149,8 +159,10 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 - **Token** — for VchasnoKasa: the token from your personal account.
 - **PIN Code**, **Client Name**, **Client Version**, **License Key** — for Checkbox; all four fields are required.
 - The **Active** ("Активна") toggle enables the card. It only takes effect once the required fields are filled in, and only one card of each type can be active at a time.
+- **Receipt Header** ("Верхня частина чека") — multi-line text the [offline till](/en/pages/offline-mode#receipt-header) prints at the top of this card's receipts. No length limit; an empty value or a value of spaces only means the text is not set, and the [studio receipt header](#receipt-header) is printed instead. The text is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
+- Only the **Super Admin** role changes the card fields.
 
-> ⚠️ The "Receipt Header" and "Receipt Footer" fields no longer exist — they were removed together with the move to integration cards.
+> ⚠️ There is no "Receipt Footer" field.
 
 
 ### Monobank acquiring

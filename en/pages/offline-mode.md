@@ -28,9 +28,15 @@ Offline mode lets a till computer with Device Handler installed work without int
 
 ### Device list and revoking
 
-- A user with the **Super Admin** or **Admin** role sees the list of valid device accesses: device name, user, date enabled, date of last contact, expiry date.
-- The **Revoke** button stops the device access at once. The next request of the computer with this access is refused; offline mode on it must be enabled again.
+- The device list is placed in **Settings** ("Налаштування") on the **Devices** ("Пристрої") tab. The tab is visible only to users with the **Super Admin** or **Admin** role; a user with the **Manager** role does not see it.
+- The list contains valid device accesses in the columns: **Device name** ("Назва пристрою"), **User** ("Користувач"), **Last contact** ("Останній звʼязок"), **Enabled on** ("Дата увімкнення": date and time offline mode was enabled on the computer), **Access valid until** ("Доступ діє до": date and time the access expires).
+- Dates and times in the **Last contact**, **Enabled on** and **Access valid until** columns are shown in the studio time zone, regardless of the time zone of the computer the list is opened on.
+- If the computer has not contacted the server since offline mode was enabled, the **Last contact** ("Останній звʼязок") column shows "Ще не виходив на звʼязок" (has not contacted the server yet).
+- If there are no valid accesses, the list shows "Немає пристроїв з увімкненим офлайн-режимом" (no devices with offline mode enabled).
+- The **Revoke** ("Відкликати") button opens a confirmation dialog. After confirmation the device access stops at once, the message "Доступ пристрою відкликано" (device access revoked) is shown and the list is refreshed. If the server did not revoke the access, the revocation message is not shown and the list is refreshed. The next request of the computer with this access is refused; offline mode on it must be enabled again.
+- The **Cancel** ("Відміна") button in the confirmation dialog closes it without changes.
 - A revoked access and an expired access are not shown in the list.
+- If the list cannot be loaded, the list is empty.
 
 | Request with a device access | Server response |
 |---|---|
@@ -100,7 +106,7 @@ The offline till works with the data received from the server at the last connec
 - An action the till received no server response to (connection drop, server unavailable) is sent again with the same id — online or during the sync of the offline queue. The server applies an operation at most once: sending it again returns the stored result; no second sale, payment or booking is created.
 - The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
-- A sale, refund, debt payment or booking stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt, a write to the class roster) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an operation whose delivery did not finish within 2 minutes.
+- A sale, refund or debt payment stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an operation whose delivery did not finish within 2 minutes.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
@@ -116,6 +122,21 @@ These till actions accept an operation id:
 | Creating a client | `client_create` |
 | Certificate sale | `certificate_sale` |
 | Certificate redemption | `certificate_redeem` |
+
+### Class booking with an operation id
+
+A class booking sent with the `X-Operation-Id` header and its offline operation journal row are stored in one database transaction: both are stored, or neither is.
+
+- If the journal row cannot be stored, the client is not booked and the "Вас записано на тренування!" notification is not sent.
+- A repeated delivery of the same operation (same id and same content) returns the stored result; the client is not booked again.
+- If a delivery stops before the booking is stored, the next delivery with the same id performs the booking again; such an operation does not get the `conflict` result ("Потребує уваги").
+- The class change log entry ("+ client name") and the client history entry are written after the booking is stored; a failure of these entries does not undo the booking.
+- The booking notification to the client is sent only after the booking is stored.
+- Every database write that belongs to the booking is stored in the same transaction: the repeat carried onto the other dates of the workout and, for a no-show on a personal workout, the client debt and the coach salary entry. If the journal row cannot be stored, none of these writes is stored.
+- A failure of the no-show debt charge does not undo the booking; in that case there is no debt and no coach salary entry.
+- A failure to carry the repeat onto one of the other dates does not undo the booking: only the carry onto that date is not stored; the carry onto the remaining dates is stored.
+- The "Звільнилося місце на тренуванні!" notice to the administrator and the class change log entries for the carried dates are written after the booking is stored.
+- If the class is deleted before the booking is stored, the operation is not stored in the journal: the next delivery with the same id is performed again.
 
 ### Technical parameters
 

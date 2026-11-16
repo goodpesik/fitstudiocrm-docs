@@ -20,6 +20,7 @@
 - [8. Reminders](#reminders) ("Нагадування") — custom reminders for studio staff.
 - [9. Categories](#categories) ("Категорії") — categories for calculating coach salaries (moved from Reports).
 - [10. Studio Information](#studio-information) ("Інформація про студію") — studio name, logo, description, photos, and contact details. This tab appears when the mobile app for clients is enabled.
+- [11. Devices](#devices) ("Пристрої") — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Super Admin** and **Admin** roles.
 
 ---
 
@@ -290,6 +291,12 @@ Changes are saved with the **Save** button.
 - **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). Reasoning: with Per Workout, the salary for the category depends on the client's specific plan; without a plan it cannot be calculated unambiguously.
 
 > ℹ️ If **Per Workout** is chosen without a plan — the **Save** button will be inactive. First create or choose the corresponding plan.
+
+## Devices
+
+> The tab shows the studio computers with offline mode enabled, the date each one last contacted the server, and the **Revoke** ("Відкликати") button. The tab is visible only to the **Super Admin** and **Admin** roles.
+
+Full description: [Offline mode](/en/pages/offline-mode#device-list-and-revoking).
 
 ---
 

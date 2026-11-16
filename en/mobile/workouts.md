@@ -53,6 +53,7 @@ Under the schedule — the note: «Important!!! If you have recurring workouts, 
 2. The app checks that booking is still available. If not — the window «Booking for this workout is no longer available» with the **«Got it»** button; the schedule is refreshed.
 3. In the **«Workout booking»** window check the client, workout, coach, room, date and time → **«Continue»** (or **«Cancel»**).
 4. After a successful booking, the **«You are booked for the workout»** window is shown with the class details and the **«Done»** button. The studio administrators receive a notification about the booking.
+5. If the booking got the **Waiting list** status, the **«Вас додано до листа очікування»** (You have been added to the waiting list) window is shown instead of **«You are booked for the workout»**, with the text «Вільні місця на цьому занятті першочергово надаються клієнтам з листа очікування. Вас додано до листа очікування.» (Free seats in this class are given first to clients on the waiting list. You have been added to the waiting list.) and the class details.
 
 A booking made in the app by a client of the studio does not require administrator confirmation: the seat is taken immediately. Confirmation is required for bookings from the [public studio page](/en/mobile/guest) (if turned on) and for [requests from users without a client card](/en/mobile/registration).
 
@@ -82,10 +83,11 @@ If the server refuses the booking (no seats, the client is already booked, the w
 
 ## 7.5.5 Wait List
 
-- A client gets on the wait list when an administrator books them for a workout without free seats (see [Schedule](/en/menu/schedule)). There is no self-booking onto the wait list from the app: a full workout shows **«No seats left»**.
-- A client on the wait list takes a seat in the workout's seat count.
+- A client gets on the wait list when an administrator books them for a workout without free seats (see [Schedule](/en/menu/schedule)). A full workout shows **«No seats left»**.
+- While the wait list of a workout is not empty, a new booking by the client for that workout gets the **Waiting list** status and joins the end of the queue, even if the workout has a free seat.
+- A client on the wait list does not take a seat in the workout's seat count.
 - **Leaving the wait list:** card menu → **«Leave the wait list»** → the **«Leave the wait list»** window: «Leave the wait list for this class? Your place in the queue will be released.» → **«Continue»**. Result — «You have left the wait list»; error — «Could not leave the wait list. Try again or contact the studio.» The client's history gets an entry with the **Left the waiting list** status.
-- A client on the wait list is not moved into a booking automatically. When a seat frees up, the administrator changes the client's status to **Planned** (Заплановано); the client receives a notification in the app.
+- When a seat frees up on a workout that has not started, the first client in the queue automatically gets the **Planned** (Заплановано) status and a message about the booking — as a push notification, or through Telegram or SMS if push notifications do not reach the client (see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
 
 ---
 

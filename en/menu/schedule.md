@@ -80,10 +80,11 @@ The card colour is the coach's colour, and for a workout without a coach — the
 |---|---|
 | **Запланували відвідати** (planned to attend) | Clients with the **Planned** status. |
 | **Резерв місць** (reserved spots) | Clients with a booking repeat set who will be booked automatically. Shown for future recurring workouts that have no bookings created for the date yet. |
-| **Місць лишилося** (spots left) | The workout capacity minus clients with the **Planned** and **Visited** statuses; for a future recurring workout — also minus the reserved spots. Shown when a capacity is set and the workout can be changed. |
+| **Місць лишилося** (spots left) | The workout capacity minus clients with the **Planned** and **Visited** statuses; for a future recurring workout — also minus the reserved spots. Clients with the **Waiting list** status do not take up spots. Shown when a capacity is set and the workout can be changed. |
 | **Відвідано** (visited) | Clients checked in to the workout (**Visited** status). |
 | **Відмінено** (cancelled) | Clients with the **Cancelled** status. |
 | **Не відвідано** (not visited) | Clients with the **Not visited** status. |
+| **Лист очікування** (waiting list) | Clients with the **Waiting list** status. When a spot frees up, the first client in the queue is moved to the **Planned** status automatically, see [Waiting list](#waiting-list). |
 | **Зараховано тренеру** (credited to the coach) | How many clients / workouts will be credited to the coach for payroll, taking the [minimum and maximum settings](/en/login/settings#features) into account. |
 
 ### Cancelling a workout
@@ -206,7 +207,34 @@ The server also refuses a prepayment for a training that has already started.
 
 For a past workout without the **Edit** toggle on, and for a cancelled workout, status actions are not available.
 
-> ℹ️ A client on the waiting list is not moved to a booking automatically: when a spot frees up, the administrator changes their status to **Planned**.
+> ℹ️ When a spot frees up, a client on the waiting list is moved to the **Planned** status automatically, see [Waiting list](#waiting-list).
+
+### Waiting list
+
+- A client with the **Waiting list** status does not take up a spot. The number of free spots is calculated the same way on the server, in the client app, on the public schedule and in the admin window: `workoutCapacity − (Planned + Attended)`.
+- The queue is served in the order clients joined the waiting list: the client who joined earlier is moved first. A client who returns to the waiting list joins the end of the queue.
+- When a spot frees up on a workout that has not started and is not cancelled (a booking is cancelled, a client is removed from the workout, a status changes from **Planned** or **Attended** to another one, the capacity is increased), the system automatically moves the first client on the waiting list to the **Planned** status. This repeats while free spots and waiting clients remain.
+- If the move did not happen right after the spot freed up, the spot is given to the first client on the waiting list within 5 minutes: every 5 minutes the system checks the workouts that have not started and start no later than 30 days ahead, and performs the move on every workout with a free spot and a non-empty waiting list.
+- If the move of a particular client fails, that client stays on the waiting list and the free spot is given to the next client in the queue.
+- The move applies to this workout only: the client's bookings on other dates, including those made by a repeat setting, do not change. The same plan and change-log rules apply as for a manual status change by an administrator. The change log names «система» (system) as the author.
+- No automatic move is performed for a workout without a set capacity, or for a workout that has started, has ended or is cancelled.
+- Each client is moved from the waiting list at most once. The automatic move never makes the number of clients with the **Planned** and **Attended** statuses exceed the workout capacity, including when several spots free up at the same time.
+- While the waiting list of a workout is not empty, a new booking for that workout (from the app, from the web page, a restored cancelled booking, a client added by an administrator with the **Planned** status) gets the **Waiting list** status and joins the end of the queue, even if the workout has a free spot. The free spot is given to the first client on the waiting list. A manual status change by an administrator for a client already on the workout is not subject to this rule.
+- After the move the client receives the push notification «Звільнилося місце: Вас переведено з листа очікування та записано на тренування.» (in English: "A place has become available: you have been moved from the waiting list and booked for the workout."). A client whom push notifications do not reach receives «<studio name> - Вас записано на тренування <date>.» (in English: "<studio name> - You are booked for <date>.") through the cascade: the studio Telegram bot → the Fitshandler Telegram account → SMS. An SMS is sent only if SMS sending is enabled for the studio and the limit is not used up.
+- The studio receives the notification «Клієнта переведено з листа очікування на тренування» (client moved from the waiting list to the workout) with the client and workout details.
+- A client who already has the **Planned** or **Attended** status on a workout keeps this status when booked for the same workout again (added again by an administrator, a request approved again) and is not moved to the waiting list.
+- A client whose booking got the **Waiting list** status instead of **Planned** receives the following message:
+
+| Where the booking comes from | Message to the client |
+|---|---|
+| The client app | A window with the heading «Вас додано до листа очікування» (in English: "You have been added to the waiting list"), the text «Вільні місця на цьому занятті першочергово надаються клієнтам з листа очікування. Вас додано до листа очікування.» and the workout details. The «Вас записано на тренування» message is not shown. |
+| The app, a client booked by an administrator | The window «Клієнта додано до листа очікування. Після звільнення місця його буде записано автоматично.» (in English: "The client has been added to the waiting list. Once a place becomes available, they will be booked automatically.") |
+| The studio public page | «Вас додано до листа очікування. Після звільнення місця Вас буде записано автоматично та повідомлено.» (in English: "You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified.") |
+| Approval of a request from the public page | Instead of «<studio name> - Вас записано на тренування <date>.» the client receives «<studio name> - Вашу заявку прийнято. Вас додано до листа очікування на тренування <date>. Після звільнення місця Вас буде записано автоматично та повідомлено.» (in English: "<studio name> - Your request has been accepted. You have been added to the waiting list for the workout on <date>. Once a place becomes available, you will be booked automatically and notified.") through the cascade: the studio Telegram bot → the Fitshandler Telegram account → SMS. |
+| An administrator changes the status to **Waiting list** | The push notification «Вас додано до листа очікування на тренування. Після звільнення місця Вас буде записано автоматично та повідомлено.» (in English: "You have been added to the waiting list for the workout. Once a place becomes available, you will be booked automatically and notified."). A client whom push notifications do not reach receives «<studio name> - Вас додано до листа очікування на тренування <date>. Після звільнення місця Вас буде записано автоматично та повідомлено.» through the same cascade. If the client returned to the waiting list herself in the app, no message is sent. |
+
+- An SMS in the cascade is sent only if SMS sending is enabled for the studio and the limit is not used up.
+- A failure to send a message does not cancel the move.
 
 ### Reserved spots
 

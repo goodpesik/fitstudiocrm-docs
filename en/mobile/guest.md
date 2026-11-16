@@ -62,6 +62,7 @@ Result:
 |---|---|
 | The booking needs the studio's confirmation | «Your request has to be approved by an administrator. We will let you know as soon as it is.» |
 | Booked | «You're booked!» |
+| The booking got the **Waiting list** status | «Вас додано до листа очікування. Після звільнення місця Вас буде записано автоматично та повідомлено.» (You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified.) |
 | The person is already booked for this class | **«You're already booked for this class»** — «See you there. Manage your booking in the app.», the **«Got it»** button |
 | No seats | «This class has no seats left» |
 | Other error | «Couldn't book. Please try again.» |
@@ -74,8 +75,14 @@ After booking in a browser, the **«Easier with the app»** block with the App S
 
 ## What the Studio Sees
 
-- If the **«Підтверджувати записи з веб сторінки»** (Confirm bookings from the web page) switch is on (on by default), the booking reaches the administrators as a notification with the **Approve** / **Reject** buttons — in the admin panel and in the app (see [7.3.5](/en/mobile/home#_735-administrator-panel)). The client card is created immediately, and the seat in the class is not taken until confirmation. After confirmation the person receives a message (see [Messages to clients](/en/pages/processing#_614-messages-to-clients)).
-- If the switch is off, the booking appears immediately in the [schedule](/en/menu/schedule) and in the [client card](/en/menu/clients); the administrators receive the notification «Запис на тренування з веб сторінки: {workout}» (Booking from the web page: {workout}).
+- The client card is created right after the number is confirmed with a code, before the request is decided.
+- If the **«Підтверджувати записи з веб сторінки»** (Confirm bookings from the web page) switch is on (on by default), the booking is submitted as a request and reaches the administrators as a notification with the **Approve** / **Reject** buttons — in the admin panel and in the app (see [7.3.5](/en/mobile/home#_735-administrator-panel)). Until the decision the person is not booked on the class and no seat in the class is taken.
+  - One administrator decides on a request; a repeated decision on the same request is not executed.
+  - Approval books the client on the class (status **Planned**, or **Waiting list** if the class waiting list is not empty) and sends them a message through the cascade: studio Telegram bot → Fitshandler Telegram account → SMS (see [Messages to clients](/en/pages/processing#_614-messages-to-clients)). For a booking with the **Waiting list** status the message is «<studio name> - Вашу заявку прийнято. Вас додано до листа очікування на тренування <date>. Після звільнення місця Вас буде записано автоматично та повідомлено.» (Your request has been accepted. You have been added to the waiting list…; see [Schedule — Waiting list](/en/menu/schedule#waiting-list)).
+  - Rejection books nobody and sends no message.
+  - A request for a class that has already passed can only be rejected.
+- If the switch is off, the booking is created right after the code is confirmed and appears in the [schedule](/en/menu/schedule) and in the [client card](/en/menu/clients); the administrators receive the notification «Запис на тренування з веб сторінки: {workout}» (Booking from the web page: {workout}).
+- While the waiting list of the class is not empty, a guest booking gets the **Waiting list** status. A client with the **Waiting list** status does not take up a seat.
 
 The language of the page the booking was made from is saved in the client card and sets the language of SMS about a class cancellation or move.
 

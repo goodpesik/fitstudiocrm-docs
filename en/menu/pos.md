@@ -114,7 +114,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 **The button is shown when all conditions are met:**
 
-- the transaction is a sale (type **Sale** or no type), a debt payment included;
+- the transaction is a sale (type **Sale** or no type), an online debt payment included; for a refund the button is not shown, and a refund receipt is not created manually;
 - the payment is not from the personal account;
 - the transaction was created online, not by the sync of an operation made on a computer without internet;
 - the transaction has no fiscal receipt;
@@ -124,6 +124,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 - After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through the first active fiscal integration, as during a sale. The transaction id is passed to the provider as the receipt id.
 - Before the receipt is created, the transaction is locked and the conditions are checked again. At most one receipt is created for a transaction: a repeated click or a simultaneous action of another user is refused with `RECEIPT_ALREADY_ISSUED`.
+- The fiscal receipt of an online debt payment, created automatically after the payment is saved, is created the same way: with the transaction lock and the repeated check of the conditions. When the receipt was already created with the **Fiscalize** button, a second receipt is not created, and the other way round.
 - Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
 - Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
 

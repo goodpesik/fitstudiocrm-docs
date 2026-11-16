@@ -134,7 +134,8 @@ Printing rules for the offline till:
 - An action the till received no server response to (connection drop, server unavailable) is sent again with the same id — online or during the sync of the offline queue. The server applies an operation at most once: sending it again returns the stored result; no second sale, payment or booking is created.
 - The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
-- An online sale, refund or debt payment stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
+- An online sale or refund stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
+- An online debt payment saves all its records together with the journal record in one transaction and creates the fiscal receipt after it is saved. Stopped before the save, it leaves no changes and is run by the next delivery with the same id.
 - A sale and a debt payment applied by the offline queue sync save all their records together with the journal record in one transaction. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
@@ -297,7 +298,8 @@ The computer's shift is kept for the shifts report apart from the server's shift
 ### Debt payment
 
 - While a payment is applied, the debt and the debt's class are locked until the transaction ends. An online payment of the same debt locks the same records: two payments of one debt run one after the other.
-- After the lock, an online payment checks the debt and its remaining sum again, before the fiscal receipt and before the first write. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
+- After the lock, an online payment checks the debt and its remaining sum again, before the first write. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
+- The fiscal receipt of an online debt payment is created after the payment is saved. When the fiscal provider returns an error, the payment stays saved and its transaction is not fiscalized, as a sale whose receipt could not be created.
 - An offline payment is applied only when the debt is not paid off and the payment does not exceed the remaining debt.
 - An offline payment not applied gets the `conflict` result; an admin's decision is needed. The debt is not paid a second time.
 - A payment equal to the remaining debt pays the debt off.

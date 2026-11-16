@@ -1,154 +1,183 @@
-# Owner Cabinet (subscription management)
+# Personal cabinet (subscription management)
 
-Besides the working admin panel, you have an **owner cabinet** at **clients.fitshandler.com**. It is a separate owner area where you manage your **tenants** (studios), **subscription and payments**, **plans**, **groups (studio networks)** and contact **support**.
+The **personal cabinet** is at **clients.fitshandler.com**. It is the owner's cabinet for managing **studios**, **subscription and payment**, **plans**, **groups (studio networks)** and contacting **support**.
 
-One cabinet account can hold **several tenants** — for example, a few studios or separate projects. Each tenant is its own working database with its own admin panel.
+One cabinet account can have **several studios**. Each studio is a separate working database with its own admin panel.
 
 ---
 
-## 1. Signing in
+## 1. Signing in to the cabinet
 
-Sign in with a **Google account**. Press "Sign in with Google" and pick your account.
+The **Вхід до кабінету** (Sign in to the cabinet) window, button **Увійти через Google** (Sign in with Google). The cabinet is tied to the Google email: all of the owner's studios are available under this sign-in.
 
-> The cabinet is tied to your Google email: all your tenants live under that login.
+If the account is disabled, the message «Обліковий запис вимкнено, тому доступ до кабінету закрито. Увімкнути його знову може адміністратор.» (The account is disabled, so access to the cabinet is closed. An administrator can enable it again.) is shown.
 
 ---
 
 ## 2. My tenants
 
-The main tab is **"My tenants"**. It lists all your tenants with their plan, due date and status.
+The main tab of the cabinet is **Мої тенанти** (My tenants): the list of studios with their plan, validity date and status.
 
-If you have no tenants yet, the cabinet shows where to start instead of an empty list: press **"New tenant"**, and if you have questions — **"Schedule a consultation"**.
+If there are no studios, «Для початку роботи натисніть «Новий тенант»» (To get started, click «Новий тенант») and the **Запланувати консультацію** (Schedule a consultation) button are shown.
 
 **Table columns:**
 
-- **Name** — the tenant name (click it to open the card — see 3).
-- **Product** — the product (fitstudiocrm).
-- **Plan** — the current plan and its price.
-- **Due date** — the date the subscription is paid up to.
-- **Status** — "Active" while the tenant is running.
-- **Actions** — operations available for the tenant.
+- **Назва** (Name) — studio name; clicking it opens the studio card (see 3).
+- **Продукт** (Product) — product (fitstudiocrm).
+- **План** (Plan) — current plan and its price.
+- **Діє до** (Valid until) — the date until which the subscription is paid.
+- **Статус** (Status) — studio state, for example «Активний» (Active), «Очікує першої оплати» (Awaiting first payment), «Пробний · залишилось N дн.» (Trial · N days left), «буде видалено після закінчення плану» (will be deleted after the plan ends).
+- **Дії** (Actions) — operations available for the studio.
 
-**Tenant actions:**
+**Studio actions:**
 
-- **Pay** — appears when there is an unpaid balance (the "Not paid" badge); opens the payment dialog (see 4).
-- **Subscription details** — opens the tenant card (see 3).
-- **SMS** — view or top up the tenant's SMS quota.
-- **Transfer** — hand the tenant over to another owner.
-- **Delete** — delete the tenant.
+- **Оплатити** (Pay) — shown when the studio needs payment (mark «Не оплачено», Not paid); opens the payment window (see 4).
+- **Деталі підписки** (Subscription details) — opens the subscription window (see 3).
+- **Докупити SMS** (Buy more SMS) — opens the **Керування SMS** (SMS management) window (see 4.1).
+- **Запросити зміну** (Request a change) — a plan change request; sent to the administrator for approval.
+- **Реактивувати** (Reactivate) — for a frozen or deactivated studio; requires choosing a plan.
+- **Передати** (Transfer) — a request to transfer the studio to another owner by email (**Email нового власника**, New owner's email); the administrator confirms the transfer.
+- **Видалити** (Delete) — for a studio with a paid plan, deletion is scheduled: the studio works until the end of the paid period, money is not refunded, cancellation — with the **Відмінити видалення** (Cancel deletion) button. A studio without an active plan is deleted permanently after confirmation; the database is sent to the owner by email.
 
 **Buttons at the top:**
 
-- **Create group** — join several studios into a network (see 7).
-- **Schedule a consultation** — book a call with our manager.
-- **New tenant** — create a tenant with the wizard (see 5).
-- **Delete account** — delete the whole cabinet account.
+- **Створити групу** (Create group) — combine several studios into a network (see 7).
+- **Запланувати консультацію** — book a consultation with a manager.
+- **Новий тенант** (New tenant) — create a studio with the wizard (see 5).
+- **Видалити акаунт** (Delete account) — delete the account with all studios. Available only if no studio has an active plan; the account is deactivated for 3 months.
+
+While a studio is awaiting administrator approval, a new studio cannot be created and the plan of existing studios cannot be changed.
 
 ---
 
-## 3. Tenant card
+## 3. Subscription details
 
-The card shows everything about the tenant: product, status, the admin panel address (**URL**), technical identifiers (**App ID**, **DB name**), the current plan, the due date, the setup choice and the creation date.
+The **Деталі підписки** window has tabs:
+
+- **Деталі** (Details) — **План**, **Оплачено до** (Paid until), **Статус**, switch **Автопродовження (регулярний платіж)** (Auto-renewal (recurring payment)). If no card is saved (payment by IBAN transfer), there is no automatic charge; the card is saved at the next card payment while the switch is on.
+- **Транзакції** (Transactions) — the studio's payments with the statuses **Очікує** (Pending), **Успішно** (Success), **Помилка** (Error).
+
+The **Скасувати підписку** (Cancel subscription) button, after confirmation («Підтверджую скасування», I confirm the cancellation), turns off auto-renewal and deletes the saved card; the studio works until the end of the paid period, after which the subscription stops. Data is not deleted; the subscription is restored with the **Відновити підписку** (Resume subscription) button or by payment.
+
+The studio card (by name in the table) contains: **Назва**, **Продукт**, **Статус**, **Домен / SSL** (Domain / SSL), **Google-вхід** (Google sign-in), **План**, **Діє до**, **Налаштування** (Setup), **Створено** (Created).
 
 ---
 
-## 4. Paying for a plan
+## 4. Paying for the plan
 
-The payment dialog opens with the **"Pay"** button. It shows the plan, its monthly price in UAH, and the **number of SMS reminders** per month (a base amount is included in the plan; you can raise it — the extra is charged at the plan's rate).
+The **Оплата плану** (Plan payment) window opens with the **Оплатити** button. It shows the plan and the price per month (for an annual tariff — per year, with the saving compared with monthly payment; an annual tariff lasts 12 months) and the number of SMS included in the plan.
 
-The **"Recurring payment (auto-renew)"** switch turns on monthly automatic charging so the subscription never lapses.
+Payment methods:
+
+- **Plata by mono** — card payment at once, the receipt is sent by email;
+- **Переказ на IBAN** (IBAN transfer) — the **Отримати рахунок** (Get invoice) button creates an invoice; the receipt is issued after the money arrives.
+
+The **Регулярний платіж (автопродовження)** (Recurring payment (auto-renewal)) switch turns on automatic charging every period. The **Оплатити — <amount> ₴** button goes to payment.
+
+### 4.1 SMS management
+
+The **Керування SMS** window shows **Норма SMS / місяць** (SMS allowance / month), **Доступно цей період** (Available this period) and **На рахунку** (On account). The **Докупити SMS** button buys extra SMS: they go to the venue's account, do not expire at the end of the period, are kept when the plan changes and are used after the monthly allowance. Buying is available after online payment (acquiring) is connected; otherwise extra SMS are added by the manager.
 
 ---
 
-## 5. Creating a tenant
+## 5. Creating a new studio
 
-**"New tenant"** opens a **four-step** wizard.
+The **Новий тенант** button opens the **Новий тенант** wizard; «Крок N з M» (Step N of M) is shown above the steps. Steps: plan, project name, questionnaire (only if there are unanswered questions for the venue's line of business), setup, confirmation.
 
-### 5.1 Step 1 — pick a plan
+### 5.1 Plan
 
-Pick the plan for the new tenant. Each plan lists its limits: users, staff, memberships, services, trainers, gyms, support tickets, SMS reminders.
+Choosing the plan. Each plan shows the price and limits. For a trial plan the limits are those of the permanent plan chosen after the trial period.
 
-### 5.2 Step 2 — project name
+### 5.2 Project name
 
-Enter the project (tenant) name. Availability is checked as you type.
+The project (studio) name; availability is checked at once («✓ Доступно», Available / «Недоступно: <reason>», Unavailable).
 
-> Name: **4–24 characters**, Latin letters, digits and hyphens only. **It cannot be changed later** — it is a technical identifier.
+> Name: **4–24 characters**, Latin letters, digits and hyphens only. **The name cannot be changed later.**
 
-### 5.3 Step 3 — setup
+If the account contact details are not filled in yet, this step asks for **Імʼя** (Name), **Телефон** (Phone), **Назва закладу** (Venue name), **Місто** (City) and **Країна** (Country); you cannot proceed without them. The name becomes the administrator's name in the app. Contact details are changed later in the **Акаунт** (Account) → **Контактні дані** (Contact details) window.
 
-Choose how you will set the tenant up:
+### 5.3 Questionnaire
 
-- **I will do it myself** — you follow the documentation (see [First setup](/en/pages/setup)).
-- **I need help** — a manager will contact you.
+The step is shown if there are unanswered questionnaire questions for the venue's line of business. The questionnaire is filled in once per line of business.
 
-### 5.4 Step 4 — confirmation
+### 5.4 Setup
 
-The last step shows the summary (plan, name, setup choice), lets you set the **number of SMS reminders** and shows the **amount of the first payment**.
+How the studio will be set up:
 
-Two optional data-transfer options live here as well:
+- **Налаштую самостійно** (I will set it up myself) — setup by the documentation (see [Initial Setup](/en/pages/setup)).
+- **Потрібна допомога** (Help needed) — a manager contacts the owner.
 
-- **Copy from another tenant** — bring reference data and settings over from a studio you already have. Users, staff and working data are **not** copied.
-- **Restore from a backup** — if you were our client before, upload the encrypted dump (`.enc`) and we restore your database while creating the tenant.
+### 5.5 Confirmation
 
-Press **"Send request"** to create the tenant.
+Summary (**План**, **Назва**, **Налаштування**), **Період оплати** (Billing period, if the plan has an annual tariff), **SMS-нагадувань на місяць** (SMS reminders per month) and **До сплати при першій оплаті** (Due at the first payment). For a trial plan — the optional **План після пробного періоду** (Plan after the trial period); if it is not chosen, the administrator assigns the plan when approving the request.
+
+Optional data transfer options:
+
+- **Скопіювати з іншого тенанта** (Copy from another tenant) — transfers reference lists and settings from an existing studio. Users, staff and working data **are not transferred**.
+- **Відновлення з резервної копії** (Restore from a backup) — upload a saved encrypted dump (`.enc`); the database is restored when the studio is created.
+
+The **Умови використання** (Terms of use) must be accepted («Я приймаю Умови використання», I accept the Terms of use). The **Надіслати заявку** (Submit request) button submits the request; the result is «Заявку прийнято» (Request accepted). If the studio needs approval, it appears after the administrator approves it.
 
 ---
 
 ## 6. Plans
 
-The **"Plans"** tab lists the available plans. Your current plan carries the **"Current"** badge.
+The **Плани** (Plans) tab (title «Плани, що ростуть разом з вами», Plans that grow with you) shows the available tariffs. The current plan is marked **Поточний** (Current).
 
 ### 6.1 Regular plans
 
-Plans for a single studio. Each shows the price in UAH (with an approximate USD equivalent) and the limits: users, staff, memberships, services, trainers, gyms, support tickets, SMS reminders.
+Plans for a single studio. Each shows the price in UAH (with an approximate USD equivalent) and the limits. The **Вибрати** (Select) button offers **Створити новий тенант** (Create a new tenant) with this plan or **Замінити план існуючому тенанту** (Replace the plan of an existing tenant) (the change requires administrator approval).
 
 ### 6.2 Enterprise
 
-**Enterprise** plans are for a **network** (group) of studios: the price is counted **per actual tenant**. The minimum number of studios is set on the plan itself (usually 2) and is shown on the plan card. They are activated for a group (see 7).
+**Enterprise** plans are for a **network** (group) of studios: the price is calculated for the actual number of studios («Ціна за фактичну кількість тенантів», Price for the actual number of studios). The minimum number of studios is set in the plan («Мінімум тенантів: N», Minimum studios: N). The plans are assigned to a group (see 7).
 
 ---
 
 ## 7. Groups (studio network)
 
-Several studios can be joined into a **group (network)** with shared limits and shared data.
+Several studios are combined into a **group (network)** with shared limits and shared data.
 
 ### 7.1 Creating a group
 
-**"Create group"** opens a dialog where you name the network. It appears once you have at least **2** studios outside any group and at least one Enterprise plan is available.
+The **Створити групу** button opens the **Нова група** (New group) window with the **Назва групи** (Group name) and **Корпоративний план** (Corporate plan) fields. The button is shown when there are at least **2** studios outside groups and at least one Enterprise plan is available.
 
-A new group starts **inactive** — it needs as many studios as the chosen Enterprise plan requires (usually 2). With fewer, it stays inactive and the cabinet says how many are missing.
+After creation the group is **inactive** («Неактивна — додайте щонайменше 2 тенанти.», Inactive — add at least 2 tenants). While the number of tenants is below the plan minimum, «Додайте ще N тенант(ів), щоб перейти до оплати.» (Add N more tenant(s) to proceed to payment) is shown. Once the minimum is reached, the group starts working after payment with the **Оплатити план групи** (Pay the group plan) button; until then each venue works on its own plan.
 
-### 7.2 Adding tenants and an Enterprise plan
+### 7.2 Adding studios and an Enterprise plan
 
-Add studios to the group and assign it an **Enterprise plan**. The Enterprise plan turns on shared limits for the whole group; group settings become available as soon as the plan is assigned.
+The **Додати в групу** (Add to group) button adds a studio to the group. If the studio has a paid plan, it stays in effect until the end of the period, after which the studio moves to the group plan. The Enterprise plan turns on shared limits for the whole group; group settings are available right after the plan is assigned. The **Вилучити з групи** (Remove from group) button returns the studio to its own plan.
 
-### 7.3 An active group and shared data
+### 7.3 Active group and shared data
 
-An active group offers:
+When the group is active, group features are available:
 
-- **Shared client base** — one client record and one bonus balance across the network.
-- **Shared memberships** — a purchased membership works in every studio of the network.
-- **Sync from the main studio** — copy reference data between studios: class categories, memberships, trainers (without schedules), gyms, clients with card numbers.
+- **Спільна база клієнтів** (Shared client base) — one client card and one shared bonus balance for the whole network.
+- **Абонементи спільні на мережу** (Memberships shared across the network) — one session counter: purchased sessions can be used in any venue of the network.
+- Synchronization (copying from the main venue) of reference lists: **Категорії занять** (Session categories), **Абонементи** (Memberships), **Тренери (без розкладу)** (Coaches, without schedule), **Зали** (Rooms), **Клієнти з номерами карток** (Clients with card numbers).
 
-One studio is marked as the **Main** one — the sync runs from it. After changing the switches press **"Apply changes"**.
+One venue is marked **Головний** (Main) — data is copied from it to the other venues. Switch changes are applied with the **Застосувати зміни** (Apply changes) button; the synchronization result is shown in the **Синхронізація групи** (Group synchronization) window.
 
-> Trainers are copied **without their schedules**: the schedule is specific to each studio and has to be built there.
+> Coaches are transferred **without schedule**: each studio's schedule is made separately.
+
+The **Видалити групу** (Delete group) button closes the group: the venues move to a regular plan and work on it until the end of the group's paid period.
 
 ---
 
 ## 8. Support
 
-The **"Support"** tab is where you reach our support service. **"New ticket"** creates a request; the list shows the subject, status, the **SOS** mark (urgent) and the update date. More in [Support System](/en/pages/support-system).
+The **Підтримка** (Support) tab — requests to the support service. The **Новий тікет** (New ticket) button creates a request (**Заклад** (Venue), **Тема** (Subject), **Повідомлення** (Message), priority **Звичайний** (Normal) / **SOS**). The list shows **Тема**, **Статус** (**Відкрито** (Open), **Очікує вас** (Awaiting you), **Вирішено** (Resolved), **Закрито** (Closed)), **SOS** and **Оновлено** (Updated). The monthly request balance is shown («Залишок: N з M на місяць», Remaining: N of M per month, or «Тікети: без ліміту», Requests: no limit). Details — [Support system](/en/pages/support-system).
 
 ---
 
 ## 9. Top bar
 
-The cabinet's top bar always offers:
+The cabinet top bar always contains:
 
-- **Product site** — the Fitshandler mark links to fitshandler.com.
-- **Documentation** — this guide.
-- **Terms of Use** — the public offer.
-- **Language switch** (UA / EN).
-- **Notifications** — a bell with the unread counter.
-- **Sign out**.
+- **Сайт** (Site) — the product website.
+- **Документація** (Documentation) — this documentation.
+- **Умови використання** (Terms of use) — the public agreement.
+- Language switch (UA / EN).
+- **Сповіщення** (Notifications) — a bell with the unread counter; **Прочитати всі** (Read all).
+- **Акаунт** (Account) — the role and the **Контактні дані** (Contact details) tab (phone with the country code, for example `+380XXXXXXXXX`).
+- **Вийти** (Sign out) — signing out of the cabinet.

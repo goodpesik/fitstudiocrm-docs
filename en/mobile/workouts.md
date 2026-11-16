@@ -2,124 +2,142 @@
 
 [Back to home](/en/)
 
-# 7.5 Classes
+# 7.5 Workouts
 
-> The **Classes** tab is the main working screen. The client books and cancels bookings; the coach and admin see the schedule and can create classes and book clients.
+> The **Workouts** tab shows the studio schedule for the selected day. A client books, cancels and restores bookings and leaves the wait list; a coach and an administrator view the schedule, create workouts and manage them.
 
-<!-- TODO: screenshot of the Classes tab (client) -->
+The schedule for a user without a client card in the studio is described in [7.2 Registration and Studio Selection](/en/mobile/registration#_721-booking-request).
 
 ---
 
 ## 7.5.1 Choosing a Day
 
-- At the top — the date picker **"Choose a day"** ("Виберіть день"). You can also switch days by swiping the screen left or right, or with the ‹ › buttons next to the title.
-- The available date range depends on the role:
+- The **«Workouts»** heading and, under it, a button with the studio name and the month — opens the **«Select a day»** calendar with the **«Today»** button.
+- The week strip: tapping a day opens it; the arrows switch the week. A dot under a day marks a day on which the user has their own booking. The day is also changed by swiping the screen left or right.
+- Available date range:
   - **Client:** from today to **+15 days**.
-  - **Coach / Admin:** up to **+30 days** (admin can also look a few days into the past).
-- Title **"Classes for: {date}"** ("Тренування на: {дата}").
-- On the studio's day off, instead of the create button, **"The studio is closed this day"** ("В цей день у студії вихідний") is shown.
+  - **Coach / Admin:** past days without limit and up to **+30 days** ahead.
+- The day heading: weekday, date and number of workouts (for example, «Saturday, 17 October · 4 classes»).
+- The **«My workouts»** filter (client and coach) shows only own bookings or own workouts.
+- On a studio day off, «The studio is closed on this day» is shown; the **«Create»** button is not shown.
+- An empty day — «No workouts on this day»; with the filter on — «No active bookings for this date» (client) or «You have no workouts on this day.» (coach).
 
 ---
 
-## 7.5.2 Booking a Class (Client)
+## 7.5.2 Workout Card (Client)
 
-The client has two tabs: **"My Classes"** ("Моі тренування") (their bookings for the selected day) and **"Book"** ("Записатися") (all classes available for booking).
+The card shows the start time, the room, the coach photo or initial with the coach rating, the workout name and the line «Coach: {name}». For a workout with a limited number of seats — an occupancy bar and «Seats: {free} of {total}».
 
-### Statuses on the Class Card
+The bottom of the card shows the booking state:
 
-On the **"My Classes"** tab, each card has a status:
-
-| Status | Meaning |
+| State | Meaning |
 |---|---|
-| **Planned** | active booking (can be cancelled) |
-| **Visited** | class attended |
-| **Cancelled** | booking cancelled |
-| **Paused** | booking paused |
-| **Waiting List** | you are in the queue (no spots yet) |
+| **Book** (button) | Booking is available. |
+| **You are booked ✓** | The client is booked; the card menu has **«Cancel booking»**. |
+| **Wait list** | The client is on the wait list; the card menu has **«Leave the wait list»**. |
+| **No seats left** | There are no free seats. |
+| **you have another booking at this time** | The client has a booking for a workout that overlaps in time. |
+| **paused** | The booking is paused for this day (client vacation). |
+| **canceled** | The workout was cancelled by the studio or the client's booking for it was cancelled; if the booking can be restored, the card menu has **«Restore booking»**. |
+| **booking unavailable** | The workout has already started or passed. |
 
-On the **"Book"** tab, the card shows whether you can book:
+Under the card of an upcoming workout the client is booked for — the **«Add to calendar»** button: adds the class to the phone calendar. Error — «Could not add the class to the calendar».
 
-- **"book"** (green) — the class is available, tap to book it.
-- **"you are already booked for this class"**, **"no spots available"**, **"you have another booking at this time"**, **"booking not available"** (past), **"cancelled"**, **"paused"** — cannot book.
-
-<!-- TODO: screenshot of a class card with the "book" status -->
-
-### How to Book
-
-1. Go to the **"Book"** tab and select a day.
-2. Find a class with the **"book"** status and tap it (or tap the menu icon → **"Book a Class"** ("Записатися на тренування")).
-3. In the **"Class Booking"** ("Запис на тренування") window, check the details (class, coach, room, date, time) → **"Continue"** ("Продовжити").
-4. A confirmation appears: **"Booking confirmed"** ("Запис записано на тренування").
-
-> If there are no available classes on the selected date — **"No classes available for booking"** ("Немає жодного тренування доступного для запису").
-
-> ⚠️ If while you were deciding someone else took the spot — on confirmation you'll see **"This class is no longer available for booking"** ("Запис на це тренування більше не доступний").
-
-### Waiting List
-
-> When all spots are taken, the class shows **"no spots available"**. If the studio uses a waiting list, your booking may get the **"Waiting List"** status — when a spot frees up, the administrator can move you to confirmed.
-
-### How to Cancel a Booking
-
-1. On the **"My Classes"** tab, find a booking with the **"Planned"** status.
-2. Tap the menu icon on the card → **"Cancel Booking"** ("Скасувати запис").
-3. In the **"Class Cancellation"** ("Відміна тренування") window, confirm → **"Continue"** ("Продовжити").
-4. **"Booking cancelled"** ("Запис на тренування скасовано") appears.
-
-> ⚠️ **A late cancellation deducts the class.** If you cancel later than the time before the start set by the studio (the [minimum time to cancel a class](/en/login/settings#minimum-time-before-workout-cancellation) parameter), the class will be deducted from the membership as **"Not Attended"**. Check with the studio for how much time you have to cancel free of charge.
-
-> ℹ️ A deduction from the membership is not shown at the moment of booking. The remaining classes are visible on [Home](/en/mobile/home) and in [Account](/en/mobile/account) (membership card and the **History** tab).
-
-> ℹ️ **Recurring classes:** automatic booking for the next class in a series happens the day after the current class's date.
+Under the schedule — the note: «Important!!! If you have recurring workouts, automatic booking for them happens the day after the current workout date.»
 
 ---
 
-## 7.5.3 Coach's Schedule
+## 7.5.3 Booking a Workout (Client)
 
-> A coach sees the **"My Classes"** and **"Schedule"** tabs.
+1. Select a day and tap **«Book»** on the workout card.
+2. The app checks that booking is still available. If not — the window «Booking for this workout is no longer available» with the **«Got it»** button; the schedule is refreshed.
+3. In the **«Workout booking»** window check the client, workout, coach, room, date and time → **«Continue»** (or **«Cancel»**).
+4. After a successful booking, the **«You are booked for the workout»** window is shown with the class details and the **«Done»** button. The studio administrators receive a notification about the booking.
 
-- **"My Classes"** — the coach's classes for the selected day. Empty → **"You have no classes on this day"** ("В вас немає тренувань у цей день").
-- **"Schedule"** — all of the studio's classes for the day.
-- The **"Add Schedule to Calendar"** ("Додати розклад у календар") button adds the coach's schedule to their phone's own calendar (Apple Calendar / Google Calendar).
+A booking made in the app by a client of the studio does not require administrator confirmation: the seat is taken immediately. Confirmation is required for bookings from the [public studio page](/en/mobile/guest) (if turned on) and for [requests from users without a client card](/en/mobile/registration).
 
-For the coach, the class card shows a summary by client: **Planned**, **Visited**, **Cancelled**, **Not Attended**, **Waiting List**, **"Spots remaining"** ("Місць лишилося"), and **"Credited to coach"** ("Зараховано тренеру").
+If the server refuses the booking (no seats, the client is already booked, the workout is cancelled), the reason is shown in an error window and the schedule is refreshed.
 
----
-
-## 7.5.4 Creating a Class (Coach / Admin)
-
-> The **"Create Class"** ("Створити тренування") button is available to the coach and admin (except on the studio's days off).
-
-1. **Admin** first selects a coach (**"Choose Coach"** ("Виберіть тренера") → **"Select Coach"** ("Вибрати тренера")) and, if needed, turns on the **"Personal"** ("Персональне") toggle.
-2. Choose a **free time slot** — they are grouped by room.
-3. Add clients: **"Choose Client"** ("Виберіть клієнта") → **"Add Client"** ("Додати клієнта"). Selected clients appear as chips under **"Selected Client(s)"** ("Вибраний(і) клієнт(и)") (clients already booked at that time are not available).
-4. Choose a **category** (**"Choose Category"** ("Виберіть категорію")); if there is only one category, it is selected automatically.
-5. **"Create Class"** ("Створити тренування") → in the **"Class Creation"** ("Створення тренування") window, check the room, coach, date, time, and clients → **"Continue"** ("Продовжити").
-6. **"Class created successfully"** ("Тренування успішно створено") appears.
-
-> ⚠️ If the slot in this room was just taken — an error appears stating the time is already taken. Choose a different slot.
+> ℹ️ The deduction from the plan is not shown at the moment of booking. The number of workouts left is shown on [Home](/en/mobile/home) and in [Account](/en/mobile/account).
 
 ---
 
-## 7.5.5 Changing the Time / Room and Cancelling a Class (Coach / Admin)
+## 7.5.4 Cancelling and Restoring a Booking (Client)
 
-> On the card of an upcoming class, the coach (for their own classes) and the admin have these actions available:
+**Cancellation.** Available for a booking with the **Planned** status for a workout that has not started yet.
 
-- **"Change Time"** ("Змінити час") — choose another free time slot → **"Save"** ("Зберегти") → confirm. Empty → **"No time slots available"** ("Немає доступних часових слотів").
-- **"Change Room"** ("Змінити зал") — choose another free room → **"Save"** ("Зберегти") → confirm. Empty → **"No rooms available"** ("Немає доступних залів").
-- **"Cancel Class"** ("Відмінити тренування") — cancels the class for everyone booked (**"Class cancelled"** ("Тренування скасовано")).
+1. Card menu (bin icon) → **«Cancel booking»**.
+2. The **«Cancel workout»** window shows the class details → **«Continue»**.
+3. Result — «Workout booking canceled»; error — «Could not cancel the booking. Try again or contact the studio.»
+
+> ⚠️ **A late cancellation deducts the workout.** If the studio has set [«Мінімальний час до відміни тренування»](/en/login/settings#minimum-time-before-workout-cancellation) (Minimum time before workout cancellation), the client has an active plan with workouts left, and less than that time remains before the start, the cancellation window shows «Since you are cancelling less than {N} h before the session, it will be deducted from your subscription.» A booking cancelled within an hour after it was made is not deducted.
+
+**Restoring.** Available for one's own cancelled booking (statuses **Canceled**, **Missed**, **Registration canceled**) if the workout is not cancelled by the studio, more than an hour remains before the start and there is a free seat. A booking cancelled from the wait list returns to the wait list regardless of the number of seats.
+
+1. Card menu → **«Restore booking»**.
+2. The **«Restore booking»** window: «Restore your booking for this class?» → **«Continue»**.
+3. Result — «Booking restored»; error — «Could not restore the booking. The class may be full, or less than an hour is left before it starts.»
 
 ---
 
-## 7.5.6 Booking a Client as Administrator
+## 7.5.5 Wait List
 
-> On the card of an upcoming class, the admin has a **"Book Client"** ("Записати клієнта") toggle.
+- A client gets on the wait list when an administrator books them for a workout without free seats (see [Schedule](/en/menu/schedule)). There is no self-booking onto the wait list from the app: a full workout shows **«No seats left»**.
+- A client on the wait list takes a seat in the workout's seat count.
+- **Leaving the wait list:** card menu → **«Leave the wait list»** → the **«Leave the wait list»** window: «Leave the wait list for this class? Your place in the queue will be released.» → **«Continue»**. Result — «You have left the wait list»; error — «Could not leave the wait list. Try again or contact the studio.» The client's history gets an entry with the **Left the waiting list** status.
+- A client on the wait list is not moved into a booking automatically. When a seat frees up, the administrator changes the client's status to **Planned** (Заплановано); the client receives a notification in the app.
 
-1. Turn on the **"Book Client"** ("Записати клієнта") toggle.
-2. **"Choose Client"** ("Виберіть клієнта") — clients unavailable (booked at that time) are not shown; clients on the **waiting list** are highlighted in blue with the label **"(waiting list)"** ("(лист очікування)"), so the admin can confirm them.
-3. For a recurring class, you can turn on the **"Repeat"** ("Повторювати") toggle — the booking will repeat across the series.
-4. **"Book"** ("Записати") → confirm in the **"Class Booking"** ("Запис на тренування") window.
-5. **"Client booked successfully"** ("Клієнта успішно записано") appears.
+---
+
+## 7.5.6 Coach Schedule
+
+- The schedule shows all studio workouts for the selected day; the **«My workouts»** filter — only the coach's workouts.
+- The **«Add schedule to calendar»** button subscribes the phone calendar to the coach's schedule.
+- The card of an own workout shows the number and names of clients by status: **Planned**, **Attended**, **Not attended**, **Canceled**, **Wait list** (rows with zero are not shown), and **«Spots left:»** and **«Credited to coach:»**. For a regular workout — «Repeats every: {days}». For a rental — the **«Rent»** badge.
+
+---
+
+## 7.5.7 Creating a Workout (Coach / Admin)
+
+The **«Create»** button is available to an administrator and a coach; to a coach — only for today and future days. On a studio day off the button is not shown.
+
+The **«New class»** screen (with the date of the selected day):
+
+1. **Admin** selects the **Coach** (the **«Select a coach»** window with search) and sets the **«Personal»** switch («One participant»). A coach creates only a personal workout.
+2. Choose a room and a time — free time slots are grouped by room. If there are no slots — «Cannot create a workout on the selected day».
+3. **«Selected client(s)»** → **«Add client»** — the **«Select a client»** window with search. Selected clients are shown as chips; tapping a chip removes the client.
+4. **Category** — the **«Select a category»** window; if there is one category, it is selected automatically.
+5. The button suggests the next step («Choose a hall and a time», «Add a client», «Choose a category») and, once everything is filled in, becomes **«Create · {room}, {time}»**.
+6. The **«Create workout»** window shows the room, coach, date, time and clients → **«Continue»**.
+7. Result — **«Done»**: «Workout created successfully».
+
+The created workout is named «Personal workout (app)» or «Workout (app)».
+
+> ⚠️ If the slot in this room has just been taken, the error window «🙀 🙀 🙀 Darn!!! Someone just created a workout in this hall at the selected time 🤬🤬🤬» is shown with the **«Got it»** button.
+
+---
+
+## 7.5.8 Workout Actions (Coach / Admin)
+
+The gear button on the card opens the **«Workout actions»** window. For a coach, actions are available for their own upcoming workouts; for an administrator — for all upcoming workouts not cancelled by the studio.
+
+- **«Change time»** — free time slots → **«Save»** → the **«Change workout time»** confirmation (with the new time). Result — «Workout time changed». Empty — «No available time slots».
+- **«Change room»** — free rooms → **«Save»** → the **«Change workout room»** confirmation (with the new room). Result — «Workout room changed». Empty — «No available rooms».
+- **«Cancel workout»** — the **«Cancel workout»** window with the class details → **«Cancel workout»**. Result — «Workout canceled»; error — «Could not cancel the workout. Try again.» Booked clients receive a cancellation message (see [Messages to clients](/en/pages/processing#_614-messages-to-clients)).
+
+---
+
+## 7.5.9 Booking a Client by the Administrator
+
+In the **«Workout actions»** window of an upcoming, not cancelled workout the administrator has the **«Book a client»** switch.
+
+1. Turn on **«Book a client»**.
+2. **«Select a client»** — a list with search; clients busy at this time are not shown. Clients on this workout's wait list are highlighted in blue with the **«(waitlist)»** mark. An empty list — «No available clients».
+3. For a regular workout the **«Repeat»** switch is available — booking for the series.
+4. **«Book»** → confirmation in the **«Workout booking»** window.
+5. Result — **«Done»**: «Client booked successfully».
+
+The administrator books a client also for a workout without free seats.
 
 ---
 

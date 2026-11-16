@@ -6,80 +6,78 @@
 
 ![](../../_media/admin-panel-users.png ':no-zoom')
 
-> The **Users** tab shows a table of users who have been **invited** to this studio. Each studio keeps its own separate list of users.
+> The **Користувачі** (Users) tab shows a table of users invited to the studio. Each studio has a separate list of users.
 
-> **`Important:`** a user is now **no longer added automatically** after signing in. They must first be invited by email (see below). If a person signs in through Google but was not invited to the studio — they **will not get access** and **will not appear** in this list.
+> Access to the studio is granted only by an email invitation (see below). A person who signed in through Google without an invitation gets no access and does not appear in the list.
+
+Above the table the plan limit indicator «Користувачі: <used> / <limit> · ще N» (Users: … · N more) is shown (see [Plan and access to the system](/en/login/billing#plan-limits)).
 
 ---
 
 ### The table contains:
 
-- **Login** (pulled from Google after the first sign-in)
-- **Name** (can be changed)
-- **Email** (used for the invitation and for linking the Google account)
-- **Phone** ("Телефон")
-- **Role** (can be changed)
-- **Actions** (**Delete** ("Видалити") and **Edit** ("Редагувати") buttons) — available only to the **Super Admin** ("Супер Адмін") and **Admin** ("Адмін") roles. A **Manager** ("Менеджер") sees the table but cannot change records.
-
-The edit form contains: **Name** ("Імʼя"), **Phone** ("Телефон"), **Hourly rate**
-("Ставка за годину") — used to calculate the administrator's payroll — **Role** ("Роль"),
-and the **Earn bonuses** ("Нараховувати бонуси") toggle.
+- **Логін** (Login) (from the Google account after the first sign-in)
+- **Імʼя** (Name)
+- **Емайл** (Email) (used for the invitation and for linking the Google account)
+- **Телефон** (Phone)
+- **Роль** (Role)
+- The **Видалити** (Delete) and **Редагувати** (Edit) buttons — available to the **Супер Адмін** (Super Admin) and **Адмін** (Admin) roles. The **Менеджер** (Manager) role sees the table without the buttons.
 
 ---
 
-## Add a User (invitation by email)
+## Add a user (invitation by email)
 
-> Above the table there is an add row: an **Email of the new user** ("Email нового користувача") field, a **role** selector, and an **Add** ("Додати") button.
+> Above the table there is an add row: the **Email нового користувача** (New user's email) field, the role selection and the **Додати** (Add) button.
 
-1. Enter the **email** of the person you want to add to the studio.
-2. Choose a **role** — **Manager** or **Admin** are available.  
-   **`The "Super Admin" role cannot be requested`** — it is granted separately at the system level.
-3. Click **Add**. The message *"User added"* ("Користувача додано") appears, and the record shows up in the table immediately.
+1. Enter the person's email.
+2. Select the role — **Менеджер** or **Адмін**. The **Супер Адмін** role cannot be invited: it is granted at system level.
+3. Click **Додати**. The message «Користувача додано» (User added) appears and the record is shown in the table.
 
-> The **Add** button is inactive until a valid email is entered, or if a user with that email is **already** on the list.
+> The **Додати** button is inactive until an email with the `@` character is entered, or if a user with this email is already in the list.
 
-**What happens next:**
+**After the invitation:**
 
-- An invitation is created for that email with the assigned role (for now, the account "awaits sign-in").
-- When the invited person **signs in through Google for the first time** using the same email, their Google account is linked to the invitation, and they immediately get access to the studio with the assigned role.
-- A single user can have access to several studios under their email — after signing in, they choose the studio they need.
+- When the invited person first signs in through Google with the same email, their account is linked to the invitation and they get access to the studio with the assigned role.
+- One email can have access to several studios; switching — with the **Змінити студію** (Switch studio) item of the user menu.
 
 ---
 
-## The **Delete** Button
+## The **Видалити** button
 
-1. You cannot delete your own user.
-2. If you click the **Delete** button and deletion is possible, the ["Are you sure you want to continue?" modal window](../_modals/are-you-sure-modal.md ':include') appears.  
-   If confirmed — the selected user is removed from the studio.  
-   **`Warning! This action is irreversible.`**
+1. You cannot delete your own user: the button is inactive with the hint «Неможливо видалити свого користувача» (You cannot delete your own user).
+2. For other users the button opens the [«Ви впевнені що хочете продовжити?» modal](../_modals/are-you-sure-modal.md ':include').
+   After confirmation the user is removed from the studio and the message «Користувача успішно видалено» (User deleted successfully) appears.
+   **`Attention! This action is irreversible.`**
 
 ---
 
-## The **Edit** Button
+## The **Редагувати** button
 
-> Clicking the edit button (pencil icon) opens the user's page.
+> The edit button (pencil icon) opens the user form under the table.
 
 ![](../../_media/admin-panel-edit-user.png ':no-zoom')
 
-Possible actions:
+Form fields:
 
-- Change the name.
-- Change the phone number.
-- Change or set the hourly rate (used for salary calculation).
-- Change the role.  
-  **`Warning! This action can only be performed by a user with the "Super Admin" role.`**
-- Turn **Earn bonuses** ("Нараховувати бонуси") on or off.
+- **Імʼя** (Name);
+- **Телефон** (Phone);
+- **Ставка за годину** (Hourly rate) — used to calculate the [administrator salary](/en/pages/processing#_64-calculating-administrator-salaries);
+- **Роль** (Role) — **Не задано** (Not set), **Супер Адмін**, **Адмін**, **Менеджер**. Only a user with the **Супер Адмін** role can change roles; you cannot change your own role;
+- the **Нараховувати бонуси** (Accrue bonuses) switch — shown when the **Адмін** role is selected.
+
+Buttons **Назад** (Back) and **Зберегти** (Save). After saving, the message «Користувача успішно оновлено» (User updated successfully) appears.
 
 ---
 
-## The **Earn bonuses** toggle
+## The **Нараховувати бонуси** switch
 
-> Not every administrator works on bonuses, so it is switched on per person.
+The switch defines whether the user receives bonuses from [Settings → Features → Administrator Bonuses](/en/login/settings#administrator-bonuses).
 
-Switched off, that person earns nothing: neither the bonus for a sale they rang up
-themselves, nor a share of the bonus split among administrators. And the split counts
-**only** the administrators who are on bonuses — the rest share the same sum between
-them rather than losing it along with the excluded colleague.
+- Off — the user receives neither the bonus for their own sale nor a share of a bonus split between administrators. A split bonus is distributed only among administrators with the switch on.
+- The switch is on by default.
 
-> ℹ️ The default is **on**, so nothing changes for anyone already in the system.
-> Bonuses are calculated by the payroll report, which is what reads this value.
+---
+
+<a href="javascript:void(0)" onclick="history.back()">⬅️ Back</a>
+
+[Back to home](/en/)

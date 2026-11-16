@@ -4,8 +4,8 @@
   - [1.3.2.1 Users](/en/login/users)
   - [1.3.2.2 Settings](/en/login/settings)
   - [1.3.2.3 Information](/en/login/info)
-  - [1.4 Plan and access](/en/login/billing)
-  - [Telegram Bot / Mobile Application](/en/login/telegram-bot)
+  - [1.4 Plan and access to the system](/en/login/billing)
+  - [Telegram bot](/en/login/telegram-bot)
 
 - [**2. Opening and Closing a Shift**](/en/pages/shifts)
 
@@ -17,7 +17,7 @@
   - [3.5 Rooms](/en/menu/rooms)
   - [3.6 Memberships](/en/menu/plans)
   - [3.7 Products](/en/menu/products)
-  - [3.8 Reports ("Звіти")](/en/menu/reports)
+  - [3.8 Reports](/en/menu/reports)
   - [3.9 Point of sale](/en/menu/pos)
   - [3.10 Gift certificates](/en/menu/certificates)
 
@@ -30,11 +30,11 @@
   - [7.2 Registration and Studio Selection](/en/mobile/registration)
   - [7.3 Home](/en/mobile/home)
   - [7.4 Client Card](/en/mobile/card)
-  - [7.5 Classes](/en/mobile/workouts)
+  - [7.5 Workouts](/en/mobile/workouts)
   - [7.6 Account](/en/mobile/account)
   - [7.7 Notifications](/en/mobile/notifications)
   - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
 
-- [**Owner Cabinet**](/en/pages/cabinet)
-- [**Support System (Support Tickets)**](/en/pages/support-system)
+- [**Personal cabinet (subscription management)**](/en/pages/cabinet)
+- [**Support System**](/en/pages/support-system)

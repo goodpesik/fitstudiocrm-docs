@@ -4,16 +4,16 @@
 
 # 1.3.2.3 Information
 
-> The **Information** tab contains:
+> The **Інформація** (Information) tab contains:
 
 ![](../../_media/admin-panel-info.png ':no-zoom')
 
-- **Version**:
+- **Версія** (Version):
   - **App** — the application version
   - **Api** — the server version
-- **Development** ("Розробка") — the developer's contact address
-- **Contacts** ("Контакти") — the same address
-- **Link** to this User Manual
+- **Розробка** (Development) — the developer's contact address (fitshandler@gmail.com)
+- **Контакти** (Contacts) — the contact address (fitshandler@gmail.com)
+- The **Посібник користувача** (User guide) link — opens this documentation
 
 ---
 

@@ -34,6 +34,8 @@ The gear button next to the heading opens the **«Notification settings»** wind
 | **Workouts** | ✔ | ✔ | — |
 | **System messages** | — | — | ✔ |
 
+- Session reminders are received by clients only. A coach does not receive session reminders; the coach settings have no **Reminders** type.
+
 - **Client:** **«Remind me»** — the number of hours from 1 to 24, with − and + buttons. The field is inactive if the **Reminders** type is off.
 - **«Save»** — saves the notification types and the reminder time.
 

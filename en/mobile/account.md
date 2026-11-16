@@ -41,10 +41,9 @@ The **«Delete my data»** button opens a window with the text «This permanentl
 
 Cards of active and new plans:
 
-- **«Plan»** and the status **Active** / **Inactive**;
+- **«Plan»** and the status **Active** or, for a new plan, **New**;
 - the plan name; «A plan of {N} workouts» if the number is not part of the name;
 - **«Workouts remaining: {N}»**, **«Valid until {date} inclusive.»**;
-- for a new plan — «Activates during your visit to the studio»;
 - the warning «The plan is expiring soon» — fewer than 3 workouts or fewer than 3 days left.
 
 Tapping a card opens the **History** section. The **«One-time plans»** row shows the number of one-time plans. If there are no plans — «No current plan».

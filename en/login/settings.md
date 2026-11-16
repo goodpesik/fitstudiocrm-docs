@@ -114,9 +114,9 @@ Bonus accrual for an individual administrator is turned on with the **Нарах
 
 ### Personal Workouts Created by Coaches
 
-The section titled **Cтворення персональних тренувань через бот** (Creating personal workouts via the bot). The setting defines the categories in which a coach can create a personal workout in the mobile app.
+The section titled **Створення персональних тренувань у мобільному застосунку** (Creating personal workouts in the mobile app). The setting defines the categories in which a coach can create a personal workout in the mobile app.
 
-- Switch **Дозволити тренерам створювати персональні тренування через бот** (Allow coaches to create personal workouts via the bot) — turns the feature on.
+- Switch **Дозволити тренерам створювати персональні тренування в мобільному застосунку** (Allow coaches to create personal workouts in the mobile app) — turns the feature on.
 - Switch **Всі категорії** (All categories) — allows all studio categories.
 - With **Всі категорії** off, the **Додати категорію** (Add category) button adds a row with the **Виберіть категорію** (Select a category) drop-down; the bin icon removes a row.
 

@@ -6,7 +6,7 @@
 
 > The app is on the **App Store**, and on every other device it works as a **PWA** —
 > a page you add to the home screen. Whichever way you installed it, the login is
-> the same: through the **Telegram bot**.
+> the same: by phone number and a confirmation code.
 
 <!-- TODO: screenshot of the welcome / installation screen -->
 
@@ -62,23 +62,33 @@ If the app is **not yet installed**, opening the link shows the installation scr
 
 ---
 
-## 7.1.2 Login via Telegram
+## 7.1.2 Login by Phone Number
 
-After installation, the login screen opens:
+After installation, the welcome screen opens: **"Hi! I'm your Fitshandler app. To get started, you need to log in"** ("Привіт! Я твій додаток Fitshandler. Для початку роботи вам потрібно увійти") and the **"Log In"** ("Вхід") button. The button opens the login screen.
 
-- **"Hi! I'm your Fitshandler app. To get started, you need to log in"** ("Привіт! Я твій додаток Fitshandler. Для початку роботи вам потрібно увійти").
-- The **"Log in via Telegram"** ("Вхід через Telegram") button opens the studio's Telegram bot.
-- In the bot, you need to share your phone number — the bot will send a **6-digit code**.
+Login is possible only in the context of a studio: the confirmation code is issued by the selected studio. If no studio is selected, the login screen shows **"To log in, pick a studio first."** ("Щоб увійти, спершу оберіть студію.") and the **"Browse Studios"** ("Переглянути студії") button.
 
-<!-- TODO: screenshot of the login screen with the code field -->
+<!-- TODO: screenshot of the login screen with the phone field -->
+
+### Phone Number
+
+1. The login screen opens directly on the phone number field in the format **+38 (0__) ___-__-__**.
+2. Once the full number is entered, the **"Send code"** ("Надіслати код") button becomes active.
+3. Pressing **"Send code"** sends a **6-digit confirmation code**. The system chooses the delivery channel:
+   - **Telegram** — if the person already chats with the Fitshandler bot or can be found in Telegram by the number;
+   - **SMS** — in other cases, if the studio has connected SMS messaging.
+4. If the code cannot be sent, the message **"We could not send the code to this number. Please contact the studio administrator."** ("Не вдалося надіслати код на цей номер. Зверніться до адміністратора студії.") is shown.
 
 ### Entering the Code
 
-1. Return to the app — a **"Enter the code you received"** ("Введіть отриманий код") field appears.
-2. Enter the 6 digits from the bot and press **"Log In"** ("Вхід") (the button is only active once exactly 6 characters are entered).
-3. If the code did not arrive or has expired — press **"Request another code"** ("Запросити ще один код") (this reopens the bot).
+1. The **"Enter the code"** ("Введіть код") screen states where the code was sent: **"We sent the code to you on Telegram. Enter it here."** ("Код надіслано вам у Telegram. Введіть його тут.") or **"Enter the code from the SMS."** ("Введіть код з SMS.").
+2. Enter the 6 digits and press **"Log In"** ("Вхід") (the button is active only once exactly 6 digits are entered). The code can be pasted from the message as a whole.
+3. If the code did not arrive — press **"Request another code"** ("Запросити ще один код"). A repeated request is available 60 seconds after the previous one; until then a countdown is shown in place of the button.
+4. The **"Back"** ("Назад") button returns to the phone number entry.
 
-> ℹ️ You can log in with **a code from Telegram** or **a code by SMS**, if the studio has enabled SMS messaging. The SMS confirmation option appears only after a studio has been selected. There is no password or Google login in the client app. The code is valid for a limited time, so enter it right away.
+> ℹ️ The code is valid for 10 minutes and is checked together with the number it was sent to. There is no password, Google login or Telegram bot login in the client app.
+
+> ℹ️ If the app is closed or restarted while the code is awaited, within 20 minutes after the code was sent the login screen opens directly on the code entry with the same number.
 
 > ℹ️ The start screen also has a **"Browse Studios"** ("Переглянути студії") button — it opens the list of studios without logging in. From there you can open a studio's page, view its schedule, and book a class without having an account.
 

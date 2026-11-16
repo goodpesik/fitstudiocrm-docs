@@ -10,7 +10,7 @@ This is a separate app from the studio's admin panel. The studio-side setup of t
 
 ## 7.0 Roles in the App
 
-One login (one Telegram account) can hold several roles and belong to several studios. After logging in, the user selects a studio and a role (client). Roles:
+One login (one phone number) can hold several roles and belong to several studios. After logging in, the user selects a studio and a role (client). Roles:
 
 | Role | Who it is | What they see |
 |---|---|---|
@@ -33,7 +33,7 @@ Next to the name in the header there is a language switch — Ukrainian or Engli
 
 ## 7.1 Sections
 
-- [7.1. Installation and Login](/en/mobile/install) — installing the app, viewing the list of studios without logging in, and confirming login via Telegram or SMS.
+- [7.1. Installation and Login](/en/mobile/install) — installing the app, viewing the list of studios without logging in, and logging in by phone number with a code in Telegram or by SMS.
 - [7.2. Registration and Studio Selection](/en/mobile/registration) — a new client's first request, choosing a studio/role.
 - [7.3. Home](/en/mobile/home) — the welcome screen, upcoming classes, current membership.
 - [7.4. Client Card](/en/mobile/card) — the QR client card for reception (client role only).

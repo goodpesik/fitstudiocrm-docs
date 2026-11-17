@@ -26,33 +26,6 @@ If the studio's access is suspended by the plan, the message **Акаунт де
 
 ---
 
-### 1.2.1 Seasonal sticker over the logo
-
-A seasonal sticker (for example, a New Year one) may be shown over the Fitshandler logo. Stickers are set by the Fitshandler system administrator; a studio has no sticker settings.
-
-**Where it is shown:**
-
-- admin panel — the logo on the login page and the logo in the header;
-- mobile app — the logo in the header.
-
-**Display rules:**
-
-| Parameter | Value |
-|---|---|
-| Period | Every year from the "from" day to the "to" day (DD.MM, no year), both days included, Kyiv time. A period may cross the New Year (for example, 01.12–15.01). A period starting on 29.02 starts on 01.03 in a non-leap year. A period ending on 29.02 ends on 28.02 in a non-leap year. |
-| Several stickers on one day | The most recently created sticker is shown. |
-| Size | The sticker width is 25% of the logo width. |
-| Position | The sticker centre is set in percent of the logo width and height from its top-left corner, to 0.01 %; the sticker may extend beyond the logo. |
-| Layer | **Поверх лого** (Over the logo) — the sticker covers the logo; **Під лого** (Under the logo) — the logo covers the sticker. |
-| File format | PNG, WebP or GIF (an animated GIF plays), at most 1 MB. |
-
-- The sticker does not change the size or position of the logo or of other header elements.
-- If there is no active sticker or it cannot be loaded, the logo is shown without a sticker.
-- A changed or removed sticker is shown within 11 minutes.
-- If the sticker cannot be received because of a server or storage failure, the logo is shown without a sticker; the sticker is shown again at the next check after the failure is resolved, within 5 minutes.
-
----
-
 ## 1.3 User Menu and Roles
 
 After signing in, the main interface of the system is shown.

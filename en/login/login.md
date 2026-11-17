@@ -39,7 +39,7 @@ A seasonal sticker (for example, a New Year one) may be shown over the Fitshandl
 
 | Parameter | Value |
 |---|---|
-| Period | Every year from the "from" day to the "to" day (DD.MM, no year), both days included, Kyiv time. A period may cross the New Year (for example, 01.12–15.01). A period starting on 29.02 starts on 01.03 in a non-leap year. |
+| Period | Every year from the "from" day to the "to" day (DD.MM, no year), both days included, Kyiv time. A period may cross the New Year (for example, 01.12–15.01). A period starting on 29.02 starts on 01.03 in a non-leap year. A period ending on 29.02 ends on 28.02 in a non-leap year. |
 | Several stickers on one day | The most recently created sticker is shown. |
 | Size | The sticker width is 25% of the logo width. |
 | Position | The sticker centre is set in percent of the logo width and height from its top-left corner, to 0.01 %; the sticker may extend beyond the logo. |

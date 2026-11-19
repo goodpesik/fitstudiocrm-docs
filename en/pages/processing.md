@@ -110,11 +110,13 @@ Every day at 12:00 (UTC) the client receives the app notification «🔔🔔🔔
 
 | Condition | Notification line |
 |---|---|
-| No more than 1 workout left | «<name>. Залишилось тренувань: N.» (Workouts left: N.) |
-| Less than 4 days until the end date | «<name>. Термін дії закінчується DD.MM.YYYY.» (Valid until DD.MM.YYYY.) |
+| No more than 1 workout left, and the membership was bought for more than 1 workout | «<name>. Залишилось тренувань: N.» (Workouts left: N.) |
+| The last valid day of the membership is today or at most 3 calendar days after today (days are counted in the studio time zone) | «<name>. Термін дії закінчується DD.MM.YYYY.» (Valid until DD.MM.YYYY.) |
 | Both conditions are met | Both parts in one line |
 
 - The notification is sent **once** per membership. A visit, an extension or a change of the workout count does not create a repeated notification for the same membership.
+- A single-visit membership (bought for 1 workout) gets no workout-count notification; only the end-date condition applies to it.
+- The number of workouts a membership was bought for is taken from the membership template; without a template, from the largest workout count recorded when the membership was activated.
 - The notification is not sent if the client already has the next purchased membership.
 - If the app server does not accept the notification, it is retried the next day.
 - Clients without the app do not receive it.

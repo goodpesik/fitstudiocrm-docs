@@ -118,6 +118,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - the payment is not from the personal account;
 - the transaction was created online, not by the sync of an operation made on a computer without internet;
 - the transaction has no fiscal receipt;
+- the transaction does not have the status **Receipt sent, number unknown** (see below);
 - the studio has an active fiscal integration (enabled and configured);
 - the operation time of the transaction is not earlier than the time of the studio's first fiscalized sale (the earliest sale transaction with a fiscal receipt). If the studio has no fiscalized sale, the button is not shown. This condition applies only to the manual receipt; the automatic receipt of a sale or a debt payment does not check it.
 
@@ -125,10 +126,22 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 - After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through the first active fiscal integration, as during a sale. The transaction id is passed to the provider as the receipt id.
 - Before the receipt is created, the transaction is locked and the conditions are checked again. At most one receipt is created for a transaction: a repeated click or a simultaneous action of another user is refused with `RECEIPT_ALREADY_ISSUED`.
-- For a **Checkbox** integration, before the receipt is created the server asks the provider for a receipt with the transaction id. When such a receipt exists, it is saved on the transaction and no new receipt is created. When the request to the provider fails, the receipt is created. For a **VchasnoKasa** integration this request is not made.
+- For a **Checkbox** integration, before the receipt is created the server asks the provider for a receipt with the transaction id. When such a receipt exists and is fiscalized, it is saved on the transaction and no new receipt is created. When the request to the provider fails, the receipt is created. When the receipt with the transaction id has the status `ERROR` in Checkbox, the request is refused with `RECEIPT_REJECTED_AT_PROVIDER`: Checkbox does not accept another receipt with the same id. When the receipt did not get a fiscal number within the wait (15 s), the request is refused with `RECEIPT_PENDING_AT_PROVIDER`; a retry is allowed. For a **VchasnoKasa** integration this request is not made.
+- For a **VchasnoKasa** integration, before the request to the provider the server saves a sent mark (`fiscalSentAt`) on the transaction in a separate write. The mark stays even when the later write of the receipt onto the transaction fails.
+  - The provider answered with a refusal (an error text in the answer or HTTP 4xx) — the mark is removed, `FISCAL_PROVIDER_ERROR` is returned, a retry is allowed.
+  - No answer from the provider (timeout, network error, HTTP 5xx) — the mark stays, `FISCAL_RESULT_UNKNOWN` is returned.
+  - The receipt was created but not written onto the transaction — the mark stays.
 - The fiscal receipt of an online debt payment, created automatically after the payment is saved, is created the same way: with the transaction lock and the repeated check of the conditions. When the receipt was already created with the **Fiscalize** button, a second receipt is not created, and the other way round.
 - Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
 - Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
+
+**Status «Receipt sent, number unknown»** ("Чек надіслано, номер невідомий"):
+
+- The transaction has a sent mark and no fiscal receipt. The **Fiscalization** column shows the badge **Receipt sent, number unknown**; the **Fiscalize** button is not shown.
+- A repeated receipt for such a transaction is not allowed: the server returns `RECEIPT_SENT_NUMBER_UNKNOWN`, no request is made to the provider. Checking for the receipt in the Vchasno.Kasa cabinet is mandatory.
+- The **Confirm the receipt is missing** ("Підтвердити відсутність чека") button in the **Receipt** column (the SuperAdmin and Admin roles), after confirmation in the **Missing fiscal receipt** ("Відсутність фіскального чека") window, removes the mark. After that the **Fiscalize** button is shown again under the conditions above.
+- Confirming a missing receipt is not allowed when the receipt exists in the Vchasno.Kasa cabinet: a repeated receipt gives a second fiscal receipt.
+- Request: `POST /transactions/:id/fiscal-receipt/not-issued`. Response: `{ id, fiscalSentAt }`. For a transaction without the mark the request changes nothing. Error codes: 403 (the role is not SuperAdmin or Admin), `TRANSACTION_NOT_FOUND`, `TRANSACTION_NOT_FISCAL_KIND`, `RECEIPT_ALREADY_ISSUED`.
 
 **Error codes:**
 
@@ -142,7 +155,11 @@ When several conditions are not met, the code of the first of them in the order 
 | 409 | `RECEIPT_ALREADY_ISSUED` | «Фіскальний чек для цієї транзакції вже створено» | the transaction already has a fiscal receipt |
 | 400 | `FISCALIZATION_NOT_ENABLED` | «Фіскалізацію не налаштовано» | the studio has no active fiscal integration |
 | 400 | `TRANSACTION_BEFORE_FIRST_FISCAL_SALE` | «Фіскальний чек вручну створюється лише для продажів, здійснених не раніше першого фіскалізованого продажу студії» | the operation time of the transaction is earlier than the time of the studio's first fiscalized sale, or the studio has no fiscalized sale |
+| 409 | `RECEIPT_SENT_NUMBER_UNKNOWN` | «Чек для цієї транзакції вже надіслано до фіскального сервісу, номер чека невідомий. Перевірте наявність чека в кабінеті Вчасно.Каса» | the transaction has the status **Receipt sent, number unknown** |
+| 409 | `RECEIPT_REJECTED_AT_PROVIDER` | «Фіскальний сервіс відхилив чек цієї транзакції. Повторне створення чека для неї неможливе: зверніться до служби підтримки Checkbox» | the receipt with the transaction id has the status `ERROR` in Checkbox |
+| 409 | `RECEIPT_PENDING_AT_PROVIDER` | «Чек цієї транзакції ще обробляється фіскальним сервісом. Повторіть спробу пізніше» | the receipt with the transaction id in Checkbox did not get a fiscal number within 15 s |
 | 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
+| 502 | `FISCAL_RESULT_UNKNOWN` | «Фіскальний сервіс не підтвердив створення чека. Чек міг бути створений: перевірте його наявність у кабінеті Вчасно.Каса» | VchasnoKasa: no answer from the provider; the transaction gets the status **Receipt sent, number unknown** |
 
 ---
 

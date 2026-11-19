@@ -75,7 +75,7 @@ Reminders are sent in two independent ways.
 
 A client with the app and the **Нагадування** (Reminders) notification type on chooses how many hours in advance to be reminded — in [Notifications](/en/mobile/notifications), from 1 to 24 hours. The reminder arrives as an app notification.
 
-- If the app server does not accept the reminder, it is retried on the following hourly runs. After 6 failed attempts, or 24 hours after the first attempt, the reminder is not sent. A retry can arrive after the session has started.
+- If the app server does not accept the reminder, it is retried on the following hourly runs. The reminder is not sent once the session has started, or after 6 failed attempts. A reminder about several sessions is not sent once the first of them has started.
 - If the app server does not answer, the remaining reminders and held messages of the studio are not sent on that run: they move to the next hourly run, and the move does not count as a failed attempt.
 - A retry does not create a second record in the app notification feed.
 

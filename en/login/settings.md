@@ -93,18 +93,20 @@ The reset is not performed, nothing is deleted and a message is shown if:
 | the studio is in a studio group with a shared client base or shared memberships | «Заклад входить до мережі зі спільною базою клієнтів або абонементів. Перед очищенням даних вийдіть із мережі.» (The studio is in a group with a shared client base or memberships. Leave the group before resetting the data.) |
 | the studio's group membership could not be checked | «Не вдалося перевірити участь закладу в мережі закладів. Спробуйте пізніше.» (The studio's group membership could not be checked. Try again later.) |
 | a cash shift is open at the fiscal provider (Checkbox, Vchasno.Kasa) | «Закрийте касову зміну перед очищенням даних» (Close the cash shift before resetting the data) with the names of the fiscal registrars |
+| the fiscal provider did not answer the cash shift check | «Не вдалося перевірити стан касової зміни у фіскального провайдера» (The cash shift state could not be checked with the fiscal provider) with the names of the fiscal registrars, «Нічого не видалено. Спробуйте пізніше.» (Nothing was deleted. Try again later.) |
+| the list of the studio's fiscal registrars could not be read | «Не вдалося перевірити стан касових змін. Нічого не видалено. Спробуйте пізніше.» (The cash shift state could not be checked. Nothing was deleted. Try again later.) |
 | a client import or a client export to a file is running | «Триває завантаження або збереження клієнтів. Дочекайтеся завершення та повторіть.» (A client import or export is running. Wait until it finishes and try again.) |
 | another operation is changing the studio data at that moment | «Дані закладу зараз використовуються іншою операцією. Нічого не видалено. Спробуйте ще раз за хвилину.» (The studio data is in use by another operation. Nothing was deleted. Try again in a minute.) |
 
-If the fiscal provider is unavailable, its shift state is not checked and the reset is not blocked. While the reset runs, new client imports and exports do not start.
+While the reset runs, new client imports and exports do not start.
 
 The server checks the role and the studio name again right before the deletion. If the name does not match, nothing is deleted and the message «Введена назва не збігається з назвою закладу» (The entered name does not match the studio name) is shown. The deletion runs as a single operation: if it fails, the data stays unchanged.
 
 After a successful deletion the message «Дані закладу видалено. Сторінку буде оновлено.» (The studio data has been deleted. The page will be reloaded.) appears and the page reloads. After the reset:
 
 - removed staff lose access to the studio; if the studio is still shown to such a person in the studio list at sign-in, it disappears from the list after the first attempt to open it;
-- the profiles of this studio's clients, coaches and staff are removed from the mobile app; a profile that could not be removed at once disappears at the person's next sign-in to the app;
-- the photos of the removed coaches are deleted from file storage.
+- the profiles of this studio's clients are removed from the mobile app; a profile that could not be removed at once disappears at the client's next sign-in to the app;
+- the photos of the removed coaches and staff are deleted from file storage.
 
 ---
 

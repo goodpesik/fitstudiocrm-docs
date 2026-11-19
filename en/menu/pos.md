@@ -118,7 +118,8 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - the payment is not from the personal account;
 - the transaction was created online, not by the sync of an operation made on a computer without internet;
 - the transaction has no fiscal receipt;
-- the studio has an active fiscal integration (enabled and configured).
+- the studio has an active fiscal integration (enabled and configured);
+- the operation time of the transaction is not earlier than the time of the studio's first fiscalized sale (the earliest sale transaction with a fiscal receipt). If the studio has no fiscalized sale, the button is not shown. This condition applies only to the manual receipt; the automatic receipt of a sale or a debt payment does not check it.
 
 **Execution:**
 
@@ -136,6 +137,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 | 404 | `TRANSACTION_NOT_FOUND` | «Транзакцію не знайдено» | the transaction does not exist |
 | 400 | `TRANSACTION_NOT_FISCAL_KIND` | «Для цієї транзакції фіскальний чек не створюється» | a refund, a personal-account payment, or a transaction created by the sync of an offline operation |
 | 409 | `RECEIPT_ALREADY_ISSUED` | «Фіскальний чек для цієї транзакції вже створено» | the transaction already has a fiscal receipt |
+| 400 | `TRANSACTION_BEFORE_FIRST_FISCAL_SALE` | «Фіскальний чек вручну створюється лише для продажів, здійснених не раніше першого фіскалізованого продажу студії» | the operation time of the transaction is earlier than the time of the studio's first fiscalized sale, or the studio has no fiscalized sale |
 | 400 | `FISCALIZATION_NOT_ENABLED` | «Фіскалізацію не налаштовано» | the studio has no active fiscal integration |
 | 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
 

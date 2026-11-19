@@ -131,6 +131,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
   - The provider answered with a refusal (an error text in the answer or HTTP 4xx) — the mark is removed, `FISCAL_PROVIDER_ERROR` is returned, a retry is allowed.
   - No answer from the provider (timeout, network error, HTTP 5xx) — the mark stays, `FISCAL_RESULT_UNKNOWN` is returned.
   - The receipt was created but not written onto the transaction — the mark stays.
+- During a sale with a **VchasnoKasa** integration, when no answer to the receipt request comes from the provider (timeout, network error, HTTP 5xx), the sale is saved without a receipt with the sent mark and has the status **Receipt sent, number unknown**. When the provider answered with a refusal, the sale is saved without the mark. For a **Checkbox** integration the mark is not set. A refund receipt does not get the mark.
 - The fiscal receipt of an online debt payment, created automatically after the payment is saved, is created the same way: with the transaction lock and the repeated check of the conditions. When the receipt was already created with the **Fiscalize** button, a second receipt is not created, and the other way round.
 - Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
 - Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.

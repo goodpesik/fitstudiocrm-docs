@@ -66,6 +66,30 @@ The **Очистити тренування** (Clear workouts) button opens the 
 
 The **Продовжити** (Continue) button becomes active only after the **Я підтверджую видалення** (I confirm the deletion) switch is on and the word **DELETE** is typed in the field. Clearing runs as a [background task](/en/pages/processing#_65-background-tasks).
 
+#### Start Over
+
+The **Почати все з початку** (Start over) button is available to the studio owner only; it is not shown to other roles, and the server rejects a request from another role with the message «Скинути дані закладу може лише власник» (Only the owner can reset the studio data).
+
+The button opens the **Почати все з початку** window. The action is irreversible and returns the studio to the state of a newly created one:
+
+| Removed | Kept |
+|---|---|
+| clients, their memberships, balance, debts, cards | the owner account |
+| memberships (plans) and their transactions | the studio settings |
+| the schedule, workouts, client bookings, the workout change log | support requests |
+| financial transactions, cash accounts, shifts, staff bonuses | the record of sent SMS |
+| staff (administrators, managers), coaches, rooms | |
+| categories, products and stock history, certificates | |
+| notifications, reminders, reviews, client import and export jobs | |
+
+In the studio settings the links to the removed categories are cleared: the list of categories for creating workouts via the bot and the categories assigned to fiscal registrars.
+
+To confirm, the studio name has to be typed exactly as it is saved (leading and trailing spaces are ignored, letter case matters). Only then does the **Видалити всі дані** (Delete all data) button become active. If the studio name is not set, confirmation is impossible: the window shows a hint to set the name on the **Інформація про студію** (Studio information) tab.
+
+The server checks the role and the studio name again right before the deletion. If the name does not match, nothing is deleted and the message «Введена назва не збігається з назвою закладу» (The entered name does not match the studio name) is shown. The deletion runs as a single operation: if it fails, the data stays unchanged.
+
+After a successful deletion the message «Дані закладу видалено. Сторінку буде оновлено.» (The studio data has been deleted. The page will be reloaded.) appears and the page reloads. Removed staff lose access to the studio.
+
 ---
 
 ## Features

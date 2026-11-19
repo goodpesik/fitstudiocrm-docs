@@ -108,7 +108,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 ### 3.9.4.2 Fiscalizing a transaction
 
-> The **Fiscalize** ("Фіскалізувати") button in the **Receipt** column creates the fiscal receipt of a saved transaction that has no receipt (the fiscal provider returned an error, or the operation was interrupted after it was saved).
+> The **Fiscalize** ("Фіскалізувати") button in the **Receipt** column creates the fiscal receipt of a saved transaction that has no receipt.
 
 **Access:** the SuperAdmin, Admin and Manager roles.
 
@@ -125,11 +125,14 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 - After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through the first active fiscal integration, as during a sale. The transaction id is passed to the provider as the receipt id.
 - Before the receipt is created, the transaction is locked and the conditions are checked again. At most one receipt is created for a transaction: a repeated click or a simultaneous action of another user is refused with `RECEIPT_ALREADY_ISSUED`.
+- For a **Checkbox** integration, before the receipt is created the server asks the provider for a receipt with the transaction id. When such a receipt exists, it is saved on the transaction and no new receipt is created. When the request to the provider fails, the receipt is created. For a **VchasnoKasa** integration this request is not made.
 - The fiscal receipt of an online debt payment, created automatically after the payment is saved, is created the same way: with the transaction lock and the repeated check of the conditions. When the receipt was already created with the **Fiscalize** button, a second receipt is not created, and the other way round.
 - Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
 - Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
 
 **Error codes:**
+
+When several conditions are not met, the code of the first of them in the order of the table rows is returned.
 
 | HTTP | Code | Message | Condition |
 |---|---|---|---|
@@ -137,8 +140,8 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 | 404 | `TRANSACTION_NOT_FOUND` | «Транзакцію не знайдено» | the transaction does not exist |
 | 400 | `TRANSACTION_NOT_FISCAL_KIND` | «Для цієї транзакції фіскальний чек не створюється» | a refund, a personal-account payment, or a transaction created by the sync of an offline operation |
 | 409 | `RECEIPT_ALREADY_ISSUED` | «Фіскальний чек для цієї транзакції вже створено» | the transaction already has a fiscal receipt |
-| 400 | `TRANSACTION_BEFORE_FIRST_FISCAL_SALE` | «Фіскальний чек вручну створюється лише для продажів, здійснених не раніше першого фіскалізованого продажу студії» | the operation time of the transaction is earlier than the time of the studio's first fiscalized sale, or the studio has no fiscalized sale |
 | 400 | `FISCALIZATION_NOT_ENABLED` | «Фіскалізацію не налаштовано» | the studio has no active fiscal integration |
+| 400 | `TRANSACTION_BEFORE_FIRST_FISCAL_SALE` | «Фіскальний чек вручну створюється лише для продажів, здійснених не раніше першого фіскалізованого продажу студії» | the operation time of the transaction is earlier than the time of the studio's first fiscalized sale, or the studio has no fiscalized sale |
 | 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
 
 ---

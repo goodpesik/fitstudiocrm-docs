@@ -75,6 +75,10 @@ Reminders are sent in two independent ways.
 
 A client with the app and the **Нагадування** (Reminders) notification type on chooses how many hours in advance to be reminded — in [Notifications](/en/mobile/notifications), from 1 to 24 hours. The reminder arrives as an app notification.
 
+- If the app server does not accept the reminder, it is retried on the following hourly runs. After 6 failed attempts, or 24 hours after the first attempt, the reminder is not sent. A retry can arrive after the session has started.
+- If the app server does not answer, the remaining reminders and held messages of the studio are not sent on that run: they move to the next hourly run, and the move does not count as a failed attempt.
+- A retry does not create a second record in the app notification feed.
+
 ### The reminder for clients without the app, set by the studio
 
 Clients without the app are covered by the studio's **Нагадувати про візит** (Remind about the visit) setting on the [Mobile Application](/en/login/settings#mobile-application) tab (from 0 to 24 hours, `0` — off). The setting applies when the studio's mobile app is on. The channel is chosen in the order described in [6.14](#_614-messages-to-clients): Telegram bot, Fitshandler Telegram account, SMS. An SMS reminder is sent only when the **SMS-нагадування про візит** (SMS visit reminder) switch is on; the switch is off by default. After a reminder sent in Telegram, the client receives a second message «Встановіть додаток Fitshandler <link>» (Install the Fitshandler app).

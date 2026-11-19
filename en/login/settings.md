@@ -74,21 +74,37 @@ The button opens the **Почати все з початку** window. The actio
 
 | Removed | Kept |
 |---|---|
-| clients, their memberships, balance, debts, cards | the owner account |
+| clients, their memberships, balance, debts, cards | the accounts with the owner role, including platform administrator accounts |
 | memberships (plans) and their transactions | the studio settings |
 | the schedule, workouts, client bookings, the workout change log | support requests |
 | financial transactions, cash accounts, shifts, staff bonuses | the record of sent SMS |
-| staff (administrators, managers), coaches, rooms | |
+| staff (administrators, managers), coaches and their photos, rooms | |
 | categories, products and stock history, certificates | |
 | notifications, reminders, reviews, client import and export jobs | |
 
 In the studio settings the links to the removed categories are cleared: the list of categories for creating workouts via the bot and the categories assigned to fiscal registrars.
 
-To confirm, the studio name has to be typed exactly as it is saved (leading and trailing spaces are ignored, letter case matters). Only then does the **Видалити всі дані** (Delete all data) button become active. If the studio name is not set, confirmation is impossible: the window shows a hint to set the name on the **Інформація про студію** (Studio information) tab.
+To confirm, the saved studio name has to be typed (leading and trailing spaces are ignored, letter case matters). A name that was changed but not saved is not accepted for confirmation. Only then does the **Видалити всі дані** (Delete all data) button become active. If the studio name is not saved, confirmation is impossible: the window shows a hint to set and save the name on the **Інформація про студію** (Studio information) tab.
+
+The reset is not performed, nothing is deleted and a message is shown if:
+
+| Condition | Message |
+|---|---|
+| the studio is in a studio group with a shared client base or shared memberships | «Заклад входить до мережі зі спільною базою клієнтів або абонементів. Перед очищенням даних вийдіть із мережі.» (The studio is in a group with a shared client base or memberships. Leave the group before resetting the data.) |
+| the studio's group membership could not be checked | «Не вдалося перевірити участь закладу в мережі закладів. Спробуйте пізніше.» (The studio's group membership could not be checked. Try again later.) |
+| a cash shift is open at the fiscal provider (Checkbox, Vchasno.Kasa) | «Закрийте касову зміну перед очищенням даних» (Close the cash shift before resetting the data) with the names of the fiscal registrars |
+| a client import or a client export to a file is running | «Триває завантаження або збереження клієнтів. Дочекайтеся завершення та повторіть.» (A client import or export is running. Wait until it finishes and try again.) |
+| another operation is changing the studio data at that moment | «Дані закладу зараз використовуються іншою операцією. Нічого не видалено. Спробуйте ще раз за хвилину.» (The studio data is in use by another operation. Nothing was deleted. Try again in a minute.) |
+
+If the fiscal provider is unavailable, its shift state is not checked and the reset is not blocked. While the reset runs, new client imports and exports do not start.
 
 The server checks the role and the studio name again right before the deletion. If the name does not match, nothing is deleted and the message «Введена назва не збігається з назвою закладу» (The entered name does not match the studio name) is shown. The deletion runs as a single operation: if it fails, the data stays unchanged.
 
-After a successful deletion the message «Дані закладу видалено. Сторінку буде оновлено.» (The studio data has been deleted. The page will be reloaded.) appears and the page reloads. Removed staff lose access to the studio.
+After a successful deletion the message «Дані закладу видалено. Сторінку буде оновлено.» (The studio data has been deleted. The page will be reloaded.) appears and the page reloads. After the reset:
+
+- removed staff lose access to the studio; if the studio is still shown to such a person in the studio list at sign-in, it disappears from the list after the first attempt to open it;
+- the profiles of this studio's clients, coaches and staff are removed from the mobile app; a profile that could not be removed at once disappears at the person's next sign-in to the app;
+- the photos of the removed coaches are deleted from file storage.
 
 ---
 

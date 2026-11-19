@@ -220,7 +220,8 @@ Fields of the `sale` operation:
 
 | Field | Meaning |
 |---|---|
-| `clientId` | client UUID; required when plans are sold or a debt remains |
+| `clientId` | client UUID; required when plans are sold or a debt remains and `clientOperationId` is not sent |
+| `clientOperationId` | id of the `client_create` operation of a client created offline (see [Reference to a client created offline](#reference-to-a-client-created-offline)) |
 | `clientName` | client name; when the client is found on the server, the transaction stores the full name from the card |
 | `plans` | plans: `planId`, `planName`, `price` (unit price), `quantity` |
 | `products` | goods: `productId`, `productName`, `price` (unit price), `quantity` |
@@ -349,3 +350,94 @@ The server refuses these operations with the `rejected` result and the `OFFLINE_
 | `PLAN_NOT_FOUND` | `conflict` | a plan of the sale is not on the server |
 | `PRODUCT_NOT_FOUND` | `conflict` | a product of the sale is not on the server |
 | `CLIENT_NOT_FOUND` | `conflict` | the client of the sale is not on the server |
+
+## Class registration and new clients
+
+A client registration for a class and a client creation made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Sending an operation again does not duplicate its records (see [One-time application of operations](#one-time-application-of-operations)).
+
+### Operation kinds
+
+| Kind | Operation | Records |
+|---|---|---|
+| `client_create` | client creation | client card; loyalty card; entry in the shared clients registry of the studio network |
+| `booking` | client registration for a class, including a class of a regular workout not yet created on the server, with one class taken from the client's plan | class client list; plan classes remaining; client plan history line |
+
+### Client creation
+
+Fields of the `client_create` operation:
+
+| Field | Value |
+|---|---|
+| `name` | first name, required, up to 128 characters |
+| `lastName` | last name, up to 128 characters |
+| `phone` | phone, up to 32 characters; stored as `0XXXXXXXXX` |
+| `email` | email, up to 128 characters |
+| `comment` | comment, up to 1024 characters |
+| `isCardManual` | `true` — the loyalty card number is set manually |
+| `manualCard` | loyalty card number, up to 64 characters; used only with `isCardManual: true` |
+
+- The client is created as in the online admin: loyalty card and the shared clients registry of the studio network. A client known to another studio of the network by phone is created from the network data.
+- The operation result is the client id on the server: `{ "clientId": "<UUID>" }`.
+- If the studio already has a client with this phone, the client is not created: the operation gets `conflict` with code `POSSIBLE_DUPLICATE`. The conflict message contains the ids of the studio clients with this phone.
+- If the manually set card number is already registered to another client, the client is not created: `conflict` with code `CARD_NUMBER_TAKEN`.
+
+### Reference to a client created offline
+
+- An operation for a client created on a computer without internet carries, instead of the client id, the `clientOperationId` field — the id of the `client_create` operation. The `booking` and `sale` operations accept this field.
+- An operation with `clientOperationId` is applied only after the `client_create` operation it refers to. The `client_create` operation comes before it in the queue; the operation's `dependsOn` field contains the `client_create` operation id.
+- If the `client_create` operation is not applied yet, the referring operation gets `retry`, the following operations of the queue get `pending`.
+- If the `client_create` operation got `conflict` or `rejected`, the referring operation gets `conflict` with code `OFFLINE_CLIENT_NOT_APPLIED`.
+- An operation must not carry both a client id and `clientOperationId`; such an operation is rejected with code `INVALID_PAYLOAD`.
+
+### Class registration
+
+The content of the `booking` operation is the content of the online class booking (`POST /workout-occurrence/add-client`) with additional fields:
+
+| Field | Value |
+|---|---|
+| `id` | client UUID; not sent when `clientOperationId` is sent |
+| `clientOperationId` | id of the `client_create` operation of a client created offline |
+| `workoutId` | workout id |
+| `date` | class date and time, ISO 8601 |
+| `status` | `0` — booked, `2` — visited |
+| `paymentStatus` | `plan` — by plan, `payed` — paid, `not_payed` — not paid |
+| `clientPlanId` | id of the client plan one class is taken from |
+| `saleOperationId` | id of the `sale` operation that paid for the class |
+
+- The registration is applied as an online class booking. If the class of a regular workout on this date is not created on the server yet, it is created together with the list of its regular clients; their registrations are kept.
+- The class client list, the class taken from the plan, the plan history line and the offline operation journal record are saved in one database transaction: all or none.
+- Taking a class from the plan decreases the classes remaining by one. A plan whose remainder becomes `0` gets the status «Ended». A class of a workout marked as rent takes nothing from the plan.
+- A client who already holds a seat in the class (a regular client or a booking through the app) does not take a second seat: the registration changes the status of the booking.
+- Clients get no notification about the registration. The class client list is sent to the coach as for an online booking.
+
+### Checks during the sync
+
+The checks run before the write and again inside the write transaction. An operation that fails a check gets `conflict` with the reason code; the class client list and the plan do not change.
+
+| Code | Condition |
+|---|---|
+| `CLIENT_NOT_FOUND` | the client was deleted or merged with another client |
+| `WORKOUT_NOT_FOUND` | the workout is missing on the server |
+| `OCCURRENCE_CANCELLED` | the class was cancelled |
+| `NO_FREE_SEATS` | no free seats: seats are taken, including bookings through the mobile app and QR self check-in; a class without a capacity set is not limited |
+| `PLAN_NOT_FOUND` | the plan is missing or belongs to another client |
+| `PLAN_FROZEN` | the plan is frozen |
+| `PLAN_EXHAUSTED` | the plan has no classes left |
+| `PLAN_EXPIRED` | the plan validity ended by the operation time, or the plan is ended |
+| `PLAN_NOT_ACTIVE` | the plan is not active |
+| `OFFLINE_SALE_NOT_APPLIED` | the sale named in `saleOperationId` got `conflict` or `rejected` |
+| `OFFLINE_CLIENT_NOT_APPLIED` | the client named in `clientOperationId` was not created on the server |
+
+- The plan classes remaining do not go below zero during the sync.
+- A booking status other than `0` and `2` is rejected with code `INVALID_PAYLOAD`.
+- After the write, the change of the plan remainder is passed to the studio network. A failure to pass it does not cancel the operation.
+
+### Class and client actions not available offline
+
+- Wait list.
+- Moving and cancelling classes, coach substitution, room change.
+- Creating and editing workouts.
+- Automatic registration by the client card from the mobile app.
+- Editing and deleting a client.
+- Client import and export.
+- QR self check-in books the client for the class on the server.

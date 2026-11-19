@@ -412,7 +412,7 @@ The content of the `booking` operation is the content of the online class bookin
 - The seat check and the class registration run one after another with bookings for the same class through the mobile app and QR self check-in.
 - The plan must match the workout type: a personal workout takes a plan of type «Personal», any other workout a plan of type «Regular». For a workout marked as rent the plan type is not checked.
 - A plan with the status «New» is activated at the first visit, as at an online check-in: the plan must have a duration other than `0`, a type that matches the workout and classes remaining above `0`. The start date is the operation date in the studio time zone; the end date is the start date plus the plan duration. The activation, the activation line in the plan history and the class taken are saved in the registration transaction.
-- The plan validity is checked at the operation time. A plan with the status «Ended» whose end date is not earlier than the operation date and whose classes remaining are above `0` is charged.
+- The plan validity is checked at the operation time. A plan with the status «Ended» is charged when its end date is not earlier than the operation date and has passed by the sync, and its classes remaining are above `0`. A plan with the status «Ended» without an end date, or with an end date that has not passed by the sync, is not charged: the operation gets the `PLAN_CLOSED` conflict for an administrator to review.
 - No notification about the registration is sent to the client or to the coach, as for an online class booking.
 
 ### Checks during the sync
@@ -428,7 +428,8 @@ The checks run before the write and again inside the write transaction. An opera
 | `PLAN_NOT_FOUND` | the plan is missing or belongs to another client |
 | `PLAN_FROZEN` | the plan is frozen |
 | `PLAN_EXHAUSTED` | the plan has no classes left |
-| `PLAN_EXPIRED` | the plan validity ended by the operation time, or the plan is ended without an end date |
+| `PLAN_EXPIRED` | the plan validity ended by the operation time |
+| `PLAN_CLOSED` | the plan was ended before its end date or without an end date; an administrator review is required |
 | `PLAN_NOT_ACTIVE` | the plan is not active and is not activated at the first visit |
 | `PLAN_NOT_FOR_CLASS` | the plan type does not match the workout type |
 | `OFFLINE_SALE_NOT_APPLIED` | the sale named in `saleOperationId` got `conflict` or `rejected` |

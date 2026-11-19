@@ -71,7 +71,7 @@ The card colour is the coach's colour, and for a workout without a coach — the
 **Workout information:**
 
 - The coach's avatar and name (the avatar is shown if set in the [coach card](/en/menu/coaches#_341-coach-card)). If a substitution is set for the date, the main coach's name is crossed out and the substitute's name is shown next to it.
-- For a regular workout — "Дата тренування: <date>" (workout date) and the time.
+- For a regular or personal workout — "Дата тренування: <date>" (workout date) and the time.
 - "Зал: <name>" (room, taking a room change into account).
 
 **Counters:**

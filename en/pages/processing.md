@@ -106,7 +106,18 @@ When the limit is used up, SMS are not sent; login codes and guest booking confi
 
 The nightly job ends a membership if its end date has passed (the last day included, in the studio time zone) or all workouts are used. «Оренда» (Rent) memberships end only by date.
 
-Every day at 12:00, clients with an active membership (except «Оренда») with no more than 2 workouts left or less than 4 days until the end receive an app notification: «🔔🔔🔔 Нагадування. Закінчується дія абонементу(ів)…» (Reminder. Your membership(s) are ending…). The notification is not sent if the client already has the next purchased membership; it is repeated only after a new visit. Clients without the app do not receive it.
+Every day at 12:00 (UTC) the client receives the app notification «🔔🔔🔔 Нагадування про абонемент» (Subscription reminder) about an active membership (except «Оренда») when one of the conditions is met:
+
+| Condition | Notification line |
+|---|---|
+| No more than 1 workout left | «<name>. Залишилось тренувань: N.» (Workouts left: N.) |
+| Less than 4 days until the end date | «<name>. Термін дії закінчується DD.MM.YYYY.» (Valid until DD.MM.YYYY.) |
+| Both conditions are met | Both parts in one line |
+
+- The notification is sent **once** per membership. A visit, an extension or a change of the workout count does not create a repeated notification for the same membership.
+- The notification is not sent if the client already has the next purchased membership.
+- If the app server does not accept the notification, it is retried the next day.
+- Clients without the app do not receive it.
 
 ---
 

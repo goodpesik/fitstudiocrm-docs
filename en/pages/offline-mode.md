@@ -380,6 +380,7 @@ Fields of the `client_create` operation:
 - The operation result is the client id on the server: `{ "clientId": "<UUID>" }`.
 - If the studio already has a client with this phone, the client is not created: the operation gets `conflict` with code `POSSIBLE_DUPLICATE`. The conflict message contains the ids of the studio clients with this phone.
 - If the manually set card number is already registered to another client, the client is not created: `conflict` with code `CARD_NUMBER_TAKEN`.
+- The id of the created client equals the id of the `client_create` operation. A repeated sending of an operation interrupted after the client was created gets `applied` with this client's id; no `POSSIBLE_DUPLICATE` conflict arises for it.
 
 ### Reference to a client created offline
 
@@ -408,7 +409,11 @@ The content of the `booking` operation is the content of the online class bookin
 - The class client list, the class taken from the plan, the plan history line and the offline operation journal record are saved in one database transaction: all or none.
 - Taking a class from the plan decreases the classes remaining by one. A plan whose remainder becomes `0` gets the status «Ended». A class of a workout marked as rent takes nothing from the plan.
 - A client who already holds a seat in the class (a regular client or a booking through the app) does not take a second seat: the registration changes the status of the booking.
-- Clients get no notification about the registration. The class client list is sent to the coach as for an online booking.
+- The seat check and the class registration run one after another with bookings for the same class through the mobile app and QR self check-in.
+- The plan must match the workout type: a personal workout takes a plan of type «Personal», any other workout a plan of type «Regular». For a workout marked as rent the plan type is not checked.
+- A plan with the status «New» is activated at the first visit, as at an online check-in: the plan must have a duration other than `0`, a type that matches the workout and classes remaining above `0`. The start date is the operation date in the studio time zone; the end date is the start date plus the plan duration. The activation, the activation line in the plan history and the class taken are saved in the registration transaction.
+- The plan validity is checked at the operation time. A plan with the status «Ended» whose end date is not earlier than the operation date and whose classes remaining are above `0` is charged.
+- No notification about the registration is sent to the client or to the coach, as for an online class booking.
 
 ### Checks during the sync
 
@@ -423,14 +428,15 @@ The checks run before the write and again inside the write transaction. An opera
 | `PLAN_NOT_FOUND` | the plan is missing or belongs to another client |
 | `PLAN_FROZEN` | the plan is frozen |
 | `PLAN_EXHAUSTED` | the plan has no classes left |
-| `PLAN_EXPIRED` | the plan validity ended by the operation time, or the plan is ended |
-| `PLAN_NOT_ACTIVE` | the plan is not active |
+| `PLAN_EXPIRED` | the plan validity ended by the operation time, or the plan is ended without an end date |
+| `PLAN_NOT_ACTIVE` | the plan is not active and is not activated at the first visit |
+| `PLAN_NOT_FOR_CLASS` | the plan type does not match the workout type |
 | `OFFLINE_SALE_NOT_APPLIED` | the sale named in `saleOperationId` got `conflict` or `rejected` |
 | `OFFLINE_CLIENT_NOT_APPLIED` | the client named in `clientOperationId` was not created on the server |
 
 - The plan classes remaining do not go below zero during the sync.
 - A booking status other than `0` and `2` is rejected with code `INVALID_PAYLOAD`.
-- After the write, the change of the plan remainder is passed to the studio network. A failure to pass it does not cancel the operation.
+- After the write, the change of the plan remainder is passed to the studio network; a plan activated at the registration is passed to the network before the remainder change. A failure to pass it does not cancel the operation.
 
 ### Class and client actions not available offline
 

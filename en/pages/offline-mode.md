@@ -520,7 +520,7 @@ The content of the `certificate_redeem` operation is the certificate id and the 
 | `clientPlanIds` | ids (UUID) of the client plans the redemption creates: one per unit of the certificate's plans, in the certificate's order; optional |
 
 - The certificate is locked until the end of the transaction. A redemption saved online earlier is taken into account: a certificate is redeemed once.
-- Validity is checked at the moment of the operation: a certificate with the "Expired" status whose validity ended after the operation is redeemed.
+- Validity is checked by the calendar day of the operation in the studio time zone: a certificate is valid through the last day of its validity inclusive. A certificate with the "Expired" status whose last day of validity is not earlier than the operation day is redeemed.
 - The redemption sets the "Redeemed" status, the usage date (the operation time) and the certificate's client. For each unit of the certificate's plans, a client plan is created with the "New" status and the purchase date equal to the operation time. After saving, the plans are sent to the studio network; a sending failure does not cancel the operation.
 - A number of `clientPlanIds` that differs from the number of the certificate's plans is rejected with code `INVALID_PAYLOAD`.
 - Operation result: `clientPlanIds`.
@@ -565,7 +565,7 @@ The content of the `refund` operation is the content of the online refund (`POST
 | `certificate_number_taken` | `conflict` | the server already has a certificate with this number |
 | `certificate_not_found` | `conflict` | the certificate is not on the server |
 | `certificate_already_redeemed` | `conflict` | the certificate is already redeemed |
-| `certificate_expired` | `conflict` | the certificate's validity ended before the operation |
+| `certificate_expired` | `conflict` | the last day of the certificate's validity is earlier than the operation day in the studio time zone |
 | `refund_exceeds_remaining` | `conflict` | the refund sum exceeds the available sum; `details.available` — the available sum |
 | `dependency_rejected` | `conflict` | the operation this one depends on was not applied; `details.operationId` — its id |
 | `TRANSACTION_NOT_FOUND` | `conflict` | the refunded sale is not on the server |

@@ -29,6 +29,8 @@
 
 **Search** — by number, client, or comment — a field at the top of the table.
 
+- **Offline** ("Офлайн") — the mark of a certificate sold or redeemed on a computer without internet. The **Date sold** and **Date used** of such a certificate are the operation time on the computer. See [Personal account, certificates and refunds](/en/pages/offline-mode#personal-account-certificates-and-refunds).
+
 ---
 
 ## 3.10.2 Creating a certificate

@@ -136,7 +136,7 @@ Printing rules for the offline till:
 - The same id with another operation content is refused.
 - An online sale or refund stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
 - An online debt payment saves all its records together with the journal record in one transaction and creates the fiscal receipt after it is saved. Stopped before the save, it leaves no changes and is run by the next delivery with the same id.
-- A sale and a debt payment applied by the offline queue sync save all their records together with the journal record in one transaction. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
+- A sale, a debt payment, a refund, a certificate sale and a certificate redemption applied by the offline queue sync save all their records together with the journal record in one transaction. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
@@ -199,6 +199,8 @@ During sync every operation gets its own result:
 | `in_progress` | another delivery is applying the operation |
 | `pending` | the operation was not looked at: an earlier operation of the queue is not applied yet |
 
+The `rejected` and `conflict` results carry the `error` field: `code` (the reason code), `message` (the description) and, for some codes, `details` — figures and ids for the administrator's decision (for example, `shortfall`, `available`, `operationId`).
+
 ## Sales sync
 
 Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Each operation is applied in one database transaction: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift, the offline operation journal record) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
@@ -230,7 +232,9 @@ Fields of the `sale` operation:
 | `price` | the sale sum after the discount |
 | `paymentMethod` | payment method of a sale not split into several payments |
 | `acquiringPosData` | the terminal's answer for a card payment |
-| `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData` |
+| `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData`, `isPersonalAccount` (`true` — the payment is taken from the personal account) |
+| `isPersonalAccount` | `true` — a sale without `payments` is paid from the personal account (see [Payment from the personal account](#payment-from-the-personal-account)) |
+| `isCertificate` | `true` — payment for a certificate: a register transaction with the certificate mark |
 | `partialAmount` | the sum paid now; the rest of `price` remains a debt |
 | `onDebt` | `true` — the sale is wholly on debt |
 | `total` | the sum the till received |
@@ -243,7 +247,7 @@ Fields of the `sale` operation:
 - A sale with `onDebt: true` may not contain `payments` or `partialAmount`; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
 - When the sum paid now is less than `price`, a debt for the difference is created: on the client of the sale, with the plans and goods of the sale.
 - A sale wholly on debt creates no register transactions.
-- A sale must contain at least one plan or product, or a client name.
+- A sale must contain at least one plan or product, the certificate mark (`isCertificate: true`) or a client name.
 - Each plan of the sale is created in the client's card: one per unit of `quantity`.
 - `receiptNo` and `shiftOperationId` are stored in every register transaction of the sale.
 
@@ -326,10 +330,10 @@ The server refuses these operations with the `rejected` result and the `OFFLINE_
 
 | Operation | Kind or sign |
 |---|---|
-| Payment from the personal account | `isPersonalAccount: true` in a sale, in one of a sale's `payments` or in a debt payment |
-| Certificate sale and redemption | `certificate_sale`, `certificate_redeem`; `isCertificate: true` in a sale |
-| Refund | `refund`; `type: "Refund"` in a sale |
+| Refund sent as a sale | `type: "Refund"` in a sale; a refund is sent as the `refund` operation |
 | Personal account top-up | `balance_top_up`; `isBalanceTopUp: true` in a sale |
+| Refund of a personal account top-up | `refund` of a sale with the account top-up mark |
+| Refund of a sale paid through a terminal, and refund through a terminal | `refund` of a sale with terminal data (`acquiringPosData`); `refund` with `refundTransaction.acquiringPosData` |
 | Personal account correction | `balance_correction` |
 | Bonuses | `bonus` |
 | Bank transfer confirmation | `payment_approve` |
@@ -384,7 +388,7 @@ Fields of the `client_create` operation:
 
 ### Reference to a client created offline
 
-- An operation for a client created on a computer without internet carries, instead of the client id, the `clientOperationId` field — the id of the `client_create` operation. The `booking` and `sale` operations accept this field.
+- An operation for a client created on a computer without internet carries, instead of the client id, the `clientOperationId` field — the id of the `client_create` operation. The `booking`, `sale` and `certificate_redeem` operations accept this field.
 - An operation with `clientOperationId` is applied only after the `client_create` operation it refers to. The `client_create` operation comes before it in the queue; the operation's `dependsOn` field contains the `client_create` operation id.
 - If the `client_create` operation is not applied yet, the referring operation gets `retry`, the following operations of the queue get `pending`.
 - If the `client_create` operation got `conflict` or `rejected`, the referring operation gets `conflict` with code `OFFLINE_CLIENT_NOT_APPLIED`.
@@ -404,6 +408,7 @@ The content of the `booking` operation is the content of the online class bookin
 | `paymentStatus` | `plan` — by plan, `payed` — paid, `not_payed` — not paid |
 | `clientPlanId` | id of the client plan one class is taken from |
 | `saleOperationId` | id of the `sale` operation that paid for the class |
+| `redeemOperationId` | id of the `certificate_redeem` operation that created the plan `clientPlanId` (see [Dependent operations](#dependent-operations)) |
 
 - The registration is applied as an online class booking. If the class of a regular workout on this date is not created on the server yet, it is created together with the list of its regular clients; their registrations are kept.
 - The class client list, the class taken from the plan, the plan history line and the offline operation journal record are saved in one database transaction: all or none.
@@ -434,6 +439,7 @@ The checks run before the write and again inside the write transaction. An opera
 | `PLAN_NOT_FOR_CLASS` | the plan type does not match the workout type |
 | `OFFLINE_SALE_NOT_APPLIED` | the sale named in `saleOperationId` got `conflict` or `rejected` |
 | `OFFLINE_CLIENT_NOT_APPLIED` | the client named in `clientOperationId` was not created on the server |
+| `dependency_rejected` | the certificate redemption named in `redeemOperationId` got `conflict` or `rejected` |
 
 - The plan classes remaining do not go below zero during the sync.
 - A booking status other than `0` and `2` is rejected with code `INVALID_PAYLOAD`.
@@ -448,3 +454,122 @@ The checks run before the write and again inside the write transaction. An opera
 - Editing and deleting a client.
 - Client import and export.
 - QR self check-in books the client for the class on the server.
+
+## Personal account, certificates and refunds
+
+Payments from the personal account, certificate sales and redemptions, and refunds made on a computer without internet are applied by the server during the sync of the offline queue (`POST /offline/sync`). Each operation is applied in one database transaction: if the operation is not applied, none of its records is saved. Sending the operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+
+### Operation time and the "Offline" mark
+
+- Register transactions, personal account history rows, the sale date and the usage date of a certificate, the plans created by a certificate redemption, and stock movements are saved with the operation time on the computer (`occurredAt`).
+- A personal account history row and a certificate written during the sync carry the offline operation id (`offlineOperationId`) and are shown with the "Offline" ("Офлайн") mark. A certificate sold offline carries the id of the sale operation; a certificate sold online and redeemed offline carries the id of the redemption operation.
+- Reports, the register transaction list and the personal account history count these records by the operation time.
+- Fiscal receipts are not created during the sync: refund transactions are saved in the "not fiscalized" state.
+- Client notifications (Telegram, push notifications, SMS) are not sent.
+
+### Payment from the personal account
+
+| Operation | Personal account payment mark |
+|---|---|
+| `sale` | `isPersonalAccount: true` — the whole sale; in a sale with `payments` — `isPersonalAccount: true` in one of the payments |
+| `debt_payment` | `isPersonalAccount: true` |
+| `certificate_sale` | `isPersonalAccount: true` together with `paymentMethod`, or in one of the `payments` |
+
+- A payment from the personal account must name the client (`clientId` or `clientOperationId`); otherwise the operation is rejected with code `INVALID_PAYLOAD`.
+- A sale with `payments` must not carry `isPersonalAccount: true` at the sale level; otherwise the operation is rejected with code `INVALID_PAYLOAD`.
+- The sum is taken from the client's balance the same way as an online payment: the balance decrease and the sufficiency check are one database write. The personal account balance does not become negative.
+- A register transaction paid from the personal account carries the personal account payment mark and the "Confirmed" status regardless of `paymentMethod`; no terminal data, cash ledger row or fiscal receipt is created for it.
+- A "Deduction" row is created in the personal account history: the sum, the names of the plans and products (for a debt payment — with the "(борг)" mark, for a certificate — "Сертифікат") and the link to the register transaction.
+- If the balance on the server is smaller than the payment (the money was spent online or through the mobile app while the computer was without internet), the operation gets `conflict` with code `balance_insufficient`; the `details.shortfall` field contains the missing sum. None of the operation's records is saved.
+
+### Certificate sale
+
+The content of the `certificate_sale` operation is the content of the online certificate sale (`POST /certificates`) with the payment fields:
+
+| Field | Value |
+|---|---|
+| `clientId` | client UUID; optional, required for a payment from the personal account |
+| `description` | comment |
+| `price` | certificate price |
+| `plans` | certificate plans: `id` (plan UUID), `quantity` (whole number from 1) |
+| `expiresAt` | expiration date, ISO 8601 |
+| `duration` | validity in days, from 1 |
+| `paymentMethod` | payment method of the whole price |
+| `isPersonalAccount` | `true` — the price is paid from the client's personal account |
+| `payments` | several payments, 2 to 10: `paymentMethod`, `amount`, `acquiringPosData`, `isPersonalAccount`; the payments add up to `price` to the kopeck |
+| `receiptNo` | number of the computer's paper receipt, up to 32 characters |
+| `shiftOperationId` | id of the `shift_open` operation of the computer's shift |
+
+- The certificate id equals the id of the `certificate_sale` operation.
+- The certificate number is computed by the online sale rule: `CRT` and the first 10 characters of the SHA-256 value of the string `<clientId>_<certificate id>`, written in base 36 in upper case. If the `clientId` field is not sent, the string has `undefined` in its place; if `null` is sent — `null`.
+- If the server already has a certificate with this number, the operation gets `conflict` with code `certificate_number_taken`; the certificate and transactions are not created.
+- The certificate is saved with the "Active" status and the sale date equal to the operation time.
+- A register transaction with the certificate mark is created for each payment; for a cash payment — a cash ledger row with the description "Сертифікат". An operation without `paymentMethod` and `payments`, or with price `0`, creates no register transactions.
+- Operation result: `id`, `certificateNumber`, `transactionIds`.
+
+### Certificate redemption
+
+The content of the `certificate_redeem` operation is the certificate id and the content of the online redemption (`PATCH /certificates/:id`):
+
+| Field | Value |
+|---|---|
+| `certificateId` | certificate id; for a certificate sold offline — the id of the `certificate_sale` operation |
+| `clientId` | UUID of the client redeeming the certificate; not sent if `clientOperationId` is sent |
+| `clientOperationId` | id of the `client_create` operation of a client created offline |
+| `status` | `Redeemed`; optional |
+| `clientPlanIds` | ids (UUID) of the client plans the redemption creates: one per unit of the certificate's plans, in the certificate's order; optional |
+
+- The certificate is locked until the end of the transaction. A redemption saved online earlier is taken into account: a certificate is redeemed once.
+- Validity is checked at the moment of the operation: a certificate with the "Expired" status whose validity ended after the operation is redeemed.
+- The redemption sets the "Redeemed" status, the usage date (the operation time) and the certificate's client. For each unit of the certificate's plans, a client plan is created with the "New" status and the purchase date equal to the operation time. After saving, the plans are sent to the studio network; a sending failure does not cancel the operation.
+- A number of `clientPlanIds` that differs from the number of the certificate's plans is rejected with code `INVALID_PAYLOAD`.
+- Operation result: `clientPlanIds`.
+
+### Dependent operations
+
+| Operation | Reference | Operation it depends on |
+|---|---|---|
+| `certificate_redeem` | `certificateId` of a certificate sold offline | `certificate_sale` |
+| `booking` on a plan created by an offline certificate redemption | `clientPlanId` — one of the redemption's `clientPlanIds`; `redeemOperationId` — id of the `certificate_redeem` operation | `certificate_redeem` |
+| `refund` of a sale made offline | `saleOperationId` | `sale` |
+
+- The operation another operation depends on comes before it in the queue; its id is in the `dependsOn` field.
+- If the operation it depends on is not applied yet, the dependent operation gets `retry`, the following operations of the queue get `pending`.
+- If the operation it depends on got `conflict` or `rejected`, the dependent operation gets `conflict` with code `dependency_rejected`; the `details.operationId` field contains the id of the operation it depends on.
+
+### Refund
+
+The content of the `refund` operation is the content of the online refund (`POST /transactions/refund`) with additional fields:
+
+| Field | Value |
+|---|---|
+| `transactionId` | id of the sale's register transaction; not sent if `saleOperationId` is sent |
+| `saleOperationId` | id of the `sale` operation of a sale made offline |
+| `paymentIndex` | position of the register transaction of that sale, from `0` (one transaction per payment, in the order of `payments`); `0` by default |
+| `refundTransaction` | the refund: `price` (refund sum, from 0.01), `paymentMethod`, `plans`, `products`, `workoutsIds`, `type` (`Refund`) |
+| `receiptNo` | number of the computer's paper receipt, up to 32 characters |
+| `shiftOperationId` | id of the `shift_open` operation of the computer's shift |
+
+- A refund is applied the same way as an online refund: the refund register transaction; the refunded products are added to the stock (stock movement "Refund"); the sum is returned to the personal account if the sale was paid from it (history row "Refund"); the refund is added to the sale's list of refunds; for a sale linked to a debt, the paid sum of the class is reduced and a paid debt becomes unpaid again; for cash, a "Refund" cash ledger row is created.
+- Client plans do not change on a refund, as on an online refund.
+- The sale transaction is locked until the end of the transaction; refunds of the same sale made online and during the sync are applied one after another.
+- The sum available for refund is the sale sum minus the sums of all its refunds. If the refund sum exceeds the available sum by more than a kopeck, the operation gets `conflict` with code `refund_exceeds_remaining`; the `details.available` field contains the available sum. A refund made both online and offline for the full sale sum is applied once: the second operation gets a conflict with available sum `0`.
+- A refund of a personal account top-up, a refund of a sale paid through a terminal and a refund through a terminal (`refundTransaction.acquiringPosData`) are rejected with code `OFFLINE_OPERATION_NOT_SUPPORTED`.
+- Operation result: `transactionId` — the id of the refund transaction.
+
+### Personal account, certificate and refund sync codes
+
+| Code | Result | Meaning |
+|---|---|---|
+| `balance_insufficient` | `conflict` | the personal account balance is smaller than the payment; `details.shortfall` — the missing sum |
+| `certificate_number_taken` | `conflict` | the server already has a certificate with this number |
+| `certificate_not_found` | `conflict` | the certificate is not on the server |
+| `certificate_already_redeemed` | `conflict` | the certificate is already redeemed |
+| `certificate_expired` | `conflict` | the certificate's validity ended before the operation |
+| `refund_exceeds_remaining` | `conflict` | the refund sum exceeds the available sum; `details.available` — the available sum |
+| `dependency_rejected` | `conflict` | the operation this one depends on was not applied; `details.operationId` — its id |
+| `TRANSACTION_NOT_FOUND` | `conflict` | the refunded sale is not on the server |
+| `PLAN_NOT_FOUND` | `conflict` | a plan of the certificate is not on the server |
+| `CLIENT_NOT_FOUND` | `conflict` | the client of the certificate redemption, or the client of a debt paid from the personal account, is not on the server |
+| `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
+| `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |

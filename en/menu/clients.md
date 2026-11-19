@@ -302,6 +302,8 @@ shows all balance movements, the third one every debt of the client
 | **Description**             | The plan/product name, or "--" for a top-up                 |
 | **Created by**     | The name of the administrator who performed the operation                                    |
 
+- **Offline** ("Офлайн") — the mark of a row created during the sync of a personal-account payment or a refund made on a computer without internet. The **Date** of such a row is the operation time on the computer. See [Personal account, certificates and refunds](/en/pages/offline-mode#personal-account-certificates-and-refunds).
+
 > 📱 The client sees their account and its full history in the mobile app, on the **Profile → Account** tab.
 
 ---

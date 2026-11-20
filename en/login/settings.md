@@ -58,6 +58,14 @@ A multi-line text field. The entered text is shown to clients in the mobile app 
 
 The **Часовий пояс** (Time zone) drop-down (default Kyiv, `Europe/Kyiv`). The time zone defines the dates and times of the studio's workouts and reports.
 
+The studio-day rule: a calendar day, "today", a weekday and an hour are determined in the studio time zone, regardless of the time zone of the server, the computer or the phone. Under this rule:
+
+- dates and times in messages to administrators, coaches and clients (app, Telegram, SMS) are shown in studio time;
+- the coach calendar (`.ics` file) lists classes in studio time;
+- in the clients Excel export the birthday is a studio day, and the `createdAt` and `lastVisit` columns are the studio date and time in the `yyyy-MM-dd HH:mm` format;
+- when the subscription sets no billing period start, the monthly SMS limit is counted from 00:00 on the 1st of the current month in studio time;
+- a rating request is sent for classes attended during the last 2 studio days, and only for classes no older than 7 studio days.
+
 > ⚠️ If the studio has at least one workout, the list is locked and the message «Зміна часового поясу недоступна» (Changing the time zone is unavailable) is shown under it.
 
 ### Danger Zone

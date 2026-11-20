@@ -17,6 +17,7 @@ The schedule for a user without a client card in the studio is described in [7.2
 - Available date range:
   - **Client:** from today to **+15 days**.
   - **Coach / Admin:** past days without limit and up to **+30 days** ahead.
+- The strip days, «today», the available date range and studio days off follow the [studio time zone](/en/login/settings#studio-time-zone) regardless of the phone's time zone.
 - The day heading: weekday, date and number of workouts (for example, «Saturday, 17 October · 4 classes»).
 - The **«My workouts»** filter (client and coach) shows only own bookings or own workouts.
 - On a studio day off, «The studio is closed on this day» is shown; the **«Create»** button is not shown.

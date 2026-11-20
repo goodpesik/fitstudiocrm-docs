@@ -202,6 +202,7 @@ Cancelling a repeating booking opens the **Cancel booking** ("Скасувати
 ![](../../_media/customer-book-1.png ":size=100x60")
 
 - Choose the **Workout date** ("Дата тренування") — a list of workouts appears (columns **Workout**, **Coach**, **Room**, **Date and time**, **Select**). The **Show personal** ("Показати персональні") toggle adds personal workouts to the list.
+- If a workout was moved for the chosen date, the list shows that date's time, room and substitute coach. A workout cancelled for the chosen date (a moved one included) is not listed. Today's workout is listed until it starts (hour and minute, in the studio's time zone).
 - Turn on the **Select** ("Вибрати") toggle to add a workout. Two different workouts starting at the same hour cannot be selected.
 
 ![](../../_media/customer-book-2.png ":size=100x65")

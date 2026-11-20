@@ -22,7 +22,7 @@ If there are no studios, «Для початку роботи натисніть
 
 **Table columns:**
 
-- **Назва** (Name) — studio name; clicking it opens the studio card (see 3).
+- **Назва** (Name) — the studio's project ID; clicking it opens the studio card (see 3).
 - **Продукт** (Product) — product (fitstudiocrm).
 - **План** (Plan) — current plan and its price.
 - **Діє до** (Valid until) — the date until which the subscription is paid.
@@ -82,17 +82,29 @@ The **Керування SMS** window shows **Норма SMS / місяць** (S
 
 ## 5. Creating a new studio
 
-The **Новий тенант** button opens the **Новий тенант** wizard; «Крок N з M» (Step N of M) is shown above the steps. Steps: plan, project name, questionnaire (only if there are unanswered questions for the venue's line of business), setup, confirmation.
+The **Новий тенант** button opens the **Новий тенант** wizard; «Крок N з M» (Step N of M) is shown above the steps. Steps: plan, project ID, questionnaire (only if there are unanswered questions for the venue's line of business), setup, confirmation.
 
 ### 5.1 Plan
 
 Choosing the plan. Each plan shows the price and limits. For a trial plan the limits are those of the permanent plan chosen after the trial period.
 
-### 5.2 Project name
+### 5.2 Project ID
 
-The project (studio) name; availability is checked at once («✓ Доступно», Available / «Недоступно: <reason>», Unavailable).
+The **Ідентифікатор проєкту** (Project ID) field is the unique technical name of the project (studio) in the system. The studio is shown under it in the personal cabinet (the **Назва** (Name) column of the studio list) and in notifications and emails about the project. The venue name for your customers is set separately, in the app settings.
 
-> Name: **4–24 characters**, Latin letters, digits and hyphens only. **The name cannot be changed later.**
+The availability of the ID is checked while you type: «✓ Доступно» (Available) or the reason the ID cannot be used appears under the field.
+
+Requirements for the ID:
+
+- lowercase Latin letters (a–z), digits and hyphens only; capital letters, Cyrillic, spaces and dots are not allowed;
+- 4 to 24 characters;
+- the first character is a Latin letter;
+- the last character is not a hyphen;
+- not used by another project;
+- not a service word of the system: `www`, `api`, `admin`, `clients`, `app`, `google`, `ssl`;
+- the ID of a deleted project is unavailable for 93 days after the deletion.
+
+> **The ID cannot be changed after the project is created.**
 
 If the account contact details are not filled in yet, this step asks for **Імʼя** (Name), **Телефон** (Phone), **Назва закладу** (Venue name), **Місто** (City) and **Країна** (Country); you cannot proceed without them. The name becomes the administrator's name in the app. Contact details are changed later in the **Акаунт** (Account) → **Контактні дані** (Contact details) window.
 
@@ -109,7 +121,7 @@ How the studio will be set up:
 
 ### 5.5 Confirmation
 
-Summary (**План**, **Назва**, **Налаштування**), **Період оплати** (Billing period, if the plan has an annual tariff), **SMS-нагадувань на місяць** (SMS reminders per month) and **До сплати при першій оплаті** (Due at the first payment). For a trial plan — the optional **План після пробного періоду** (Plan after the trial period); if it is not chosen, the administrator assigns the plan when approving the request.
+Summary (**План**, **Ідентифікатор проєкту** (Project ID), **Налаштування**), **Період оплати** (Billing period, if the plan has an annual tariff), **SMS-нагадувань на місяць** (SMS reminders per month) and **До сплати при першій оплаті** (Due at the first payment). For a trial plan — the optional **План після пробного періоду** (Plan after the trial period); if it is not chosen, the administrator assigns the plan when approving the request.
 
 Optional data transfer options:
 

@@ -75,6 +75,10 @@ Reminders are sent in two independent ways.
 
 A client with the app and the **Нагадування** (Reminders) notification type on chooses how many hours in advance to be reminded — in [Notifications](/en/mobile/notifications), from 1 to 24 hours. The reminder arrives as an app notification.
 
+- If the app server does not accept the reminder, it is retried on the following hourly runs. The reminder is not sent once the session has started, or after 6 failed attempts. A reminder about several sessions is not sent once the first of them has started.
+- If the app server does not answer, the remaining reminders and held messages of the studio are not sent on that run: they move to the next hourly run. Only the send that got no answer counts as a failed attempt; the moved reminders and messages do not.
+- A retry does not create a second record in the app notification feed.
+
 ### The reminder for clients without the app, set by the studio
 
 Clients without the app are covered by the studio's **Нагадувати про візит** (Remind about the visit) setting on the [Mobile Application](/en/login/settings#mobile-application) tab (from 0 to 24 hours, `0` — off). The setting applies when the studio's mobile app is on. The channel is chosen in the order described in [6.14](#_614-messages-to-clients): Telegram bot, Fitshandler Telegram account, SMS. An SMS reminder is sent only when the **SMS-нагадування про візит** (SMS visit reminder) switch is on; the switch is off by default. After a reminder sent in Telegram, the client receives a second message «Встановіть додаток Fitshandler <link>» (Install the Fitshandler app).
@@ -106,7 +110,20 @@ When the limit is used up, SMS are not sent; login codes and guest booking confi
 
 The nightly job ends a membership if its end date has passed (the last day included, in the studio time zone) or all workouts are used. «Оренда» (Rent) memberships end only by date.
 
-Every day at 12:00, clients with an active membership (except «Оренда») with no more than 2 workouts left or less than 4 days until the end receive an app notification: «🔔🔔🔔 Нагадування. Закінчується дія абонементу(ів)…» (Reminder. Your membership(s) are ending…). The notification is not sent if the client already has the next purchased membership; it is repeated only after a new visit. Clients without the app do not receive it.
+Every day at 12:00 (UTC) the client receives the app notification «🔔🔔🔔 Нагадування про абонемент» (Subscription reminder) about an active membership (except «Оренда») when one of the conditions is met:
+
+| Condition | Notification line |
+|---|---|
+| No more than 1 workout left, and the membership was bought for more than 1 workout | «<name>. Залишилось тренувань: N.» (Workouts left: N.) |
+| The last valid day of the membership is today or at most 3 calendar days after today (days are counted in the studio time zone) | «<name>. Термін дії закінчується DD.MM.YYYY.» (Valid until DD.MM.YYYY.) |
+| Both conditions are met | Both parts in one line |
+
+- The notification is sent **once** per membership. A visit, an extension or a change of the workout count does not create a repeated notification for the same membership.
+- A single-visit membership (bought for 1 workout) gets no workout-count notification; only the end-date condition applies to it.
+- The number of workouts a membership was bought for is taken from the membership template; without a template, from the largest workout count recorded when the membership was activated.
+- The notification is not sent if the client already has the next purchased membership.
+- If the app server does not accept the notification, it is retried the next day.
+- Clients without the app do not receive it.
 
 ---
 

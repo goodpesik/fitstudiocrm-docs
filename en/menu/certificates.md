@@ -81,6 +81,9 @@ Result:
 - Each membership of the certificate (with its quantity) is added to the client with the **Неактивний** (inactive) status.
 - The certificate gets the **Redeemed** status; the redemption date and the client are recorded automatically.
 - No register transaction is created on redemption: the payment was made when the certificate was sold.
+- The memberships are added and the certificate is marked redeemed in one operation: on a refusal no membership is added and the certificate status does not change.
+- A certificate is redeemed only once. A repeated redemption, including a simultaneous one from another device, is refused.
+- A certificate is valid through the last day of its validity period in the studio's time zone inclusive. A certificate without an expiration date does not expire.
 
 **Search errors:**
 
@@ -89,6 +92,15 @@ Result:
 | Сертифікат за номером <number> не знайдено !!! | The number does not exist |
 | Сертифікат прострочено!!! | The certificate has the **Expired** status |
 | Сертифікат вже погашено!!! | The certificate has the **Redeemed** status |
+
+**Redemption refusals** (checked when **Погасити** (redeem) is clicked; the message is shown in the error window):
+
+| Message | Condition |
+|---|---|
+| Сертифікат уже погашено. Повторне погашення неможливе. | The certificate was redeemed earlier, including from another device after the window was opened |
+| Термін дії сертифіката минув. Погашення неможливе. | The last day of the validity period has passed in the studio's time zone, or the certificate has the **Expired** status |
+| Абонемент, зазначений у сертифікаті, відсутній у довіднику. Погашення неможливе. | A membership of the certificate was deleted from the memberships catalogue |
+| Клієнта не знайдено. | The chosen client was deleted |
 
 ---
 

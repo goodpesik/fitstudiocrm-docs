@@ -519,8 +519,8 @@ The content of the `certificate_redeem` operation is the certificate id and the 
 | `status` | `Redeemed`; optional |
 | `clientPlanIds` | ids (UUID) of the client plans the redemption creates: one per unit of the certificate's plans, in the certificate's order; optional |
 
-- The certificate is locked until the end of the transaction. A redemption saved online earlier is taken into account: a certificate is redeemed once.
-- Validity is checked by the calendar day of the operation in the studio time zone: a certificate is valid through the last day of its validity inclusive. A certificate with the "Expired" status whose last day of validity is not earlier than the operation day is redeemed.
+- Redemptions of the same certificate made online and during the sync are applied one after another. A redemption saved online earlier is taken into account: a certificate is redeemed once; the second operation gets the `certificate_already_redeemed` conflict.
+- Validity is checked by the calendar day of the operation in the studio time zone: a certificate is valid through the last day of its validity inclusive. A certificate without an expiry date is valid. A certificate with the "Expired" status whose last day of validity is not earlier than the operation day is redeemed.
 - The redemption sets the "Redeemed" status, the usage date (the operation time) and the certificate's client. For each unit of the certificate's plans, a client plan is created with the "New" status and the purchase date equal to the operation time. After saving, the plans are sent to the studio network; a sending failure does not cancel the operation.
 - A number of `clientPlanIds` that differs from the number of the certificate's plans is rejected with code `INVALID_PAYLOAD`.
 - Operation result: `clientPlanIds`.
@@ -552,7 +552,7 @@ The content of the `refund` operation is the content of the online refund (`POST
 
 - A refund is applied the same way as an online refund: the refund register transaction; the refunded products are added to the stock (stock movement "Refund"); the sum is returned to the personal account if the sale was paid from it (history row "Refund"); the refund is added to the sale's list of refunds; for a sale linked to a debt, the paid sum of the class is reduced and a paid debt becomes unpaid again; for cash, a "Refund" cash ledger row is created.
 - Client plans do not change on a refund, as on an online refund.
-- The sale transaction is locked until the end of the transaction; refunds of the same sale made online and during the sync are applied one after another.
+- A refund and other operations on the same sale made online and during the sync are applied one after another. A refund of a sale that is not on the server gets `conflict` with code `TRANSACTION_NOT_FOUND`; no records are created.
 - The sum available for refund is the sale sum minus the sums of all its refunds. If the refund sum exceeds the available sum by more than a kopeck, the operation gets `conflict` with code `refund_exceeds_remaining`; the `details.available` field contains the available sum. A refund made both online and offline for the full sale sum is applied once: the second operation gets a conflict with available sum `0`.
 - A refund of a personal account top-up, a refund of a sale paid through a terminal and a refund through a terminal (`refundTransaction.acquiringPosData`) are rejected with code `OFFLINE_OPERATION_NOT_SUPPORTED`.
 - Operation result: `transactionId` — the id of the refund transaction.

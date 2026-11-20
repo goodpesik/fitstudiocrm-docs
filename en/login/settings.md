@@ -62,6 +62,8 @@ The studio-day rule: a calendar day, "today", a weekday and an hour are determin
 
 - dates and times in messages to administrators, coaches and clients (app, Telegram, SMS) are shown in studio time;
 - the coach calendar (`.ics` file) lists classes in studio time;
+- the date and time of a Z-report and of a sales receipt are shown in studio time;
+- the clients export file name `clients_yyyy-MM-dd.xlsx` carries the studio date;
 - in the clients Excel export the birthday is a studio day, and the `createdAt` and `lastVisit` columns are the studio date and time in the `yyyy-MM-dd HH:mm` format;
 - when the subscription sets no billing period start, the monthly SMS limit is counted from 00:00 on the 1st of the current month in studio time;
 - a rating request is sent for classes attended during the last 2 studio days, and only for classes no older than 7 studio days.

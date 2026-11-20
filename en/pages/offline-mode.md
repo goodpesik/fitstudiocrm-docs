@@ -135,8 +135,8 @@ Printing rules for the offline till:
 - The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
 - An online sale or refund stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
-- An online debt payment saves all its records together with the journal record in one transaction and creates the fiscal receipt after it is saved. Stopped before the save, it leaves no changes and is run by the next delivery with the same id.
-- A sale, a debt payment, a refund, a certificate sale and a certificate redemption applied by the offline queue sync save all their records together with the journal record in one transaction. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
+- An online debt payment saves all its records together or none of them, and creates the fiscal receipt after they are saved. Stopped before the save, it leaves no changes and is run by the next delivery with the same id.
+- A sale, a debt payment, a refund, a certificate sale and a certificate redemption applied by the offline queue sync save all their records together or none of them. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
@@ -155,7 +155,7 @@ These till actions accept an operation id:
 
 ### Class booking with an operation id
 
-A class booking sent with the `X-Operation-Id` header and its offline operation journal row are stored in one database transaction: both are stored, or neither is.
+A class booking sent with the `X-Operation-Id` header is saved once: sending it again with the same id returns the saved result and creates no second booking.
 
 - If the journal row cannot be stored, the client is not booked and the "Вас записано на тренування!" notification is not sent.
 - A repeated delivery of the same operation (same id and same content) returns the stored result; the client is not booked again.
@@ -203,7 +203,7 @@ The `rejected` and `conflict` results carry the `error` field: `code` (the reaso
 
 ## Sales sync
 
-Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Each operation is applied in one database transaction: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift, the offline operation journal record) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Each operation is applied fully or not at all: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation kinds
 
@@ -302,8 +302,8 @@ The computer's shift is kept for the shifts report apart from the server's shift
 
 ### Debt payment
 
-- While a payment is applied, the debt and the debt's class are locked until the transaction ends. An online payment of the same debt locks the same records: two payments of one debt run one after the other.
-- After the lock, an online payment checks the debt and its remaining sum again, before the first write. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
+- Two payments of the same debt made online and during the sync are applied one after the other.
+- An online payment checks the debt and its remaining sum taking the earlier payment into account. When the debt is already paid or deleted, the payment is refused with the message «Борг уже погашено або видалено»; when the sum exceeds the remainder — with the message «Сума перевищує борг». No records and no receipt are created.
 - The fiscal receipt of an online debt payment is created after the payment is saved. When the fiscal provider returns an error, the payment stays saved and its transaction is not fiscalized, as a sale whose receipt could not be created.
 - A debt payment saved without a fiscal receipt (a fiscal provider error or an interruption after the save) stays saved. Sending it again does not create the receipt. The receipt is created manually with the **Fiscalize** ("Фіскалізувати") button on the transaction (see [Fiscalizing a transaction](/en/menu/pos#_3942-fiscalizing-a-transaction)).
 - An offline payment is applied only when the debt is not paid off and the payment does not exceed the remaining debt.
@@ -411,7 +411,7 @@ The content of the `booking` operation is the content of the online class bookin
 | `redeemOperationId` | id of the `certificate_redeem` operation that created the plan `clientPlanId` (see [Dependent operations](#dependent-operations)) |
 
 - The registration is applied as an online class booking. If the class of a regular workout on this date is not created on the server yet, it is created together with the list of its regular clients; their registrations are kept.
-- The class client list, the class taken from the plan, the plan history line and the offline operation journal record are saved in one database transaction: all or none.
+- The class client list, the class taken from the plan and the plan history line are saved together: all or none.
 - Taking a class from the plan decreases the classes remaining by one. A plan whose remainder becomes `0` gets the status «Ended». A class of a workout marked as rent takes nothing from the plan.
 - A client who already holds a seat in the class (a regular client or a booking through the app) does not take a second seat: the registration changes the status of the booking.
 - The seat check and the class registration run one after another with bookings for the same class through the mobile app and QR self check-in.
@@ -422,7 +422,7 @@ The content of the `booking` operation is the content of the online class bookin
 
 ### Checks during the sync
 
-The checks run before the write and again inside the write transaction. An operation that fails a check gets `conflict` with the reason code; the class client list and the plan do not change.
+The checks take into account the records saved by the moment the operation is applied. An operation that fails a check gets `conflict` with the reason code; the class client list and the plan do not change.
 
 | Code | Condition |
 |---|---|
@@ -457,7 +457,7 @@ The checks run before the write and again inside the write transaction. An opera
 
 ## Personal account, certificates and refunds
 
-Payments from the personal account, certificate sales and redemptions, and refunds made on a computer without internet are applied by the server during the sync of the offline queue (`POST /offline/sync`). Each operation is applied in one database transaction: if the operation is not applied, none of its records is saved. Sending the operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+Payments from the personal account, certificate sales and redemptions, and refunds made on a computer without internet are applied by the server during the sync of the offline queue (`POST /offline/sync`). Each operation is applied fully or not at all: if the operation is not applied, none of its records is saved. Sending the operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation time and the "Offline" mark
 

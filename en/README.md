@@ -37,5 +37,6 @@
   - [7.7 Notifications](/en/mobile/notifications)
   - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
+- [Offline mode: overview, installation and start, devices and access, Device Handler, data without internet, one-time application of operations, sales sync, class registration and new clients, personal account, certificates and refunds, till work without internet, going offline and back, fiscalization after the sync, refusal codes](/en/pages/offline-mode)
 - [Personal cabinet (subscription management)](/en/pages/cabinet)
 - [Support System](/en/pages/support-system)

@@ -36,5 +36,6 @@
   - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
 
+- [**Offline mode**](/en/pages/offline-mode)
 - [**Personal cabinet (subscription management)**](/en/pages/cabinet)
 - [**Support System**](/en/pages/support-system)

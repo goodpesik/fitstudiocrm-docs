@@ -644,6 +644,97 @@ The content of the `refund` operation is the content of the online refund (`POST
 | `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
 | `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |
 
+## Till work without internet
+
+Without a connection to the server the till performs the actions below using the till data: the last package received together with the operations made at the till after it. Each action becomes one queue operation and is sent to the server once the connection is back.
+
+### Available actions
+
+| Action | What changes in the till data at once |
+|---|---|
+| Opening and closing the offline shift | The till's current shift |
+| Sale of plans, products and single classes; split payment; "pay later" | Client plans, product stock, client debt, shift total |
+| Debt payment | Debt balance |
+| Payment from the personal account | Personal account balance |
+| Certificate sale | Certificate with its number, shift total |
+| Certificate redemption | Certificate state, client plans |
+| Refund | Refundable amount of the sale, product stock, personal account balance |
+| Bank transfer payment | Transaction marked "not confirmed" |
+| Class registration | Class roster, sessions left on the plan |
+| Client creation | Client list |
+| Self check-in QR on the reception screen | — |
+
+### Repeated press
+
+Pressing an action button again (including "Pay") does not create a second operation: the till returns the result of the first press.
+
+### Offline shift
+
+- The offline shift is closed until it is opened manually. Payments are accepted only while the offline shift is open.
+- The cash in the till is entered at closing. Without an entered amount the shift closes with the expected amount: cash at the start of the shift plus cash payments and minus cash refunds of the shift.
+- The X-report of the offline shift is made from the transactions of this shift.
+
+### Document number
+
+A till document has a number like `D1-0005`: the studio device number and the document's sequence number on that device. The device number is set by Device Handler; document numbers of different devices of a studio do not coincide.
+
+### Personal account
+
+- The personal account balance in the till data is the package balance minus payments from the account and plus refunds to the account made at the till.
+- A payment from the account above this balance is not made: the till shows the available amount and offers to pay the rest another way or leave a debt. Several account payments of one client together do not exceed the balance.
+
+### Certificates
+
+- The number of a certificate sold at the till is computed by the same rule as on the server; the printed number matches the number on the server.
+- Redemption marks the certificate redeemed and creates the certificate's plans for the client. Class registration on such a plan is available at once.
+
+### Refunds
+
+- Refunds are available for sales in the till data (the last 3 days) and for sales made at the till. The available amount is the transaction amount minus the refunds known to the till.
+- Money is returned the same way it was paid. A refund to the personal account increases the balance in the till data.
+- A product refund returns it to stock. Client plans are not changed by a refund.
+
+### Class registration
+
+- Registration with a deduction from a plan reduces the sessions left by 1; a plan with the "New" status becomes active, a plan with no sessions left becomes ended.
+- A plan sold at the till without internet is available for registration right after the sale.
+- A repeating registration is not available without internet.
+
+### Till refusals
+
+The till refuses with an explanation and does not queue the operation:
+
+| Code | Message | Condition |
+|---|---|---|
+| `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. | Payment without an open offline shift |
+| `BALANCE_INSUFFICIENT` | На особовому рахунку недостатньо коштів: доступно … грн. Оплатіть решту іншим способом або залиште борг. | Account payment above the balance in the till data |
+| `PLAN_EXHAUSTED` | На абонементі не лишилося занять. | Deduction from a plan with no sessions left |
+| `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE`, `PLAN_NOT_FOUND` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. / Цього абонемента клієнта немає в даних каси. | The plan cannot pay for the class |
+| `NO_FREE_SEATS` | На занятті немає вільних місць. | All seats of the class are taken |
+| `OCCURRENCE_NOT_FOUND`, `OCCURRENCE_CANCELLED` | Заняття немає в даних каси. / Заняття скасовано. | The class is not in the till data or is cancelled |
+| `CERTIFICATE_NOT_FOUND` | Сертифіката немає в даних каси. | The certificate is not in the till data |
+| `CERTIFICATE_ALREADY_REDEEMED` | Сертифікат уже погашено. | The certificate is redeemed |
+| `CERTIFICATE_EXPIRED` | Термін дії сертифіката минув. | The certificate's last valid day in the studio time zone has passed |
+| `REFUND_SALE_NOT_FOUND` | Продажу немає в даних каси. | The sale is not in the till data |
+| `REFUND_EXCEEDS_REMAINING` | Сума повернення більша за доступну: … грн. | The refund is above the available amount |
+| `REFUND_PAID_BY_TERMINAL` | Продаж, оплачений через термінал, повертається лише онлайн. | The sale was paid through a terminal |
+| `REFUND_OF_TOP_UP` | Поповнення особового рахунку не повертається в офлайн-режимі. | Refund of a personal account top-up |
+| `DEBT_NOT_FOUND` | Боргу немає в даних каси. | The debt is not in the till data |
+| `DEBT_OVERPAYMENT` | Сума оплати більша за залишок боргу: … грн. | Payment above the debt balance |
+| `DEBT_NOT_SYNCED` | Борг, створений без інтернету, можна оплатити після синхронізації. | The debt was created at the till without internet |
+| `CLIENT_NOT_SYNCED` | Сертифікат клієнту, створеному без інтернету, можна продати після синхронізації. | Certificate sale to a client created at the till |
+| `POSSIBLE_DUPLICATE` | Клієнт із цим номером телефону вже є в даних каси. | Client creation with an existing phone number |
+| `CARD_NUMBER_TAKEN` | Картка з цим номером уже належить іншому клієнту. | The card number belongs to another client |
+| `OFFLINE_NOT_AVAILABLE` | Ця дія недоступна в офлайн-режимі. | An action from the list of actions not available offline |
+
+### Reports
+
+The "Summary", "Products", "Plans" reports and the X-report for the offline period are made from the transactions of the till data: sales and refunds from the package and those made at the till. The report total equals the total of the operations in the queue and those already synced.
+
+### Self check-in QR
+
+The reception screen shows the code of the current hour from the till data for the chosen set of rooms. Without a code for the current hour (data older than 48 hours or self check-in turned off) the QR is not shown; the message "Самостійний чекін зараз недоступний: у даних каси немає коду на цю годину." is shown instead.
+
 ## Fiscalization after the sync
 
 The offline till creates no fiscal receipts, neither without internet nor while the FitStudioCRM server is unavailable: the buyer gets a non-fiscal document with a number (`receiptNo`). The fiscal receipts of the sales and refunds of the offline period are created after the sync, through the server, by the studio's fiscal integration (Checkbox or Vchasno.Kasa), on the [Point of sale → Not fiscalized](/en/menu/pos#_397-not-fiscalized) tab.

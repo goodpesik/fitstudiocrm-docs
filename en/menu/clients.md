@@ -389,6 +389,8 @@ Requirements and behaviour:
 
 If there are no operations, "Немає операцій по особовому рахунку" is shown.
 
+- **Offline** ("Офлайн") — the mark of a row created during the sync of a personal-account payment or a refund made on a computer without internet. The **Date** of such a row is the operation time on the computer. See [Personal account, certificates and refunds](/en/pages/offline-mode#personal-account-certificates-and-refunds).
+
 > 📱 The client sees their account and its full history in the mobile app, on the **Profile → Account** tab.
 
 ### 3.2.11.4 Account correction

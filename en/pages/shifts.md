@@ -105,4 +105,6 @@ Clicking the button opens the **Сповіщення** window with a table: **Д
 - **Перейти до тренування** (Go to workout) — for notifications related to a workout;
 - **Підтвердити** (Confirm) / **Відхилити** (Reject) — for bookings that need confirmation.
 
+The automatic closing does not affect the shift of a computer working without internet. A shift marked "Офлайн" (Offline), created by the server for sales made without internet, is closed from its creation. See [Sales sync](/en/pages/offline-mode#shift).
+
 [Back to home](/en/)

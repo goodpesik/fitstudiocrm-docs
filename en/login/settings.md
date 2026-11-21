@@ -19,6 +19,7 @@
 - [7. Reminders](#reminders) — custom reminders for studio staff.
 - [8. Categories](#categories) — workout categories for coach salary calculation.
 - [9. Studio Information](#studio-information) — studio name, logo, description, photos and contacts.
+- [10. Devices](#devices) — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Супер Адмін** and **Адмін** roles.
 
 > Client import and export is done on the [Clients](/en/menu/clients#_3214-excel-import-and-export-of-clients) page.
 
@@ -53,6 +54,16 @@ Start (**З**, From) and end (**ДО**, To) of the working day in 30-minute step
 A multi-line text field. The entered text is shown to clients in the mobile app under **Правила студії** (Studio rules) on the studio card.
 
 > ℹ️ The caption under the heading in the settings reads «Якщо введено, правила будуть доступні клієнтам в телеграм боті» (If entered, the rules will be available to clients in the Telegram bot). The rules are shown to clients in the mobile app.
+
+### Receipt Header
+
+> A multi-line text field ("Верхня частина чека") below the **Studio Rules** field. The text is printed at the top of receipts issued by the [offline till](/en/pages/offline-mode#receipt-header): on receipts without a fiscal card and on receipts of a fiscal card that has no [receipt header](#fiscal-integrations) of its own.
+
+- No length limit; line breaks are kept.
+- An empty value or a value of spaces only means the text is not set.
+- Only the **Super Admin** role can change the field. Other roles see it read-only; they save the other general settings as usual.
+- The server refuses a change of the field from other roles (`403`) and a value that is not text (`400`).
+- The text is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
 
 ### Studio Time Zone
 
@@ -216,6 +227,10 @@ Each fiscal integration is added as a separate card — with the **Додати 
 - The **Активна** (Active) switch turns a card on. Before activation the window «Активувати інтеграцію?» (Activate the integration?) — «Зараз перевіримо облікові дані у провайдера. Продовжити?» (We will now check the credentials with the provider. Continue?) — appears. If the check fails, the message «Не вдалося активувати інтеграцію» (Could not activate the integration) appears.
 - Only one card of each type can be active at a time.
 - Turning a card off is confirmed in the «Деактивувати інтеграцію?» (Deactivate the integration?) window.
+- **Верхня частина чека** (Receipt Header) — multi-line text the [offline till](/en/pages/offline-mode#receipt-header) prints at the top of this card's receipts. No length limit; an empty value or a value of spaces only means the text is not set, and the [studio receipt header](#receipt-header) is printed instead. The text is not printed on online receipts of the fiscal provider (Checkbox, Вчасно Каса).
+- Only the **Супер Адмін** role changes the card fields.
+
+> ⚠️ There is no «Нижня частина чека» (Receipt Footer) field.
 
 ### Monobank Acquiring
 
@@ -421,6 +436,12 @@ Buttons **Закрити** (Close) and **Зберегти**. If no membership is
 - **Телефон** (Phone, format `+380XXXXXXXXX`) and **Адреса** (Address).
 
 Text fields are saved with the **Зберегти інформацію** (Save information) button; until the changes are saved, «Є незбережені зміни» (There are unsaved changes) is shown next to it.
+
+## Devices
+
+> The tab shows the studio computers with offline mode enabled, the date each one last contacted the server, and the **Revoke** ("Відкликати") button. The tab is visible only to the **Super Admin** and **Admin** roles.
+
+Full description: [Offline mode](/en/pages/offline-mode#device-list-and-revoking).
 
 ---
 

@@ -177,6 +177,8 @@ The server also refuses a prepayment for a training that has already started.
 
 > ℹ️ A client who repeats only on some weekdays (for example, Tuesday) has the **Paused** status on other days (for example, Thursday). The administrator can book them once through the **Choose a client** field: the status for that date changes to **Planned** without changing the repeat.
 
+- Without internet a client is booked for a class in the offline till by the rules of [Offline mode](/en/pages/offline-mode#class-registration-and-new-clients).
+
 ### Workout settings
 
 ![](../../_media/schedule-card-details-3.png ':size=400x241')

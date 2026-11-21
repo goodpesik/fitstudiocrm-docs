@@ -600,6 +600,7 @@ The offline till creates no fiscal receipts, neither without internet nor while 
 - A full refund of a sale not fiscalized yet: no receipt is created, neither for the sale nor for the refund; both transactions have the state **No fiscalization needed**.
 - A refund of a fiscalized sale has the state **Awaiting fiscalization** after the sync. The refund receipt is created through the same fiscal register as the sale receipt, against the sale receipt.
 - A refund made after the sale receipt was created for the net amount is fiscalized against that receipt.
+- When the fiscal provider already holds a sale receipt created by an earlier attempt before the refund was made, that receipt is stored; the refunds not included in its amount get the state **Awaiting fiscalization** and are fiscalized with return receipts.
 - These rules also apply to refunds made online of a sale made offline.
 
 ### One receipt per transaction

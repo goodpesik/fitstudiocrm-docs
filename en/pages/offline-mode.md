@@ -76,7 +76,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 - Offline till operations the server did not apply, or applied with a mark, are shown in the online admin on the [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention) tab with the reason (see [Needs attention](#needs-attention) and [Operation sync codes](#operation-sync-codes)).
 - For each operation not applied the admins get one notification.
 - An admin resolves the operation with the tab's actions or marks it **Переглянуто** (Reviewed).
-- Operations refused by the check of the operation id, kind, version and time are not shown on the tab; only the **Офлайн-операції** screen of the offline till shows their state (see [Operation check refusals](#operation-check-refusals)).
+- Operations refused by the check of the operation kind, version and time are shown on the tab as refused, with the reason. Only operations with an invalid id and operations whose id belongs to another operation are not shown (see [Operation check refusals](#operation-check-refusals)).
 
 ### Related pages
 
@@ -374,7 +374,7 @@ During sync every operation gets its own result:
 | `in_progress` | another delivery is applying the operation |
 | `pending` | the operation was not looked at: an earlier operation of the queue is not applied yet |
 
-The `rejected` and `conflict` results carry the `error` field: `code` (the reason code), `message` (the description) and, for some codes, `details` — figures and ids for the administrator's decision (for example, `shortfall`, `available`, `operationId`).
+The `rejected` and `conflict` results carry the `error` field: `code` (the reason code), `message` (the description) and, for some codes, `details` — figures and ids for the administrator's decision (for example, `shortfall`, `available`, `operationId`), and the `reason` field — the reason in Ukrainian from the «What the user sees» column of [Operation sync codes](#operation-sync-codes). The offline till shows `reason` in the **Примітка** column of the **Офлайн-операції** screen.
 
 ## Sales sync
 
@@ -996,11 +996,11 @@ The sync result sets the state of the operation on the **Офлайн-опера
 | Result | State on the **Офлайн-операції** screen | **Потребує уваги** tab | Notification to admins |
 |---|---|---|---|
 | `applied` | Синхронізовано (Synced) | only an operation with the `price_changed`, `total_mismatch` or `negative_stock` mark | no |
-| `rejected` | Відхилено сервером (Rejected by the server) | yes, except [operation check refusals](#operation-check-refusals) | yes, except operation check refusals |
+| `rejected` | Відхилено сервером (Rejected by the server) | yes, except the `INVALID_ID` and `IDEMPOTENCY_KEY_REUSED` refusals (see [Operation check refusals](#operation-check-refusals)) | yes, except the `INVALID_ID` and `IDEMPOTENCY_KEY_REUSED` refusals |
 | `conflict` | Потребує уваги (Needs attention) | yes | yes |
 | `retry`, `in_progress`, `pending` | Очікує синхронізації (Waiting for sync) | no | no |
 
-- The reason on the **Потребує уваги** tab and in the notification is the text from the «What the user sees» column.
+- The reason on the **Потребує уваги** tab, in the notification and in the **Примітка** column of the **Офлайн-операції** screen is the text from the «What the user sees» column.
 - The notification to admins: «Офлайн-операцію «<вид>» від <дата й час> не виконано. <причина> Перегляньте розділ Каса → Потребує уваги.» The notification is created once per operation however many times it is synced again.
 - A sum from the `details` field is shown on its own line: «Нестача коштів: … грн.» (`shortfall`), «Доступно до повернення: … грн.» (`available`).
 - A code not in the table is shown as «Операцію не виконано (код <код>).»
@@ -1043,17 +1043,23 @@ The actions an admin resolves an operation with on the **Потребує ува
 
 ### Operation check refusals
 
-The server checks the id, kind, version and time of each operation before applying it. An operation that fails the check gets `rejected`; the data does not change. The offline till shows the «Відхилено сервером» state and the server's refusal text in the **Примітка** (Note) column; the operation is not shown on the **Потребує уваги** tab, and no notification is created.
+The server checks the id, kind, version and time of each operation before applying it. An operation that fails the check gets `rejected`; the data does not change. The offline till shows the «Відхилено сервером» state and the reason in the **Примітка** (Note) column.
 
-| Code | Condition |
-|---|---|
-| `INVALID_ID` | the operation id is not a UUID |
-| `INVALID_KIND` | the operation kind is not set |
-| `INVALID_VERSION` | the operation version is not a whole number from 1 |
-| `INVALID_OCCURRED_AT` | the operation time is not a date |
-| `OCCURRED_IN_FUTURE` | the operation time is later than the server time by more than 5 minutes |
-| `OCCURRED_TOO_LONG_AGO` | the operation time is earlier than the server time by more than 30 days |
-| `IDEMPOTENCY_KEY_REUSED` | the operation id was already used for another operation |
+- An operation with the codes `INVALID_KIND`, `INVALID_VERSION`, `INVALID_OCCURRED_AT`, `OCCURRED_IN_FUTURE`, `OCCURRED_TOO_LONG_AGO` is stored as a refused offline till operation together with its content: it is shown on the [Каса → Потребує уваги](/menu/pos#_398-Потребує-уваги) tab with the reason, and the admins get one notification about the operation. On the tab the operation can only be marked as reviewed.
+- An operation without a kind is shown with the kind «Невідома операція». An operation without a valid time is shown with the time the server received it.
+- Sending such an operation again returns the stored result; no second record and no second notification are created.
+- An operation with the `INVALID_ID` code is not stored: without an id it cannot be recognised when sent again. An operation with the `IDEMPOTENCY_KEY_REUSED` code is not stored: its id belongs to another operation. These operations are not shown on the **Потребує уваги** tab and no notification is created; only the **Офлайн-операції** screen shows the reason.
+- If the id of an operation with a check code already belongs to an applied or stored operation, the stored result of that operation is returned.
+
+| Code | Condition | What the user sees |
+|---|---|---|
+| `INVALID_ID` | the operation id is not a UUID | Ідентифікатор операції некоректний. |
+| `INVALID_KIND` | the operation kind is not set or is longer than 32 characters | Тип операції не вказано або він некоректний. |
+| `INVALID_VERSION` | the operation version is not a whole number from 1 | Версія операції не підтримується. |
+| `INVALID_OCCURRED_AT` | the operation time is not a date | Час операції не вказано або він некоректний. |
+| `OCCURRED_IN_FUTURE` | the operation time is later than the server time by more than 5 minutes | Час операції пізніший за час сервера. |
+| `OCCURRED_TOO_LONG_AGO` | the operation time is earlier than the server time by more than 30 days | Операцію виконано надто давно для синхронізації. |
+| `IDEMPOTENCY_KEY_REUSED` | the operation id was already used for another operation | Ідентифікатор операції вже використано для іншої операції. |
 
 ### Operations waiting in the queue
 

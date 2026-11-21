@@ -2,6 +2,89 @@
 
 Offline mode lets a till computer with Device Handler installed work without internet and while the Fitshandler server is unavailable. Operations made without a connection are sent to the server once the connection is back.
 
+## Overview
+
+### What works without internet
+
+- The offline till works by the same rules in the «No internet» and «Server unavailable» states (see [Connection states](#connection-states)).
+- Without a connection to the server the following are available: opening and closing an offline shift; selling plans, products, single classes and certificates; paying in parts and «оплатити пізніше» (pay later); debt payment; payment from the personal account; certificate redemption; refunds; bank transfer payment; class registration; client creation; the self check-in QR; reports for the offline period (see [Available actions](#available-actions)).
+- Payment methods: cash, card without a terminal, personal account, bank transfer.
+- Each action becomes one queue operation and is sent to the server once the connection is back. An operation shown as saved stays saved after a power cut of the computer.
+
+### What is not available offline
+
+- The **Тренування** (Workouts), **Тренери** (Coaches), **Зали** (Rooms) and **Налаштування** (Settings) sections, the **Підтримка** (Support) and **Сповіщення** (Notifications) buttons.
+- Personal account top-up and correction, bonuses, confirmation of a bank transfer payment, editing and deleting transactions, payment and refund through a terminal, Monobank acquiring, refund of a personal account top-up (see [Operations not accepted offline](#operations-not-accepted-offline)).
+- The waiting list, recurring bookings, moving and cancelling classes, creating and editing workouts, editing, deleting, importing and exporting clients (see [Class and client actions not available offline](#class-and-client-actions-not-available-offline)).
+- Issuing fiscal receipts and the **Не фіскалізовано** (Not fiscalized) tab (see [Fiscalization after the sync](#fiscalization-after-the-sync)).
+- An action not available in the offline till shows the message «Ця дія недоступна в офлайн-режимі.»
+
+### Till refusals on till data
+
+The till checks an action against its own data, refuses with an explanation and does not queue the operation, in particular:
+
+- a payment without an open offline shift;
+- a payment from the personal account above the balance, a product sale above the stock;
+- a registration by a plan that is used up, frozen, expired, not active or not valid for the class; a registration for a class with no free seats or a cancelled class;
+- redemption of a certificate that is not in the till data, is already redeemed or has expired;
+- a refund above the available sum, a refund of a sale paid through a terminal and a refund of a personal account top-up;
+- a debt payment above the remaining debt and a payment of a debt created without internet;
+- creating a client with a phone or card number that is already in the till data.
+
+The full list of codes and messages is in [Till refusal codes](#till-refusal-codes).
+
+### Enabling offline mode
+
+1. Device Handler is installed and running on the till computer; the offline till starts with it (see [Installation and start](#installation-and-start)).
+2. A user with the **Супер Адмін** (Super Admin) or **Адмін** (Admin) role, in the browser of this computer, opens the **Налаштування** (Settings) section, the **Пристрої** (Devices) tab, the **Цей компʼютер** (This computer) block, sets **Номер каси** (Till number) and presses **Увімкнути офлайн-режим** (Enable offline mode) (see [Enabling on a computer](#enabling-on-a-computer)).
+3. The offline till receives the full data package and then updates the data while connected (see [Data updates](#data-updates)).
+
+### Going to the offline till and back online
+
+1. When the server does not answer, the online admin shows the «Сервер FitStudioCRM недоступний» window; the **Перейти в офлайн-касу** button opens the offline till in a new tab (see [Server unavailable mode](#server-unavailable-mode)). The offline till is also opened by the **Відкрити офлайн-касу** button and by the link in the error window.
+2. Payments are taken after the offline shift is opened (see [Offline shift](#offline-shift)).
+3. The offline banner shows the connection state, the data time and the number of unsynced operations (see [Offline banner](#offline-banner)).
+4. Once the connection is back, the queue is sent to the server with no user action, and the offline till shows the «Звʼязок із сервером відновлено» window. The **Перейти в онлайн-адмінку** button opens the closing of the offline shift when it is open, and after closing — the online admin (see [Back to the online admin](#back-to-the-online-admin)).
+5. The online admin reminds about an open offline shift until it is closed (see [Reminder about an open offline shift](#reminder-about-an-open-offline-shift)).
+
+### Sales and fiscalization after the sync
+
+- Queue operations are sent to the server one by one in the order they were made. Each operation is applied at most once, including after a connection break in the middle of sending and a repeated sending (see [One-time application of operations](#one-time-application-of-operations)).
+- An operation the server did not accept for the moment stays in the queue in the «Очікує синхронізації» (Waiting for sync) state; the next queue operations wait for it.
+- Transactions, stock movements, personal account history and certificates are saved with the operation time at the till; sales and debt payments go into a shift by the rules of [Shift](#shift).
+- An operation that contradicts changes made while there was no connection is not applied and is shown on the **Потребує уваги** (Needs attention) tab (see [Operation sync codes](#operation-sync-codes)).
+- The offline till creates no fiscal receipts: the buyer gets a non-fiscal document with a number. Fiscal receipts for sales and refunds of the offline period are created after the sync on the [Каса → Не фіскалізовано](/en/menu/pos#_397-not-fiscalized) tab when the studio has an active fiscal integration (see [Fiscalization after the sync](#fiscalization-after-the-sync)).
+
+### Data available offline
+
+- Studio plans, categories, products with stock, coaches, rooms, workouts; clients with the personal account balance and plans; unpaid debts; active certificates; sales and closed shifts for the last 3 days; the schedule from 3 days before the current day to 7 days after it; self check-in codes for 48 hours; studio settings (see [Contents](#contents)).
+- Data is updated only while connected: an update every 12 minutes, a full package every 12 hours. Data not updated for more than 24 hours is marked as stale (see [Stale data](#stale-data)).
+- Keys, tokens, cashier PIN codes and secrets are not passed to the till computer.
+
+### Limits of work without a connection
+
+| Limit | Value |
+|---|---|
+| Age of an operation at the sync | not more than 30 days; the server refuses an older operation with the `OCCURRED_TOO_LONG_AGO` code |
+| Till computer clock | not more than 5 minutes ahead of the server time; otherwise the operation is refused with the `OCCURRED_IN_FUTURE` code |
+| Stale data | more than 24 hours without an update |
+| Self check-in QR | not longer than 48 hours after the last data update |
+| Online admin operations with an unknown result | passed to the offline till when they are not older than 24 hours |
+
+### Operations that need attention
+
+- Offline till operations the server did not apply, or applied with a mark, are shown in the online admin on the [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention) tab with the reason (see [Needs attention](#needs-attention) and [Operation sync codes](#operation-sync-codes)).
+- For each operation not applied the admins get one notification.
+- An admin resolves the operation with the tab's actions or marks it **Переглянуто** (Reviewed).
+- Operations refused by the check of the operation id, kind, version and time are not shown on the tab; only the **Офлайн-операції** screen of the offline till shows their state (see [Operation check refusals](#operation-check-refusals)).
+
+### Related pages
+
+- [Каса](/en/menu/pos) (POS) — the **Не фіскалізовано** and **Потребує уваги** tabs, fiscalizing a transaction.
+- [Розклад](/en/menu/schedule) (Schedule) — classes and client booking.
+- [Клієнти](/en/menu/clients) (Clients) — client card, personal account, debts.
+- [Зміна та сповіщення](/en/pages/shifts) (Shift and notifications) — opening and closing a shift, admin notifications.
+
 ## Installation and start
 
 ### Requirements
@@ -60,16 +143,14 @@ Offline mode lets a till computer with Device Handler installed work without int
 | Parameter | Value |
 |---|---|
 | Server check while connected | every 10 s |
-| Server answer timeout | 10 s |
-| Failed check | no connection, no answer within 10 s, answer `502`, `503` or `504` |
+| Failed check | the server did not answer or reported it is temporarily unavailable |
 | Switch to «No internet» or «Server unavailable» | after 3 failed checks in a row |
 | Server check while disconnected | every 30 s |
 | Return to «Online» | after 2 successful checks in a row |
 
-- `4xx` answers are not failed checks.
+- A server refusal that explains its reason is not a failed check.
 - One failed check does not change the state.
 - A separate check of a public internet address tells «No internet» from «Server unavailable».
-- A server answering `503` while the internet is available switches the state to «Server unavailable».
 - In the «No internet» and «Server unavailable» states the offline till works by the same rules.
 
 ## Devices and access
@@ -307,16 +388,7 @@ A class booking sent with the `X-Operation-Id` header is saved once: sending it 
 | Operation fields | `id` (UUID), `kind`, `version`, `occurredAt` (ISO 8601), `payload`, `dependsOn` (UUIDs of earlier queue operations, optional) |
 | Operation time | not earlier than 30 days and not later than 5 minutes from the server time |
 
-| Code | Meaning |
-|---|---|
-| `IDEMPOTENCY_KEY_REUSED` | the id was already used for another operation; an online action gets `409` |
-| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; an online action gets `409` with this code, retry later with the same id |
-| `OPERATION_INTERRUPTED` | the operation stopped after a step that cannot be undone; it is not run again; an online action gets `409`; an admin's review is needed |
-| `INVALID_VERSION` | the operation version is not a whole number from 1; the operation is refused |
-| `RETRY` | the server could not apply the operation; send it later |
-| `INVALID_OPERATION_ID` | the `X-Operation-Id` header is not a UUID; response `400` |
-| `OP_VERSION_UNSUPPORTED` | the operation version is above the one the server supports; the operation stays in the queue |
-| `OP_KIND_UNSUPPORTED` | the server does not apply this operation kind yet; the operation stays in the queue |
+The refusal codes of online actions and queue operations are in [Refusals of online actions with an operation id](#refusals-of-online-actions-with-an-operation-id), [Operation check refusals](#operation-check-refusals) and [Operations waiting in the queue](#operations-waiting-in-the-queue).
 
 During sync every operation gets its own result:
 
@@ -476,17 +548,7 @@ The server refuses these operations with the `rejected` result and the `OFFLINE_
 
 ### Sales sync codes
 
-| Code | Result | Meaning |
-|---|---|---|
-| `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |
-| `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
-| `DEBT_ALREADY_PAID` | `conflict` | the debt is paid off in full |
-| `DEBT_OVERPAYMENT` | `conflict` | the remaining debt is less than the payment |
-| `DEBT_FORGIVEN` | `conflict` | the debt is forgiven: deleted, or closed without the full payment |
-| `DEBT_NOT_FOUND` | `conflict` | the debt is not on the server |
-| `PLAN_NOT_FOUND` | `conflict` | a plan of the sale is not on the server |
-| `PRODUCT_NOT_FOUND` | `conflict` | a product of the sale is not on the server |
-| `CLIENT_NOT_FOUND` | `conflict` | the client of the sale is not on the server |
+The reason codes the server does not apply a sale or a debt payment with, and the text the user sees, are in [Operation sync codes](#operation-sync-codes).
 
 ## Class registration and new clients
 
@@ -559,22 +621,7 @@ The content of the `booking` operation is the content of the online class bookin
 
 The checks take into account the records saved by the moment the operation is applied. An operation that fails a check gets `conflict` with the reason code; the class client list and the plan do not change.
 
-| Code | Condition |
-|---|---|
-| `CLIENT_NOT_FOUND` | the client was deleted or merged with another client |
-| `WORKOUT_NOT_FOUND` | the workout is missing on the server |
-| `OCCURRENCE_CANCELLED` | the class was cancelled |
-| `NO_FREE_SEATS` | no free seats: seats are taken, including bookings through the mobile app and QR self check-in; a class without a capacity set is not limited |
-| `PLAN_NOT_FOUND` | the plan is missing or belongs to another client |
-| `PLAN_FROZEN` | the plan is frozen |
-| `PLAN_EXHAUSTED` | the plan has no classes left |
-| `PLAN_EXPIRED` | the plan validity ended by the operation time |
-| `PLAN_CLOSED` | the plan was ended before its end date or without an end date; an administrator review is required |
-| `PLAN_NOT_ACTIVE` | the plan is not active and is not activated at the first visit |
-| `PLAN_NOT_FOR_CLASS` | the plan type does not match the workout type |
-| `OFFLINE_SALE_NOT_APPLIED` | the sale named in `saleOperationId` got `conflict` or `rejected` |
-| `OFFLINE_CLIENT_NOT_APPLIED` | the client named in `clientOperationId` was not created on the server |
-| `dependency_rejected` | the certificate redemption named in `redeemOperationId` got `conflict` or `rejected` |
+The reason codes and the text the user sees are in [Operation sync codes](#operation-sync-codes). A registration paid by a sale with `saleOperationId` that got `conflict` or `rejected` gets the `OFFLINE_SALE_NOT_APPLIED` code; a registration by a plan from a certificate redemption with `redeemOperationId` that got `conflict` or `rejected` gets the `dependency_rejected` code.
 
 - The plan classes remaining do not go below zero during the sync.
 - A booking status other than `0` and `2` is rejected with code `INVALID_PAYLOAD`.
@@ -695,20 +742,7 @@ The content of the `refund` operation is the content of the online refund (`POST
 
 ### Personal account, certificate and refund sync codes
 
-| Code | Result | Meaning |
-|---|---|---|
-| `balance_insufficient` | `conflict` | the personal account balance is smaller than the payment; `details.shortfall` — the missing sum |
-| `certificate_number_taken` | `conflict` | the server already has a certificate with this number |
-| `certificate_not_found` | `conflict` | the certificate is not on the server |
-| `certificate_already_redeemed` | `conflict` | the certificate is already redeemed |
-| `certificate_expired` | `conflict` | the last day of the certificate's validity is earlier than the operation day in the studio time zone |
-| `refund_exceeds_remaining` | `conflict` | the refund sum exceeds the available sum; `details.available` — the available sum |
-| `dependency_rejected` | `conflict` | the operation this one depends on was not applied; `details.operationId` — its id |
-| `TRANSACTION_NOT_FOUND` | `conflict` | the refunded sale is not on the server |
-| `PLAN_NOT_FOUND` | `conflict` | a plan of the certificate is not on the server |
-| `CLIENT_NOT_FOUND` | `conflict` | the client of the certificate redemption, or the client of a debt paid from the personal account, is not on the server |
-| `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
-| `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |
+The reason codes the server does not apply an operation with, and the text the user sees, are in [Operation sync codes](#operation-sync-codes). For the `dependency_rejected` code the `details.operationId` field holds the id of the operation this one depends on.
 
 ## Till work without internet
 
@@ -776,32 +810,7 @@ A till document has a number like `D1-0005`: the till number and the document's 
 
 ### Till refusals
 
-The till refuses with an explanation and does not queue the operation:
-
-| Code | Message | Condition |
-|---|---|---|
-| `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. | Payment without an open offline shift |
-| `BALANCE_INSUFFICIENT` | На особовому рахунку недостатньо коштів: доступно … грн. Оплатіть решту іншим способом або залиште борг. | Account payment above the balance in the till data |
-| `INSUFFICIENT_STOCK` | Недостатньо товару на складі: … | A product sale above the stock in the till data |
-| `PLAN_EXHAUSTED` | На абонементі не лишилося занять. | Deduction from a plan with no sessions left |
-| `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE`, `PLAN_NOT_FOUND` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. / Цього абонемента клієнта немає в даних каси. | The plan cannot pay for the class |
-| `INVALID_PAYLOAD` | Оберіть абонемент, з якого буде списано заняття. | A registration paid by a plan with no plan chosen |
-| `NO_FREE_SEATS` | На занятті немає вільних місць. | All seats of the class are taken |
-| `OCCURRENCE_NOT_FOUND`, `OCCURRENCE_CANCELLED` | Заняття немає в даних каси. / Заняття скасовано. | The class is not in the till data or is cancelled |
-| `CERTIFICATE_NOT_FOUND` | Сертифіката немає в даних каси. | The certificate is not in the till data |
-| `CERTIFICATE_ALREADY_REDEEMED` | Сертифікат уже погашено. | The certificate is redeemed |
-| `CERTIFICATE_EXPIRED` | Термін дії сертифіката минув. | The certificate's last valid day in the studio time zone has passed |
-| `REFUND_SALE_NOT_FOUND` | Продажу немає в даних каси. | The sale is not in the till data |
-| `REFUND_EXCEEDS_REMAINING` | Сума повернення більша за доступну: … грн. | The refund is above the available amount |
-| `REFUND_PAID_BY_TERMINAL` | Продаж, оплачений через термінал, повертається лише онлайн. | The sale was paid through a terminal |
-| `REFUND_OF_TOP_UP` | Поповнення особового рахунку не повертається в офлайн-режимі. | Refund of a personal account top-up |
-| `DEBT_NOT_FOUND` | Боргу немає в даних каси. | The debt is not in the till data |
-| `DEBT_OVERPAYMENT` | Сума оплати більша за залишок боргу: … грн. | Payment above the debt balance |
-| `DEBT_NOT_SYNCED` | Борг, створений без інтернету, можна оплатити після синхронізації. | The debt was created at the till without internet |
-| `CLIENT_NOT_SYNCED` | Сертифікат клієнту, створеному без інтернету, можна продати після синхронізації. | Certificate sale to a client created at the till |
-| `POSSIBLE_DUPLICATE` | Клієнт із цим номером телефону вже є в даних каси. | Client creation with an existing phone number |
-| `CARD_NUMBER_TAKEN` | Картка з цим номером уже належить іншому клієнту. | The card number belongs to another client |
-| `OFFLINE_NOT_AVAILABLE` | Ця дія недоступна в офлайн-режимі. | An action from the list of actions not available offline |
+The till refuses with an explanation and does not queue the operation. The codes and messages are in [Till refusal codes](#till-refusal-codes).
 
 ### Reports
 
@@ -885,8 +894,7 @@ The online admin checks the server when the Device Handler is switched on on the
 | Parameter | Value |
 |---|---|
 | Server check | every 20 s |
-| Answer wait time | 10 s |
-| Failed check | no connection, no answer within 10 s, answer `502`, `503` or `504` |
+| Failed check | the server did not answer or reported it is temporarily unavailable |
 | The «Сервер FitStudioCRM недоступний» window is shown | after 3 failed checks in a row |
 
 - One failed check does not show the window; a successful check starts the count again.
@@ -900,7 +908,7 @@ The online admin checks the server when the Device Handler is switched on on the
 
 - The window of a server or connection error shows the text «Спробуйте перезавантажити сторінку.»
 - When this studio's offline till runs on the computer, the window also shows «Якщо сервер не відповідає, продовжте роботу в офлайн-касі.» with a link that opens the offline till in a new tab.
-- A window with a refusal the server explained (`400`, `409`, `413`) does not show these texts.
+- A window with a refusal whose reason the server explained does not show these texts.
 
 ### Operations with an unknown result
 
@@ -971,3 +979,135 @@ The offline till creates no fiscal receipts, neither without internet nor while 
 
 - At most one fiscal receipt is created for a transaction. A provider error leaves the transaction on the **Not fiscalized** tab in the state **Fiscalization error**; a retry does not create a second receipt.
 - The mode of an unavailable FitStudioCRM server fiscalizes the same way: only after the sync, through the server.
+
+## Refusal codes
+
+### Till refusal codes
+
+The till refuses with an explanation and does not queue the operation. The message is shown in the offline till.
+
+| Code | Message | Condition |
+|---|---|---|
+| `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. | Payment without an open offline shift |
+| `SHIFT_ALREADY_OPEN` | Офлайн-зміну вже відкрито. | Opening an offline shift while an offline shift is open |
+| `PAYMENT_METHOD_NOT_AVAILABLE_OFFLINE` | Цей спосіб оплати недоступний в офлайн-режимі. | A payment method other than cash, card without a terminal, personal account and bank transfer |
+| `BALANCE_INSUFFICIENT` | На особовому рахунку недостатньо коштів: доступно … грн. Оплатіть решту іншим способом або залиште борг. | Account payment above the balance in the till data |
+| `INSUFFICIENT_STOCK` | Недостатньо товару на складі: … | A product sale above the stock in the till data |
+| `PLAN_EXHAUSTED` | На абонементі не лишилося занять. | Deduction from a plan with no sessions left |
+| `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE`, `PLAN_NOT_FOUND` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. / Цього абонемента клієнта немає в даних каси. | The plan cannot pay for the class |
+| `INVALID_PAYLOAD` | Оберіть абонемент, з якого буде списано заняття. | A registration paid by a plan with no plan chosen |
+| `NO_FREE_SEATS` | На занятті немає вільних місць. | All seats of the class are taken |
+| `OCCURRENCE_NOT_FOUND`, `OCCURRENCE_CANCELLED` | Заняття немає в даних каси. / Заняття скасовано. | The class is not in the till data or is cancelled |
+| `CLIENT_NOT_FOUND` | Клієнта немає в даних каси. | The client is not in the till data |
+| `CERTIFICATE_NOT_FOUND` | Сертифіката немає в даних каси. | The certificate is not in the till data |
+| `CERTIFICATE_ALREADY_REDEEMED` | Сертифікат уже погашено. | The certificate is redeemed |
+| `CERTIFICATE_EXPIRED` | Термін дії сертифіката минув. | The certificate's last valid day in the studio time zone has passed |
+| `REFUND_SALE_NOT_FOUND` | Продажу немає в даних каси. | The sale is not in the till data |
+| `REFUND_EXCEEDS_REMAINING` | Сума повернення більша за доступну: … грн. | The refund is above the available amount |
+| `REFUND_PAID_BY_TERMINAL` | Продаж, оплачений через термінал, повертається лише онлайн. | The sale was paid through a terminal |
+| `REFUND_OF_TOP_UP` | Поповнення особового рахунку не повертається в офлайн-режимі. | Refund of a personal account top-up |
+| `DEBT_NOT_FOUND` | Боргу немає в даних каси. | The debt is not in the till data |
+| `DEBT_OVERPAYMENT` | Сума оплати більша за залишок боргу: … грн. | Payment above the debt balance |
+| `DEBT_NOT_SYNCED` | Борг, створений без інтернету, можна оплатити після синхронізації. | The debt was created at the till without internet |
+| `CLIENT_NOT_SYNCED` | Сертифікат клієнту, створеному без інтернету, можна продати після синхронізації. | Certificate sale to a client created at the till |
+| `POSSIBLE_DUPLICATE` | Клієнт із цим номером телефону вже є в даних каси. | Client creation with an existing phone number |
+| `CARD_NUMBER_TAKEN` | Картка з цим номером уже належить іншому клієнту. | The card number belongs to another client |
+| `OPERATION_ID_REUSED` | Цей ідентифікатор операції вже використано для іншої дії. | A repeated action with the same operation id and other data |
+| `OFFLINE_NOT_AVAILABLE` | Ця дія недоступна в офлайн-режимі. | An action from the list of actions not available offline |
+
+### Operation sync codes
+
+The sync result sets the state of the operation on the **Офлайн-операції** (Offline operations) screen of the offline till and whether it is shown on the [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention) tab of the online admin:
+
+| Result | State on the **Офлайн-операції** screen | **Потребує уваги** tab | Notification to admins |
+|---|---|---|---|
+| `applied` | Синхронізовано (Synced) | only an operation with the `price_changed`, `total_mismatch` or `negative_stock` mark | no |
+| `rejected` | Відхилено сервером (Rejected by the server) | yes, except [operation check refusals](#operation-check-refusals) | yes, except operation check refusals |
+| `conflict` | Потребує уваги (Needs attention) | yes | yes |
+| `retry`, `in_progress`, `pending` | Очікує синхронізації (Waiting for sync) | no | no |
+
+- The reason on the **Потребує уваги** tab and in the notification is the text from the «What the user sees» column.
+- The notification to admins: «Офлайн-операцію «<вид>» від <дата й час> не виконано. <причина> Перегляньте розділ Каса → Потребує уваги.» The notification is created once per operation however many times it is synced again.
+- A sum from the `details` field is shown on its own line: «Нестача коштів: … грн.» (`shortfall`), «Доступно до повернення: … грн.» (`available`).
+- A code not in the table is shown as «Операцію не виконано (код <код>).»
+
+| Code | Result | Operations | Condition | What the user sees |
+|---|---|---|---|---|
+| `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | any | the operation is not accepted offline (see [Operations not accepted offline](#operations-not-accepted-offline)) | Операція не підтримується сервером. |
+| `INVALID_PAYLOAD` | `rejected` | any | the operation content does not match the format | Дані операції некоректні. |
+| `CLIENT_NOT_FOUND` | `conflict` | sale, debt payment from the personal account, class registration, certificate redemption | the client was deleted, merged with another client or is not on the server | Клієнта видалено або обʼєднано з іншим клієнтом. |
+| `PLAN_NOT_FOUND` | `conflict` | sale, class registration, certificate redemption | the plan is not on the server; for a class registration — also a plan of another client | Абонемента немає на сервері. For a class registration also: «Створіть абонемент клієнту вручну та зареєструйте відвідування повторно.» |
+| `PLAN_FROZEN` | `conflict` | class registration | the plan is frozen | Абонемент клієнта призупинено (відпустка). |
+| `PLAN_EXHAUSTED` | `conflict` | class registration | the plan has no sessions left | Абонемент вичерпано. |
+| `PLAN_EXPIRED` | `conflict` | class registration | the plan's validity ended by the operation time | Строк дії абонемента закінчився. |
+| `PLAN_CLOSED` | `conflict` | class registration | the plan was ended before its end date or has no end date | Абонемент закрито. |
+| `PLAN_NOT_ACTIVE` | `conflict` | class registration | the plan is not active and is not activated on the first visit | Абонемент неактивний. |
+| `PLAN_NOT_FOR_CLASS` | `conflict` | class registration | the plan type does not match the workout type | Абонемент не діє для цього заняття. |
+| `WORKOUT_NOT_FOUND` | `conflict` | class registration | the workout is not on the server | Заняття не знайдено. |
+| `OCCURRENCE_CANCELLED` | `conflict` | class registration | the class is cancelled | Заняття скасовано. |
+| `NO_FREE_SEATS` | `conflict` | class registration | no free seats: the seats are taken, including by bookings through the mobile app and by self check-in by QR code; a class without a set capacity is not limited | Заняття заповнене. |
+| `PRODUCT_NOT_FOUND` | `conflict` | sale | a product of the sale is not on the server | Товар не знайдено. |
+| `DEBT_ALREADY_PAID` | `conflict` | debt payment | the debt is paid off in full | Борг уже погашено. |
+| `DEBT_OVERPAYMENT` | `conflict` | debt payment | the remaining debt is less than the payment | Сума оплати перевищує залишок боргу. |
+| `DEBT_FORGIVEN` | `conflict` | debt payment | the debt is forgiven: deleted, or closed without the full payment | Борг списано. |
+| `DEBT_NOT_FOUND` | `conflict` | debt payment | the debt is not on the server | Борг не знайдено. |
+| `POSSIBLE_DUPLICATE` | `conflict` | new client | the studio already has a client with this phone | Можливий дублікат клієнта: клієнт із таким телефоном уже є. |
+| `CARD_NUMBER_TAKEN` | `conflict` | new client | the manually set card number is registered to another client | Номер картки вже призначено іншому клієнту. |
+| `balance_insufficient` | `conflict` | payment from the personal account | the personal account balance on the server is smaller than the payment | Недостатньо коштів на особовому рахунку. Нестача коштів: … грн. |
+| `certificate_number_taken` | `conflict` | certificate sale | the server already has a certificate with this number | Номер сертифіката вже використовується. |
+| `certificate_not_found` | `conflict` | certificate redemption | the certificate is not on the server | Сертифікат не знайдено. |
+| `certificate_already_redeemed` | `conflict` | certificate redemption | the certificate is already redeemed | Сертифікат уже погашено. |
+| `certificate_expired` | `conflict` | certificate redemption | the last day of the certificate's validity is earlier than the operation day in the studio time zone | Строк дії сертифіката закінчився. |
+| `TRANSACTION_NOT_FOUND` | `conflict` | refund | the refunded sale is not on the server | Продаж не знайдено. |
+| `refund_exceeds_remaining` | `conflict` | refund | the refund sum exceeds the available sum | Сума повернення перевищує доступну суму. Доступно до повернення: … грн. |
+| `dependency_rejected` | `conflict` | an operation that depends on another queue operation | the operation this one depends on was not applied | Не виконано операцію, від якої залежить ця операція. |
+| `OFFLINE_CLIENT_NOT_APPLIED` | `conflict` | an operation with a client created offline | the client creation got `conflict` or `rejected` | Не виконано створення клієнта, до якого належить операція. |
+| `OFFLINE_SALE_NOT_APPLIED` | `conflict` | a class registration paid by an offline till sale | the sale got `conflict` or `rejected` | Не виконано продаж, яким оплачено операцію. |
+| `OPERATION_INTERRUPTED` | `conflict` | a sale or refund started in the online admin | the operation stopped after a step that cannot be undone | Offline till: the «Потребує уваги» state. Online admin: «Операцію «<вид>» від <дата й час> не завершено на сервері. Перевірте її результат перед повторним виконанням.» |
+
+The actions an admin resolves an operation with on the **Потребує уваги** tab, and the refusals of these actions, are described in [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention).
+
+### Operation check refusals
+
+The server checks the id, kind, version and time of each operation before applying it. An operation that fails the check gets `rejected`; the data does not change. The offline till shows the «Відхилено сервером» state and the server's refusal text in the **Примітка** (Note) column; the operation is not shown on the **Потребує уваги** tab, and no notification is created.
+
+| Code | Condition |
+|---|---|
+| `INVALID_ID` | the operation id is not a UUID |
+| `INVALID_KIND` | the operation kind is not set |
+| `INVALID_VERSION` | the operation version is not a whole number from 1 |
+| `INVALID_OCCURRED_AT` | the operation time is not a date |
+| `OCCURRED_IN_FUTURE` | the operation time is later than the server time by more than 5 minutes |
+| `OCCURRED_TOO_LONG_AGO` | the operation time is earlier than the server time by more than 30 days |
+| `IDEMPOTENCY_KEY_REUSED` | the operation id was already used for another operation |
+
+### Operations waiting in the queue
+
+An operation with these codes is not applied now and stays in the queue in the «Очікує синхронізації» state; the next queue operations wait for it. The operation is sent again at the next sync with no user action.
+
+| Code | Condition |
+|---|---|
+| `OP_VERSION_UNSUPPORTED` | the operation version is above the one the server supports; the operation is applied after the server is updated |
+| `OP_KIND_UNSUPPORTED` | the server does not apply this operation kind yet; the operation is applied after the server is updated |
+| `RETRY` | the server could not apply the operation for the moment |
+| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id |
+
+### Access and sync request refusals
+
+| Code or condition | When | What the user sees |
+|---|---|---|
+| `DEVICE_TOKEN_USER_DISABLED` | enabling offline mode by a user without access to the studio | Ваш обліковий запис у цій студії не має доступу. Офлайн-режим недоступний. |
+| the device access is invalid, revoked or expired | sync and data updates | the sync stops; the banner: «Увімкніть офлайн-режим на цьому компʼютері повторно в онлайн-адмінці» (see [Sync stop](#sync-stop)) |
+| `DEVICE_MISMATCH` | data of a computer other than the one the access was issued for | the same as for invalid access |
+| `INVALID_DEVICE_ID`, `INVALID_OPERATIONS` | the server does not accept the sync request from this offline till version | the sync stops, the operations stay in the queue; the banner: «Оновіть Device Handler, щоб операції передавались на сервер» |
+
+### Refusals of online actions with an operation id
+
+An online action with an operation id (see [One-time application of operations](#one-time-application-of-operations)) gets a refusal with a code; the action is not done, and the online admin shows the refusal window.
+
+| Code | Condition |
+|---|---|
+| `INVALID_OPERATION_ID` | the operation id is not a UUID |
+| `IDEMPOTENCY_KEY_REUSED` | the id was already used for another operation |
+| `OPERATION_IN_PROGRESS` | another delivery is applying the operation with this id; retry later with the same id |
+| `OPERATION_INTERRUPTED` | the operation stopped after a step that cannot be undone; it is not run again; an admin's review is needed |

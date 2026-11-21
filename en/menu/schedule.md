@@ -101,6 +101,8 @@
 
 > after selection, the client is booked for the workout
 
+- Without internet a client is booked for a class in the offline till by the rules of [Offline mode](/en/pages/offline-mode#class-registration-and-new-clients).
+
 ### Settings button
 
 ![](../../_media/schedule-card-details-3.png ':size=400x241')

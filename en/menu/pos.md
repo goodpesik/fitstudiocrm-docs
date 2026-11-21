@@ -280,7 +280,7 @@ Each section has its own subtotal (sum of the "Amount" column).
 | Відхилено сервером (Refused by the server) | result `rejected`: the operation was not applied |
 | Виконано з розбіжністю (Applied with a difference) | result `applied` with a mark: the operation was applied, the result differs from what the offline till showed |
 
-- The **Reason** column holds the description of the reason code (see [Sales sync codes](/en/pages/offline-mode#sales-sync-codes), [Checks during the sync](/en/pages/offline-mode#checks-during-the-sync), [Personal account, certificate and refund sync codes](/en/pages/offline-mode#personal-account-certificate-and-refund-sync-codes)), the amounts from `details` («Нестача коштів: <amount> грн.» — shortfall, «Доступно до повернення: <amount> грн.» — available for refund) and the description of each mark:
+- The **Reason** column holds the description of the reason code (see [Operation sync codes](/en/pages/offline-mode#operation-sync-codes)), the amounts from `details` («Нестача коштів: <amount> грн.» — shortfall, «Доступно до повернення: <amount> грн.» — available for refund) and the description of each mark:
 
 | Mark | Text |
 |---|---|

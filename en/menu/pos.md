@@ -238,7 +238,7 @@ Each section has its own subtotal (sum of the "Amount" column).
 
 **Fiscalization:**
 
-- The **Fiscalize** button in a row creates the receipt of that operation. The **Fiscalize selected** ("Фіскалізувати вибрані") button creates the receipts of the operations ticked in the first column one after another: sales first, then refunds. At most 50 operations are chosen at once.
+- The **Fiscalize** button in a row creates the receipt of that operation. The **Fiscalize selected** ("Фіскалізувати вибрані") button creates the receipts of the operations ticked in the first column one after another: sales first, then refunds. Ticked refunds in the state **Sale receipt check needed** are not included in these receipts and are not counted on the button. At most 50 operations are chosen at once.
 - When the studio has several active fiscal integrations, choosing the **Fiscal register** above the table is mandatory; until then the buttons are inactive. A refund is fiscalized through the fiscal register of its sale's receipt regardless of the choice.
 - The receipt is created in the current shift of the fiscal register, also for operations of a closed shift. The receipt carries the line «Продаж в офлайн-режимі <date and time>, документ <number>» (for a refund, «Повернення в офлайн-режимі …»).
 - Afterwards the number of receipts created and the number not created with the text of the first error are shown. When processing the selected operations takes too long, some operations are not processed: the number of unprocessed operations is shown, they stay on the tab and are fiscalized by running again. An operation with a created receipt leaves the tab and has the badge **Fiscalized** in the **Fiscalization** column of the **Transactions** tab.

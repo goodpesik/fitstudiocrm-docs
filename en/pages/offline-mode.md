@@ -932,7 +932,9 @@ The online admin checks the server when the Device Handler is switched on on the
 ### Needs attention
 
 - Operations the server did not apply during the sync (result `conflict` or `rejected`) or applied with a mark (`price_changed`, `total_mismatch`, `negative_stock`) are shown in the online admin on the [POS → Needs attention](/en/menu/pos#_398-needs-attention) ("Потребує уваги") tab with the reason and the description of the mark.
-- The same tab shows the fiscal receipts of offline operations in the state **Sale receipt check needed**, **Fiscalization error** or **Fiscalization result unknown**.
+- The same tab shows the fiscal receipts of offline operations in the state **Sale receipt check needed**, **Fiscalization error** or **Fiscalization result unknown**, and the payments by account that wait for confirmation.
+- The administrator resolves an operation with the tab's actions or marks it **Reviewed**; a resolved operation moves to the reviewed list.
+- For every operation not applied, one notification is created for the administrators however many times it is synced.
 
 ## Fiscalization after the sync
 

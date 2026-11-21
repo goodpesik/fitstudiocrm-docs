@@ -234,7 +234,7 @@ Each section has its own subtotal (sum of the "Amount" column).
 - **Payment method** — the actual payment method of the transaction. A sale paid in parts shows one row per payment; each payment gets its own receipt for its amount with its payment method.
 - **Document** — the number of the non-fiscal document the offline till issued.
 - **State** — **Awaiting fiscalization** ("Очікує фіскалізації"), **Fiscalization error** ("Помилка фіскалізації"), **Fiscalization result unknown** ("Результат фіскалізації невідомий") or **Sale receipt check needed** ("Потребує перевірки чека продажу"); under the error badge, the error text of the fiscal provider. The state `error` without a provider error text is shown with the neutral badge **Fiscalization result unknown**.
-- For a refund in the state **Sale receipt check needed**, the buttons **Included in the sale receipt** ("Враховано в чеку продажу") and **Not included in the sale receipt** ("Не враховано в чеку продажу") are shown instead of **Fiscalize**. Each button opens the confirmation window «Перевірка чека продажу» with the buttons **Confirm** ("Підтвердити") and **Cancel** ("Скасувати"). After confirmation the request `POST /transactions/:id/fiscal-receipt/refund-check` is made (see [Fiscalizing a transaction](#_3942-fiscalizing-a-transaction)): a refund included in the sale receipt gets the state **No fiscalization needed** and leaves the tab; a refund not included gets the state **Awaiting fiscalization** and is fiscalized with a return receipt. The message «Рішення щодо повернення збережено» (The decision on the refund is saved) is shown.
+- For a refund in the state **Sale receipt check needed**, the **Fiscalize** button is not shown; users with the role SuperAdmin or Admin see the buttons **Included in the sale receipt** ("Враховано в чеку продажу") and **Not included in the sale receipt** ("Не враховано в чеку продажу"). Each button opens the confirmation window «Перевірка чека продажу» with the buttons **Confirm** ("Підтвердити") and **Cancel** ("Скасувати"). After confirmation the request `POST /transactions/:id/fiscal-receipt/refund-check` is made (see [Fiscalizing a transaction](#_3942-fiscalizing-a-transaction)): a refund included in the sale receipt gets the state **No fiscalization needed** and leaves the tab; a refund not included gets the state **Awaiting fiscalization** and is fiscalized with a return receipt. The message «Рішення щодо повернення збережено» (The decision on the refund is saved) is shown.
 
 **Fiscalization:**
 
@@ -260,13 +260,19 @@ Each section has its own subtotal (sum of the "Amount" column).
 **Fiscal receipts** ("Фіскальні чеки"; the block is shown when the studio has an active fiscal integration):
 
 - The operations of the [Not fiscalized](#_397-not-fiscalized) tab in the state **Sale receipt check needed**, **Fiscalization error** or **Fiscalization result unknown**. Operations in the state **Awaiting fiscalization** are not shown in the block.
-- The columns, buttons and fiscal register choice are the same as on the [Not fiscalized](#_397-not-fiscalized) tab, including the buttons **Included in the sale receipt** and **Not included in the sale receipt** for a refund that needs the sale receipt check.
+- The columns, buttons and fiscal register choice are the same as on the [Not fiscalized](#_397-not-fiscalized) tab. The buttons **Included in the sale receipt** and **Not included in the sale receipt** are shown to users with the role SuperAdmin or Admin; for other roles the row of a refund that needs the sale receipt check has no buttons.
 - When there are no such operations, the text «Немає фіскальних чеків, що потребують уваги» (No fiscal receipts need attention) is shown.
+
+**Awaiting confirmation** ("Очікують підтвердження"):
+
+- Payments by account taken by the offline till that wait for the confirmation that the money arrived, earliest first. Columns: **Operation time**, **Client**, **Amount**, **Document**.
+- The **Confirm** ("Підтвердити") button opens the window «Підтвердження оплати» (Payment confirmation) with the buttons **Confirm** and **Cancel**. After confirmation the transaction is confirmed by the same request as the confirmation button of the **Transactions** tab (`PATCH /transactions/:id`), leaves the list, and the message «Оплату підтверджено» (Payment confirmed) is shown.
+- When there are no such payments, the text «Немає оплат, що очікують підтвердження» (No payments await confirmation) is shown.
 
 **Offline till operations** ("Операції офлайн-каси"):
 
 - The offline till operations the server did not apply during the sync (result `conflict` or `rejected`) or applied with a mark (`price_changed`, `total_mismatch`, `negative_stock`), newest first; at most 200 operations. Online admin operations with an operation id are not listed.
-- Columns: **Time** ("Час"; the operation time at the offline till in the studio time zone), **Operation** ("Операція"), **State** ("Стан"), **Reason** ("Причина"), **User** ("Користувач"; the user the operation was made under at the offline till). The **Refresh** ("Оновити") button reads the list again.
+- Columns: **Time** ("Час"; the operation time at the offline till in the studio time zone), **Operation** ("Операція"), **State** ("Стан"), **Reason** ("Причина"), **User** ("Користувач"; the user the operation was made under at the offline till), **Actions** ("Дії"). The **Refresh** ("Оновити") button reads the list again.
 
 | State | Meaning |
 |---|---|
@@ -274,7 +280,7 @@ Each section has its own subtotal (sum of the "Amount" column).
 | Відхилено сервером (Refused by the server) | result `rejected`: the operation was not applied |
 | Виконано з розбіжністю (Applied with a difference) | result `applied` with a mark: the operation was applied, the result differs from what the offline till showed |
 
-- The **Reason** column holds the description of the reason code (see [Sale sync codes](/en/pages/offline-mode#sales-sync-codes), [Checks during the sync](/en/pages/offline-mode#checks-during-the-sync), [Personal account, certificate and refund sync codes](/en/pages/offline-mode#personal-account-certificate-and-refund-sync-codes)), the amounts from `details` («Нестача коштів: <amount> грн.» — shortfall, «Доступно до повернення: <amount> грн.» — available for refund) and the description of each mark:
+- The **Reason** column holds the description of the reason code (see [Sales sync codes](/en/pages/offline-mode#sales-sync-codes), [Checks during the sync](/en/pages/offline-mode#checks-during-the-sync), [Personal account, certificate and refund sync codes](/en/pages/offline-mode#personal-account-certificate-and-refund-sync-codes)), the amounts from `details` («Нестача коштів: <amount> грн.» — shortfall, «Доступно до повернення: <amount> грн.» — available for refund) and the description of each mark:
 
 | Mark | Text |
 |---|---|
@@ -284,8 +290,48 @@ Each section has its own subtotal (sum of the "Amount" column).
 
 - A code without a description is shown as «Операцію не виконано (код <code>).».
 - A class registration with the code `PLAN_NOT_FOUND` also carries the text «Створіть абонемент клієнту вручну та зареєструйте відвідування повторно.» (Create the plan for the client by hand and register the visit again.)
-- The operation stays on the list; no resolving actions are performed from the tab.
 
-**Request:**
+**Resolving actions** (the **Actions** column):
 
-- `GET /offline/attention` — an array of operations, newest first: `id`, `kind`, `deviceId`, `status`, `operationAt`, `performedBy`, `performedByName`, `flags`, `error` (`code`, `message`, `details`). Roles: SuperAdmin, Admin, Manager; any other role is refused with 403.
+| Operation and reason | Buttons |
+|---|---|
+| Class registration, `NO_FREE_SEATS` (class full) | **Register over capacity** ("Зареєструвати понад місткість"), **Take the registration off** ("Зняти реєстрацію") |
+| Class registration, plan used up, expired, suspended, not active, closed, not valid for the class or missing (`PLAN_*`) | **Take from another plan** ("Списати з іншого абонемента"), **Record as debt** ("Оформити борг"), **Take the registration off** |
+| New client, `POSSIBLE_DUPLICATE` | **Merge with a client** ("Обʼєднати з клієнтом"), **Keep as a separate client** ("Залишити окремим клієнтом") |
+| Sale or debt payment from the personal account, `balance_insufficient` | **Record the shortfall as debt** ("Оформити нестачу боргом"), **Refuse the operation** ("Відхилити операцію") |
+| Certificate redeem, `certificate_already_redeemed` or `certificate_expired` | **Record a plan sale** ("Оформити продаж абонемента"), **Record as debt**, **Refuse the operation** |
+| Refund, `refund_exceeds_remaining` | **Refund the available amount** ("Повернути доступну суму"), **Refuse the operation** |
+| Any operation, `dependency_rejected`, `OFFLINE_CLIENT_NOT_APPLIED` or `OFFLINE_SALE_NOT_APPLIED` | **Apply again** ("Виконати повторно"), **Refuse the operation** |
+| Operation applied with the mark `price_changed` | **Confirm the price** ("Підтвердити ціну") |
+
+- The **Reviewed** ("Переглянуто") button is shown in every row. Its confirmation window for an operation not applied says «Операцію «<operation>» від <date and time> не виконано на сервері. Після позначки «Переглянуто» вона залишиться невиконаною й перейде до списку переглянутих.» (the operation stays not applied and moves to the reviewed list); for an operation applied with a mark — «Операцію «<operation>» від <date and time> буде позначено як переглянуту й перенесено до списку переглянутих.».
+- Every action without a choice opens a confirmation window with the buttons **Confirm** and **Cancel**. **Take from another plan** (choice of a client plan with classes left, in the state Active or New), **Merge with a client** (choice of a studio client with the same phone) and **Record a plan sale** (choice of the payment method: cash or card) open a choice window with the buttons **Cancel** and **Confirm**; **Confirm** is inactive until a choice is made.
+- The actions that apply the operation (**Register over capacity**, **Take from another plan**, **Record as debt**, **Record a plan sale**, **Record the shortfall as debt**, **Refund the available amount**, **Keep as a separate client**, **Apply again**) apply it the same way as the offline till sync, with the same checks, under the same operation id:
+  - **Register over capacity** — the registration without the free seat check.
+  - **Take from another plan** — the class is taken from the chosen client plan.
+  - **Record as debt** for a registration — the registration with the payment status «Не оплачено» (not paid) without taking a class from a plan, and the client debt «Борг за тренування: <name>» for the price of the plan of the class category (0 UAH when the category has no plan).
+  - **Record a plan sale** and **Record as debt** for a certificate — a sale of the certificate's plans to the client at catalogue prices, dated at the moment of resolving: paid by the chosen method or wholly on debt. The certificate is not redeemed.
+  - **Record the shortfall as debt** — the personal account pays the balance it holds at the moment of resolving, the rest of the sale is recorded as debt; a debt payment pays the balance held, the rest of the debt stays. The personal account balance does not go below zero. When the account holds nothing, a debt payment is refused with the code `OFFLINE_RESOLVE_NOTHING_TO_APPLY`.
+  - **Refund the available amount** — a refund of the amount still refundable; the refund never exceeds the sale amount less earlier refunds.
+  - **Keep as a separate client** — the client is created without the phone check.
+  - **Apply again** — the operation is applied unchanged, after the operation it depends on is resolved.
+- **Merge with a client** — no new client is created; the offline till operations that name this client apply to the chosen studio client (those already refused — through **Apply again**).
+- **Confirm the price**, **Take the registration off**, **Refuse the operation** and **Reviewed** change no data. Money given out of the till in an offline shift stays in that shift's report.
+- After a successful action the message «Рішення щодо операції збережено» (The decision on the operation is saved) is shown and the operation moves to the **Reviewed operations** ("Переглянуті операції") list.
+- When the operation cannot be applied the chosen way (for example, the chosen plan is suspended), the server's refusal is shown; the operation stays on the list with the new reason.
+- When another user is resolving the operation at the same moment, the request is refused with 409 `OFFLINE_ATTENTION_BEING_RESOLVED` «Цю операцію саме зараз вирішує інший користувач». An action the operation does not offer, or resolving it again, is refused with 409 `OFFLINE_ATTENTION_NOT_RESOLVABLE` «Операцію вже вирішено або її не можна вирішити в такий спосіб».
+
+**Reviewed operations:**
+
+- Operations marked **Reviewed** or resolved, last resolved first; at most 200. Columns: **Time**, **Operation**, **State**, **Reason**, **Decision** ("Рішення"; the action name and the user who took it).
+
+**Notifications:**
+
+- For every offline till operation the server did not apply, one notification is created for the administrators: «Офлайн-операцію «<operation>» від <date and time> не виконано. <reason> Перегляньте розділ Каса → Потребує уваги.» The date and time are in the studio time zone. Syncing the same operation again creates no second notification.
+
+**Requests:**
+
+- `GET /offline/attention` — open operations, newest first; `GET /offline/attention?reviewed=true` — reviewed ones. Fields: `id`, `kind`, `deviceId`, `status`, `operationAt`, `performedBy`, `performedByName`, `flags`, `error` (`code`, `message`, `details`), `reasons` (the texts of the **Reason** column), `actions` (available actions: `declined`, `price_confirmed`, `over_capacity`, `other_plan`, `as_debt`, `sell_plan`, `shortfall_debt`, `refund_available`, `merge`, `keep_separate`, `retry`), `options` (`plans` — plans for `other_plan`; `clients` — clients for `merge`), `reviewedAt`, `reviewedBy`, `resolution`.
+- `POST /offline/attention/:id/resolve`, body `{ action, clientPlanId?, clientId?, paymentMethod? }`; `action` is one of `actions` or `reviewed`. `clientPlanId` is required for `other_plan`, `clientId` for `merge`, `paymentMethod` (`0` — cash, `2` — card) for `sell_plan`; without them the request is refused with 400 `INVALID_RESOLUTION`. Response: `{ id, resolution }`.
+- `GET /offline/attention/awaiting-approval` — payments by account of the offline till that wait for confirmation.
+- Roles: SuperAdmin, Admin, Manager; any other role is refused with 403.

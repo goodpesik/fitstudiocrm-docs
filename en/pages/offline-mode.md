@@ -2,6 +2,66 @@
 
 Offline mode lets a till computer with Device Handler installed work without internet and while the Fitshandler server is unavailable. Operations made without a connection are sent to the server once the connection is back.
 
+## Installation and start
+
+### Requirements
+
+- The offline till runs on a till computer with Device Handler installed. Device Handler starts the offline till and stops it together with itself; no separate installation is needed.
+- Offline mode must be enabled on the computer (see [Devices and access](#devices-and-access)).
+- The offline till is available only on the computer it runs on; other computers of the network cannot reach it.
+
+### Offline till address
+
+| Parameter | Value |
+|---|---|
+| Address | `http://127.0.0.1:9899` |
+| Time zone of dates and times | the studio's time zone, regardless of the computer's time zone |
+
+- The offline till shows the studio data received during the last connection, including when there is no internet.
+- An action or section unavailable in the offline till shows the message «Ця дія недоступна в офлайн-режимі.» (code `OFFLINE_NOT_AVAILABLE`).
+
+### Data updates
+
+| Event | What the till receives |
+|---|---|
+| First start after offline mode is enabled | the full data package |
+| Every 12 hours | the full data package |
+| Every 12 minutes | a data update |
+| Connection restored | the operation queue is sent to the server, then the till receives data |
+
+- Data is updated only while the server can be reached.
+- Operations made without a connection are sent to the server after the connection is restored, without user action, one by one in the order they were made. An operation the server did not accept for a temporary reason is sent again; the next operations of the queue wait for it.
+- While the queue holds operations not yet sent to the server, received data is not applied; it is applied after the queue is sent.
+- Each queued operation has a state: `queued` — waiting to be sent, `applied` — applied on the server, `rejected` — refused, `conflict` — needs an administrator's decision.
+- An operation shown as saved is kept after the computer loses power.
+
+### Stale data
+
+- Data not updated for more than 24 hours is stale. The offline till reports it on the offline mode banner.
+
+### Connection states
+
+| State | Meaning |
+|---|---|
+| Online | the Fitshandler server answers |
+| No internet | the server does not answer, and a public internet address does not answer either |
+| Server unavailable | the internet is available, the Fitshandler server does not answer |
+
+| Parameter | Value |
+|---|---|
+| Server check while connected | every 10 s |
+| Server answer timeout | 10 s |
+| Failed check | no connection, no answer within 10 s, answer `502`, `503` or `504` |
+| Switch to «No internet» or «Server unavailable» | after 3 failed checks in a row |
+| Server check while disconnected | every 30 s |
+| Return to «Online» | after 2 successful checks in a row |
+
+- `4xx` answers are not failed checks.
+- One failed check does not change the state.
+- A separate check of a public internet address tells «No internet» from «Server unavailable».
+- A server answering `503` while the internet is available switches the state to «Server unavailable».
+- In the «No internet» and «Server unavailable» states the offline till works by the same rules.
+
 ## Devices and access
 
 ### Enabling on a computer

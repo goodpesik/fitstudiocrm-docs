@@ -233,7 +233,8 @@ Each section has its own subtotal (sum of the "Amount" column).
 - **Receipt amount** — for a sale: the sale amount less the refunds made before the receipt; for a refund: the refund amount.
 - **Payment method** — the actual payment method of the transaction. A sale paid in parts shows one row per payment; each payment gets its own receipt for its amount with its payment method.
 - **Document** — the number of the non-fiscal document the offline till issued.
-- **State** — **Awaiting fiscalization** ("Очікує фіскалізації") or **Fiscalization error** ("Помилка фіскалізації"); under the error badge, the error text of the fiscal provider.
+- **State** — **Awaiting fiscalization** ("Очікує фіскалізації"), **Fiscalization error** ("Помилка фіскалізації"), **Fiscalization result unknown** ("Результат фіскалізації невідомий") or **Sale receipt check needed** ("Потребує перевірки чека продажу"); under the error badge, the error text of the fiscal provider. The state `error` without a provider error text is shown with the neutral badge **Fiscalization result unknown**.
+- For a refund in the state **Sale receipt check needed**, the buttons **Included in the sale receipt** ("Враховано в чеку продажу") and **Not included in the sale receipt** ("Не враховано в чеку продажу") are shown instead of **Fiscalize**. Each button opens the confirmation window «Перевірка чека продажу» with the buttons **Confirm** ("Підтвердити") and **Cancel** ("Скасувати"). After confirmation the request `POST /transactions/:id/fiscal-receipt/refund-check` is made (see [Fiscalizing a transaction](#_3942-fiscalizing-a-transaction)): a refund included in the sale receipt gets the state **No fiscalization needed** and leaves the tab; a refund not included gets the state **Awaiting fiscalization** and is fiscalized with a return receipt. The message «Рішення щодо повернення збережено» (The decision on the refund is saved) is shown.
 
 **Fiscalization:**
 
@@ -245,9 +246,46 @@ Each section has its own subtotal (sum of the "Amount" column).
 - A refund is fiscalized only after its sale. For a refund whose sale awaits its receipt (the state **Awaiting fiscalization** or **Fiscalization error**), the sale is fiscalized first under the rules of [fiscalizing a transaction](#_3942-fiscalizing-a-transaction). When the refund needs no receipt after that, it gets the state **No fiscalization needed** and no refund receipt is created. A refusal of the sale receipt is returned as the refusal for the refund. For a refund whose sale has no receipt and does not await one, the request is refused with `SALE_NOT_FISCALIZED`.
 - The conditions and error codes for each operation are the same as for [fiscalizing a transaction](#_3942-fiscalizing-a-transaction).
 
-**The «Fiscalization» column of the «Transactions» tab** shows for operations made offline their state: **Awaiting fiscalization**, **Fiscalization error**, **No fiscalization needed** ("Не потребує фіскалізації") or **Fiscalized**.
+**The «Fiscalization» column of the «Transactions» tab** shows for operations made offline their state: **Awaiting fiscalization**, **Fiscalization error**, **Fiscalization result unknown**, **Sale receipt check needed**, **No fiscalization needed** ("Не потребує фіскалізації") or **Fiscalized**.
 
 **Requests:**
 
 - `GET /transactions/awaiting-receipt` — the operations waiting for a receipt, earliest first: `data` (transactions with the fields `fiscalState`, `fiscalError`, `receiptAmount`) and `fiscalCards` (the active fiscal registers: `id`, `label`, `type`).
 - `POST /transactions/fiscal-receipts`, body `{ transactionIds, fiscalProviderId }`. Response: an array of `{ id, ok, code?, message? }`, one item per operation; an operation whose processing was not started has `ok: false` and the code `RECEIPT_NOT_ATTEMPTED` «Транзакцію не оброблено: вичерпано час обробки. Повторіть фіскалізацію». An empty list or more than 50 operations is refused with 400 `RECEIPT_GROUP_SIZE` «Оберіть від 1 до 50 транзакцій»; no receipt is created.
+
+## 3.9.8 Needs attention
+
+> The **Needs attention** ("Потребує уваги") tab shows the operations that need an administrator's action after the sync of the [offline till](/en/pages/offline-mode#needs-attention). The tab is shown in the online admin; the offline till has no such tab.
+
+**Fiscal receipts** ("Фіскальні чеки"; the block is shown when the studio has an active fiscal integration):
+
+- The operations of the [Not fiscalized](#_397-not-fiscalized) tab in the state **Sale receipt check needed**, **Fiscalization error** or **Fiscalization result unknown**. Operations in the state **Awaiting fiscalization** are not shown in the block.
+- The columns, buttons and fiscal register choice are the same as on the [Not fiscalized](#_397-not-fiscalized) tab, including the buttons **Included in the sale receipt** and **Not included in the sale receipt** for a refund that needs the sale receipt check.
+- When there are no such operations, the text «Немає фіскальних чеків, що потребують уваги» (No fiscal receipts need attention) is shown.
+
+**Offline till operations** ("Операції офлайн-каси"):
+
+- The offline till operations the server did not apply during the sync (result `conflict` or `rejected`) or applied with a mark (`price_changed`, `total_mismatch`, `negative_stock`), newest first; at most 200 operations. Online admin operations with an operation id are not listed.
+- Columns: **Time** ("Час"; the operation time at the offline till in the studio time zone), **Operation** ("Операція"), **State** ("Стан"), **Reason** ("Причина"), **User** ("Користувач"; the user the operation was made under at the offline till). The **Refresh** ("Оновити") button reads the list again.
+
+| State | Meaning |
+|---|---|
+| Не виконано: конфлікт (Not applied: conflict) | result `conflict`: the operation was not applied, it contradicts changes made on the server |
+| Відхилено сервером (Refused by the server) | result `rejected`: the operation was not applied |
+| Виконано з розбіжністю (Applied with a difference) | result `applied` with a mark: the operation was applied, the result differs from what the offline till showed |
+
+- The **Reason** column holds the description of the reason code (see [Sale sync codes](/en/pages/offline-mode#sales-sync-codes), [Checks during the sync](/en/pages/offline-mode#checks-during-the-sync), [Personal account, certificate and refund sync codes](/en/pages/offline-mode#personal-account-certificate-and-refund-sync-codes)), the amounts from `details` («Нестача коштів: <amount> грн.» — shortfall, «Доступно до повернення: <amount> грн.» — available for refund) and the description of each mark:
+
+| Mark | Text |
+|---|---|
+| `negative_stock` | Залишок товару на складі відʼємний. (The product stock is below zero.) |
+| `price_changed` | Ціна відрізняється від ціни в каталозі. (The price differs from the catalogue price.) |
+| `total_mismatch` | Сума операції відрізняється від суми на сервері. (The operation total differs from the server total.) |
+
+- A code without a description is shown as «Операцію не виконано (код <code>).».
+- A class registration with the code `PLAN_NOT_FOUND` also carries the text «Створіть абонемент клієнту вручну та зареєструйте відвідування повторно.» (Create the plan for the client by hand and register the visit again.)
+- The operation stays on the list; no resolving actions are performed from the tab.
+
+**Request:**
+
+- `GET /offline/attention` — an array of operations, newest first: `id`, `kind`, `deviceId`, `status`, `operationAt`, `performedBy`, `performedByName`, `flags`, `error` (`code`, `message`, `details`). Roles: SuperAdmin, Admin, Manager; any other role is refused with 403.

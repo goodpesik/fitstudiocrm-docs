@@ -914,6 +914,7 @@ The online admin checks the server when the Device Handler is switched on on the
 - The match is made when, for every plan of the sale, the server has exactly as many plans of that kind for this client as units sold, created no earlier than 10 minutes before the online sale reached the server and no later than 10 minutes after it.
 - After an answer with `planIdMap` the server does not look at the rest of the request's operations (status `pending`). The offline till replaces the offline till plan id with the server plan id in the queued operations, the plan in the till data gets the server id, and the queue is sent again. A class registration on such a plan takes the class from the plan on the server; no second plan is created.
 - When no match is made, the ids are not changed; a class registration on a plan created by the offline till gets the result `conflict` with the code `PLAN_NOT_FOUND` and is shown on the **Офлайн-операції** screen with the status «Потребує уваги».
+- Such a class registration is not corrected automatically: it stays on the [POS → Needs attention](/en/menu/pos#_398-needs-attention) tab of the online admin; the administrator creates the plan for the client by hand and registers the visit again.
 - An operation with an unknown result does not need to be repeated by hand.
 - When the online admin opens and when the server answers again, the online admin asks the server for the result of every operation with an unknown result and shows a message:
 
@@ -928,6 +929,11 @@ The online admin checks the server when the Device Handler is switched on on the
 - When the server does not answer the result request, the remaining operations stay «Результат невідомий» until the next check.
 - The date and time of the operation are shown in the studio's time zone.
 
+### Needs attention
+
+- Operations the server did not apply during the sync (result `conflict` or `rejected`) or applied with a mark (`price_changed`, `total_mismatch`, `negative_stock`) are shown in the online admin on the [POS → Needs attention](/en/menu/pos#_398-needs-attention) ("Потребує уваги") tab with the reason and the description of the mark.
+- The same tab shows the fiscal receipts of offline operations in the state **Sale receipt check needed**, **Fiscalization error** or **Fiscalization result unknown**.
+
 ## Fiscalization after the sync
 
 The offline till creates no fiscal receipts, neither without internet nor while the FitStudioCRM server is unavailable: the buyer gets a non-fiscal document with a number (`receiptNo`). The fiscal receipts of the sales and refunds of the offline period are created after the sync, through the server, by the studio's fiscal integration (Checkbox or Vchasno.Kasa), on the [Point of sale → Not fiscalized](/en/menu/pos#_397-not-fiscalized) tab.
@@ -937,9 +943,9 @@ The offline till creates no fiscal receipts, neither without internet nor while 
 | State (`fiscalState`) | Badge | Meaning |
 |---|---|---|
 | `pending` | **Awaiting fiscalization** ("Очікує фіскалізації") | the transaction waits for a fiscal receipt and is shown on the **Not fiscalized** tab |
-| `error` | **Fiscalization error** ("Помилка фіскалізації") | the last attempt failed or ended without a stored receipt; the provider's error text is in `fiscalError`; the transaction is shown on the **Not fiscalized** tab |
+| `error` | **Fiscalization error** ("Помилка фіскалізації"); without a provider error text — **Fiscalization result unknown** ("Результат фіскалізації невідомий") | the last attempt failed or ended without a stored receipt; the provider's error text is in `fiscalError`; the transaction is shown on the **Not fiscalized** and **Needs attention** tabs |
 | `not_required` | **No fiscalization needed** ("Не потребує фіскалізації") | no receipt is created |
-| `needs_check` | **Sale receipt check needed** ("Потребує перевірки чека продажу") | a refund the sale receipt found may include; no return receipt is created until an administrator confirms (see [Fiscalizing a transaction](/en/menu/pos#_3942-fiscalizing-a-transaction)); the transaction is shown on the **Not fiscalized** tab |
+| `needs_check` | **Sale receipt check needed** ("Потребує перевірки чека продажу") | a refund the sale receipt found may include; no return receipt is created until an administrator confirms (see [Fiscalizing a transaction](/en/menu/pos#_3942-fiscalizing-a-transaction)); the transaction is shown on the **Not fiscalized** and **Needs attention** tabs, where the administrator confirms whether the sale receipt includes the refund |
 | `fiscalized` | **Fiscalized** ("Фіскалізовано") | the receipt is created |
 
 ### Sales

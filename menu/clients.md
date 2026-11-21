@@ -499,7 +499,7 @@
 
 - Файл `.xlsx`, розмір — не більше 5 МБ («Файл завеликий. Максимальний розмір — 5 МБ.»).
 - Дані — на аркуші **Clients**, перший рядок — назви колонок.
-- Колонки (у порядку експорту): `id`, `firstName`, `lastName`, `phone`, `email`, `card`, `birthday`, `comment`. Колонка `firstName` обовʼязкова.
+- Колонки (у порядку експорту): `id`, `firstName`, `lastName`, `phone`, `email`, `card`, `birthday`, `comment`, `createdAt`, `lastVisit`, `personalBalance`. Колонка `firstName` обовʼязкова. Колонки `createdAt`, `lastVisit` і `personalBalance` лише інформаційні: імпорт їх не читає. `createdAt` і `lastVisit` — дата й час за [часовим поясом студії](/login/settings#часовий-пояс-студії) у форматі `рррр-ММ-дд ГГ:хх`.
 
 ### 3.2.14.2 Імпорт
 

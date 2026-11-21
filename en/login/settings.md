@@ -58,6 +58,16 @@ A multi-line text field. The entered text is shown to clients in the mobile app 
 
 The **Часовий пояс** (Time zone) drop-down (default Kyiv, `Europe/Kyiv`). The time zone defines the dates and times of the studio's workouts and reports.
 
+The studio-day rule: a calendar day, "today", a weekday and an hour are determined in the studio time zone, regardless of the time zone of the server, the computer or the phone. Under this rule:
+
+- dates and times in messages to administrators, coaches and clients (app, Telegram, SMS) are shown in studio time;
+- the coach calendar (`.ics` file) lists classes in studio time;
+- the date and time of a Z-report and of a sales receipt are shown in studio time;
+- the clients export file name `clients_YYYY-MM-DD.xlsx` (for example, `clients_2026-11-20.xlsx`) carries the studio date;
+- in the clients Excel export the birthday is a studio day, and the `createdAt` and `lastVisit` columns are the studio date and time in the `yyyy-MM-dd HH:mm` format;
+- when the subscription sets no billing period start, the monthly SMS limit is counted from 00:00 on the 1st of the current month in studio time;
+- a rating request is sent for classes attended during the last 2 studio days, and only for classes no older than 7 studio days.
+
 > ⚠️ If the studio has at least one workout, the list is locked and the message «Зміна часового поясу недоступна» (Changing the time zone is unavailable) is shown under it.
 
 ### Danger Zone
@@ -177,6 +187,7 @@ The section titled **Створення персональних тренува�
 | **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) | An open shift is closed every day at 23:58 in the [studio time zone](#studio-time-zone); if no time zone is set, `Europe/Kyiv` applies. See [Automatic Shift Closing](/en/pages/shifts#_24-automatic-shift-closing). |
 | **Нараховувати борг за неявку на персональне (без абонемента) та зараховувати тренеру** (Charge a debt for a no-show at a personal workout (without a membership) and credit the coach) | See below. |
 | **Автоматична реєстрація при скануванні картки (клієнт з активним абонементом і записом на сьогодні)** (Automatic registration on card scan (client with an active membership and a booking for today)) | See [Automatic registration on card scan](/en/pages/processing#_610-automatic-registration-on-card-scan). |
+| **Автоматично переводити клієнтів із листа очікування в запис (після звільнення місця на тренуванні)** (Automatically move clients from the waiting list into a booking (when a place on the workout becomes free)) | On: when a spot frees up on a workout that has not started and is not cancelled, the first client on the waiting list is moved to the **Planned** status automatically. Off (default): clients stay on the waiting list and an administrator changes their status manually; any client who books the workout can take the free spot; the studio receives the notification «Звільнилося місце на тренуванні!» (a spot has freed up on the workout). See [Schedule — Waiting list](/en/menu/schedule#waiting-list). |
 
 **Debt for a no-show at a personal workout.** When the switch is on and a personal workout client gets the **Не відвідано** status without a membership deduction (manually, through a late cancellation or by the nightly job), and the client has no active personal membership:
 

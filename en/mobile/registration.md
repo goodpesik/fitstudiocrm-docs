@@ -12,7 +12,7 @@
 
 The guest schedule opens on the **Workouts** tab:
 
-1. At the top is a strip of the days of the current week (from today, 7 days); a dot under a day marks a day with workouts. The day is changed by tapping a day or by swiping the screen left or right.
+1. At the top is a strip of the days of the current week (from today in the studio time zone, 7 days); a dot under a day marks a day with workouts. The day is changed by tapping a day or by swiping the screen left or right.
 2. The workout card has the **«Book»** button. The **«Workout booking»** window shows the workout, coach, room, date and time; buttons **«Cancel»** and **«Continue»**.
 3. If the studio does not yet know the user's first and last name, the **«Enter your first and last name»** window opens with the class details and the **First name** and **Last name** fields (both required); buttons **«Confirm selection»** and **«Close»**.
 4. The request is sent to the studio administrators. A client card is created in the studio; the seat in the workout is not taken until the request is approved.

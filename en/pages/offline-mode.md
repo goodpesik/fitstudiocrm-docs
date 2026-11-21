@@ -58,7 +58,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 ### Data available offline
 
 - Studio plans, categories, products with stock, coaches, rooms, workouts; clients with the personal account balance and plans; unpaid debts; active certificates; sales and closed shifts for the last 3 days; the schedule from 3 days before the current day to 7 days after it; self check-in codes for 48 hours; studio settings (see [Contents](#contents)).
-- Data is updated only while connected: an update every 12 minutes, a full package every 12 hours. Data not updated for more than 24 hours is marked as stale (see [Stale data](#stale-data)).
+- Data is updated regularly and only while connected; the till receives the full data package periodically. Data not updated for more than 24 hours is marked as stale (see [Stale data](#stale-data)).
 - Keys, tokens, cashier PIN codes and secrets are not passed to the till computer.
 
 ### Limits of work without a connection
@@ -108,8 +108,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | Event | What the till receives |
 |---|---|
 | First start after offline mode is enabled | the full data package |
-| Every 12 hours | the full data package |
-| Every 12 minutes | a data update |
+| Regularly while connected | a data update; periodically the full data package |
 | Connection restored | the operation queue is sent to the server, then the till receives data |
 
 - Data is updated only while the server can be reached.
@@ -140,13 +139,8 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | No internet | the server does not answer, and a public internet address does not answer either |
 | Server unavailable | the internet is available, the Fitshandler server does not answer |
 
-| Parameter | Value |
-|---|---|
-| Server check while connected | every 10 s |
-| Failed check | the server did not answer or reported it is temporarily unavailable |
-| Switch to «No internet» or «Server unavailable» | after 3 failed checks in a row |
-| Server check while disconnected | every 30 s |
-| Return to «Online» | after 2 successful checks in a row |
+- The till checks the server regularly. A failed check: the server did not answer or reported it is temporarily unavailable.
+- The «No internet» or «Server unavailable» state is set after several failed checks in a row; the «Online» state returns after several successful checks in a row.
 
 - A server refusal that explains its reason is not a failed check.
 - One failed check does not change the state.
@@ -158,7 +152,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 ### Enabling on a computer
 
 - Offline mode is enabled separately for each till computer.
-- A user with the **Super Admin** or **Admin** role, signed in on that computer, can enable offline mode. A user with the **Manager** role gets `403`.
+- A user with the **Super Admin** or **Admin** role, signed in on that computer, can enable offline mode. A user with the **Manager** role is refused.
 - On enabling, the computer receives a device access — a separate key bound to the studio, the user and the computer.
 - The key is passed to the computer once. The server stores only its hash; the key cannot be restored from the server data.
 - One user on one computer has one valid device access. Enabling again issues a new access; the previous one stops working.
@@ -190,7 +184,6 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | Parameter | Value |
 |---|---|
 | Access validity | 7 days from the last contact |
-| Validity update | at most once every 5 minutes |
 | Valid accesses per user and computer | 1 |
 
 ### Device list and revoking
@@ -205,11 +198,9 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 - A revoked access and an expired access are not shown in the list.
 - If the list cannot be loaded, the list is empty.
 
-| Request with a device access | Server response |
-|---|---|
-| Access revoked, expired, or the user has no role with access | `401` |
-| A section the device access does not open | `403` |
-| Data of another computer than the one the access was issued to | `403`, code `DEVICE_MISMATCH` |
+- A request with an access that is revoked, expired, or whose user has no role with access is refused; the sync stops (see [Sync stop](#sync-stop)).
+- A request with a device access to a section that access does not open is refused.
+- A request with data of another computer than the one the access was issued to is refused with the code `DEVICE_MISMATCH`.
 
 ## Device Handler
 
@@ -276,7 +267,7 @@ The offline till works with the data received from the server at the last connec
 | Sales | sales and personal account top-ups from the start of the day 3 days back in the studio time zone, except sales of the current online shift: lines, amount, payment method, paid from the personal account flag, top-up flag, invoice payment confirmation flag, paid through a terminal flag, refunds made, fiscalization state, fiscal card id |
 | Shifts | closed shifts from the start of the day 3 days back in the studio time zone; the current online shift is not sent |
 | Schedule | workouts from 3 days before today to 7 days after it, with booked clients and the number of taken seats; recurring workouts on dates with no workout created yet, from today on, with their regular clients |
-| Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on; the state of the codes is in the `checkInCodesStatus` field |
+| Self check-in codes | ready QR links for every hour of the next 48 hours: for all rooms, for each room alone and for the room sets the till asks for; only when self check-in is on |
 | Settings | studio name and time zone, shift and booking parameters, self check-in parameters, printers, studio receipt header (`receiptHeader`); fiscal cards — id, name, type, active flag and receipt header (`receiptHeader`); acquiring cards — id, name, type and active flag only |
 
 - Keys, tokens, cashier PIN codes, licence keys and the self check-in signing secret are not sent to the till computer.
@@ -313,31 +304,14 @@ Printing rules for the offline till:
 ### Full package and updates
 
 - The full package contains all the data in the table.
-- An update (a request with the `since` parameter) contains all the data except plans, categories, products (name and price), coaches, rooms, workouts and settings. Product stock is sent in an update as a separate list.
+- An update contains all the data except plans, categories, products (name and price), coaches, rooms, workouts and settings. Product stock is sent in an update as a separate list.
 - Every list of an update is complete: the till replaces its list with the one received. A record missing from an update list (a redeemed or expired certificate, a paid or deleted debt, an ended plan) is removed by the till.
 - A product sale, a personal account payment, a certificate redemption and a refund made online or in the app appear in the offline till after the next update.
 
-### Technical parameters
+### Self check-in codes in the till data
 
-| Parameter | Value |
-|---|---|
-| Request | `GET /offline/snapshot`, with device access only; the request only reads data and writes nothing |
-| Update | `since` parameter — the `generatedAt` of the previous package |
-| Room sets for check-in codes | `checkInRooms` parameter: sets separated by `;`, room ids in a set separated by `,`; up to 20 sets |
-| Response fields | `version`, `generatedAt`, `full`, `window` (schedule bounds), `salesFrom` (start of the sales period), `catalog` (full package only), `clients`, `clientPlans`, `clientDebts`, `certificates`, `stock`, `transactions`, `shifts`, `occurrences`, `checkInCodes`, `checkInCodesStatus` |
-| Workout with no record created | `projected: true`, `id: null` |
-
-| `checkInCodesStatus` | Meaning |
-|---|---|
-| `ready` | self check-in codes are sent in `checkInCodes` |
-| `off` | self check-in is off; `checkInCodes` is `null` |
-| `failed` | self check-in is on, the codes could not be built (including when the studio has no stored public code or code signing secret yet; the first opening of the online self check-in QR creates them); `checkInCodes` is `null`; the rest of the data is sent |
-
-| Response | Meaning |
-|---|---|
-| `403`, code `DEVICE_TOKEN_REQUIRED` | request without device access |
-| `400`, code `INVALID_SINCE` | `since` is not a date or is later than the server time |
-| `400`, code `TOO_MANY_ROOM_SETS` | more than 20 sets in `checkInRooms` |
+- If self check-in is off, no self check-in codes are passed to the till data.
+- If self check-in is on but the codes could not be made (in particular, the studio has no saved public code or code signing secret yet; the first opening of the online self check-in QR creates them), no codes are passed; the rest of the data is passed.
 
 ## One-time application of operations
 
@@ -345,9 +319,9 @@ Printing rules for the offline till:
 - An action the till received no server response to (connection drop, server unavailable) is sent again with the same id — online or during the sync of the offline queue. The server applies an operation at most once: sending it again returns the stored result; no second sale, payment or booking is created.
 - The stored result is returned in the form the first server response had it (JSON): dates as ISO 8601 strings, money amounts in the same format as in the first response.
 - The same id with another operation content is refused.
-- An online sale or refund stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online action whose delivery did not finish within 2 minutes.
+- An online sale or refund stopped after a step that cannot be undone (a cash ledger row, a fiscal receipt) is not run again. Such an operation gets the `conflict` result with the `OPERATION_INTERRUPTED` code and needs an admin's review. This also applies to an online sale or refund whose delivery stopped before it finished.
 - An online debt payment saves all its records together or none of them, and creates the fiscal receipt after they are saved. Stopped before the save, it leaves no changes and is run by the next delivery with the same id.
-- A sale, a debt payment, a refund, a certificate sale and a certificate redemption applied by the offline queue sync save all their records together or none of them. Such an operation, stopped or not finished within 2 minutes, leaves no changes and is run by the next delivery with the same id.
+- A sale, a debt payment, a refund, a certificate sale and a certificate redemption applied by the offline queue sync save all their records together or none of them. Such an operation, stopped before it finished, leaves no changes and is run by the next delivery with the same id.
 - An operation stopped before the first such step leaves no changes; sending it again with the same id runs it.
 - An operation of a version above the one the server supports is not applied and changes no data. The operation stays in the computer's queue and is applied after the server is updated.
 - An action without an operation id runs as an ordinary online action.
@@ -366,7 +340,7 @@ These till actions accept an operation id:
 
 ### Class booking with an operation id
 
-A class booking sent with the `X-Operation-Id` header is saved once: sending it again with the same id returns the saved result and creates no second booking.
+A class booking sent with an operation id is saved once: sending it again with the same id returns the saved result and creates no second booking.
 
 - If the journal row cannot be stored, the client is not booked and the "Вас записано на тренування!" notification is not sent.
 - A repeated delivery of the same operation (same id and same content) returns the stored result; the client is not booked again.
@@ -379,12 +353,11 @@ A class booking sent with the `X-Operation-Id` header is saved once: sending it 
 - The "Звільнилося місце на тренуванні!" notice to the administrator and the class change log entries for the carried dates are written after the booking is stored.
 - If the class is deleted before the booking is stored, the operation is not stored in the journal: the next delivery with the same id is performed again.
 
-### Technical parameters
+### Operation format
 
 | Parameter | Value |
 |---|---|
-| Online action header | `X-Operation-Id`, UUID |
-| Offline queue sync | `POST /offline/sync`, up to 200 operations per request |
+| Operation id | UUID |
 | Operation fields | `id` (UUID), `kind`, `version`, `occurredAt` (ISO 8601), `payload`, `dependsOn` (UUIDs of earlier queue operations, optional) |
 | Operation time | not earlier than 30 days and not later than 5 minutes from the server time |
 
@@ -405,7 +378,7 @@ The `rejected` and `conflict` results carry the `error` field: `code` (the reaso
 
 ## Sales sync
 
-Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Each operation is applied fully or not at all: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+Sales, debt payments and shifts made on a computer without internet are applied by the server during the offline queue sync. Each operation is applied fully or not at all: all its records (register transactions, client plans, stock moves, a debt, cash ledger rows, the computer's shift) are saved together or none is saved. Sending an operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation kinds
 
@@ -552,7 +525,7 @@ The reason codes the server does not apply a sale or a debt payment with, and th
 
 ## Class registration and new clients
 
-A client registration for a class and a client creation made on a computer without internet are applied by the server during the offline queue sync (`POST /offline/sync`). Sending an operation again does not duplicate its records (see [One-time application of operations](#one-time-application-of-operations)).
+A client registration for a class and a client creation made on a computer without internet are applied by the server during the offline queue sync. Sending an operation again does not duplicate its records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation kinds
 
@@ -591,7 +564,7 @@ Fields of the `client_create` operation:
 
 ### Class registration
 
-The content of the `booking` operation is the content of the online class booking (`POST /workout-occurrence/add-client`) with additional fields:
+The content of the `booking` operation is the content of the online class booking with additional fields:
 
 | Field | Value |
 |---|---|
@@ -640,7 +613,7 @@ The reason codes and the text the user sees are in [Operation sync codes](#opera
 
 ## Personal account, certificates and refunds
 
-Payments from the personal account, certificate sales and redemptions, and refunds made on a computer without internet are applied by the server during the sync of the offline queue (`POST /offline/sync`). Each operation is applied fully or not at all: if the operation is not applied, none of its records is saved. Sending the operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
+Payments from the personal account, certificate sales and redemptions, and refunds made on a computer without internet are applied by the server during the sync of the offline queue. Each operation is applied fully or not at all: if the operation is not applied, none of its records is saved. Sending the operation again does not duplicate records (see [One-time application of operations](#one-time-application-of-operations)).
 
 ### Operation time and the "Offline" mark
 
@@ -667,7 +640,7 @@ Payments from the personal account, certificate sales and redemptions, and refun
 
 ### Certificate sale
 
-The content of the `certificate_sale` operation is the content of the online certificate sale (`POST /certificates`) with the payment fields:
+The content of the `certificate_sale` operation is the content of the online certificate sale with the payment fields:
 
 | Field | Value |
 |---|---|
@@ -692,7 +665,7 @@ The content of the `certificate_sale` operation is the content of the online cer
 
 ### Certificate redemption
 
-The content of the `certificate_redeem` operation is the certificate id and the content of the online redemption (`PATCH /certificates/:id`):
+The content of the `certificate_redeem` operation is the certificate id and the content of the online redemption:
 
 | Field | Value |
 |---|---|
@@ -722,7 +695,7 @@ The content of the `certificate_redeem` operation is the certificate id and the 
 
 ### Refund
 
-The content of the `refund` operation is the content of the online refund (`POST /transactions/refund`) with additional fields:
+The content of the `refund` operation is the content of the online refund with additional fields:
 
 | Field | Value |
 |---|---|
@@ -852,11 +825,11 @@ The banner above the offline till's menu is always shown: «Офлайн · да
 
 - With several conditions one action is shown, in the order of the table.
 - The data date and time are shown in the studio's time zone.
-- The banner refreshes every 30 s.
+- The banner refreshes automatically.
 
 ### The «Офлайн-операції» screen
 
-- The screen shows the offline till's operations, newest first, in the columns **Час**, **Операція**, **Стан**, **Примітка**. Time is shown in the studio's time zone. The screen refreshes every 30 s and with the **Оновити** button.
+- The screen shows the offline till's operations, newest first, in the columns **Час**, **Операція**, **Стан**, **Примітка**. Time is shown in the studio's time zone. The screen refreshes automatically and with the **Оновити** button.
 
 | State | Meaning |
 |---|---|
@@ -891,11 +864,8 @@ The banner above the offline till's menu is always shown: «Офлайн · да
 
 The online admin checks the server when the Device Handler is switched on on the computer, offline mode is enabled for this studio and the offline till is running.
 
-| Parameter | Value |
-|---|---|
-| Server check | every 20 s |
-| Failed check | the server did not answer or reported it is temporarily unavailable |
-| The «Сервер FitStudioCRM недоступний» window is shown | after 3 failed checks in a row |
+- The online admin checks the server regularly. A failed check: the server did not answer or reported it is temporarily unavailable.
+- The «Сервер FitStudioCRM недоступний» window is shown after several failed checks in a row.
 
 - One failed check does not show the window; a successful check starts the count again.
 - The «Сервер FitStudioCRM недоступний» window holds the text «Сервер FitStudioCRM не відповідає. Роботу можна продовжити в офлайн-касі на цьому компʼютері: вона відкриється в новій вкладці, ця сторінка залишиться відкритою.» and the **Закрити** and **Перейти в офлайн-касу** buttons.
@@ -913,9 +883,9 @@ The online admin checks the server when the Device Handler is switched on on the
 ### Operations with an unknown result
 
 - Online admin operations with an operation id: sale, refund, debt payment, class registration, client creation, certificate sale and redeem.
-- The operation id is created when the action is first sent and goes in the `X-Operation-Id` header. Pressing the same action again with the same data sends the same id and the data of the first send; the server applies the operation once and answers a repeated send with the result of the first.
-- After the server's answer (a success or a `4xx` refusal) the id is forgotten; the next action gets a new id.
-- An action without a server answer (no connection, the wait time ran out, a `5xx` answer) gets the «Результат невідомий» state. The error window shows the text «Сервер не відповів, тому результат операції невідомий. Повторне виконання тієї самої операції не створить її вдруге.»
+- The operation id is created when the action is first sent. Pressing the same action again with the same data sends the same id and the data of the first send; the server applies the operation once and answers a repeated send with the result of the first.
+- After the server's answer (a success or a refusal with its reason) the id is forgotten; the next action gets a new id.
+- An action without a server answer (no connection, the server did not answer or reported a failure) gets the «Результат невідомий» state. The error window shows the text «Сервер не відповів, тому результат операції невідомий. Повторне виконання тієї самої операції не створить її вдруге.»
 - Operations with an unknown result are kept in the computer's browser and handed to the offline till on every move there, with the same id and data. The offline till queues them once the offline shift is open; after the sync the operation exists on the server once — both when the server applied it before the connection was lost and when it did not.
 - Operations older than 24 hours are not handed to the offline till.
 - A plan sale handed to the offline till that the server has already applied online creates no plans again during the sync. The offline till creates the sale's plans in its data under its own ids; the server's answer to such a sale contains the field `planIdMap` (offline till plan id → client plan id on the server) and the field `clientPlanIds` (plan ids on the server in the order of the sale lines).
@@ -988,14 +958,16 @@ The till refuses with an explanation and does not queue the operation. The messa
 
 | Code | Message | Condition |
 |---|---|---|
-| `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. | Payment without an open offline shift |
+| `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. / Цю офлайн-зміну не відкрито. | Payment without an open offline shift; closing a shift that is not the open offline shift |
 | `SHIFT_ALREADY_OPEN` | Офлайн-зміну вже відкрито. | Opening an offline shift while an offline shift is open |
 | `PAYMENT_METHOD_NOT_AVAILABLE_OFFLINE` | Цей спосіб оплати недоступний в офлайн-режимі. | A payment method other than cash, card without a terminal, personal account and bank transfer |
 | `BALANCE_INSUFFICIENT` | На особовому рахунку недостатньо коштів: доступно … грн. Оплатіть решту іншим способом або залиште борг. | Account payment above the balance in the till data |
 | `INSUFFICIENT_STOCK` | Недостатньо товару на складі: … | A product sale above the stock in the till data |
 | `PLAN_EXHAUSTED` | На абонементі не лишилося занять. | Deduction from a plan with no sessions left |
-| `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE`, `PLAN_NOT_FOUND` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. / Цього абонемента клієнта немає в даних каси. | The plan cannot pay for the class |
-| `INVALID_PAYLOAD` | Оберіть абонемент, з якого буде списано заняття. | A registration paid by a plan with no plan chosen |
+| `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. | The plan cannot pay for the class |
+| `PLAN_NOT_FOUND` | Цього абонемента клієнта немає в даних каси. / Абонемента немає в даних каси. / Абонемента сертифіката немає в даних каси. | The plan is not in the till data: for a class registration, a plan sale, a certificate sale or redemption |
+| `PRODUCT_NOT_FOUND` | Товару немає в даних каси. | A sale of a product that is not in the till data |
+| `INVALID_PAYLOAD` | Оберіть абонемент, з якого буде списано заняття. / Вкажіть ім'я клієнта. / Сума повернення має бути більшою за нуль. / Оплата з особового рахунку потребує клієнта. / Вкажіть термін дії сертифіката. / Частини оплати не дорівнюють ціні сертифіката. / Продажу, яким оплачено заняття, немає в черзі каси. / Додайте до продажу абонемент, товар або клієнта. / Поле … заповнено некоректно. | The action's data is incomplete or invalid; the text names what to correct |
 | `NO_FREE_SEATS` | На занятті немає вільних місць. | All seats of the class are taken |
 | `OCCURRENCE_NOT_FOUND`, `OCCURRENCE_CANCELLED` | Заняття немає в даних каси. / Заняття скасовано. | The class is not in the till data or is cancelled |
 | `CLIENT_NOT_FOUND` | Клієнта немає в даних каси. | The client is not in the till data |
@@ -1012,8 +984,10 @@ The till refuses with an explanation and does not queue the operation. The messa
 | `CLIENT_NOT_SYNCED` | Сертифікат клієнту, створеному без інтернету, можна продати після синхронізації. | Certificate sale to a client created at the till |
 | `POSSIBLE_DUPLICATE` | Клієнт із цим номером телефону вже є в даних каси. | Client creation with an existing phone number |
 | `CARD_NUMBER_TAKEN` | Картка з цим номером уже належить іншому клієнту. | The card number belongs to another client |
+| `INVALID_OPERATION_ID` | Некоректний ідентифікатор операції. | An action with an operation id that is not a UUID |
 | `OPERATION_ID_REUSED` | Цей ідентифікатор операції вже використано для іншої дії. | A repeated action with the same operation id and other data |
 | `OFFLINE_NOT_AVAILABLE` | Ця дія недоступна в офлайн-режимі. | An action from the list of actions not available offline |
+| `SELF_CHECK_IN_UNAVAILABLE` | Самостійний чекін зараз недоступний: у даних каси немає коду на цю годину. | The reception screen: the till data has no self check-in code for the current hour |
 
 ### Operation sync codes
 
@@ -1063,7 +1037,7 @@ The sync result sets the state of the operation on the **Офлайн-опера
 | `dependency_rejected` | `conflict` | an operation that depends on another queue operation | the operation this one depends on was not applied | Не виконано операцію, від якої залежить ця операція. |
 | `OFFLINE_CLIENT_NOT_APPLIED` | `conflict` | an operation with a client created offline | the client creation got `conflict` or `rejected` | Не виконано створення клієнта, до якого належить операція. |
 | `OFFLINE_SALE_NOT_APPLIED` | `conflict` | a class registration paid by an offline till sale | the sale got `conflict` or `rejected` | Не виконано продаж, яким оплачено операцію. |
-| `OPERATION_INTERRUPTED` | `conflict` | a sale or refund started in the online admin | the operation stopped after a step that cannot be undone | Offline till: the «Потребує уваги» state. Online admin: «Операцію «<вид>» від <дата й час> не завершено на сервері. Перевірте її результат перед повторним виконанням.» |
+| `OPERATION_INTERRUPTED` | `conflict` | a sale or refund started in the online admin; a queue operation stopped during the sync | the operation stopped after a step that cannot be undone | Виконання операції перервано. Перевірте її результат. Online admin, for an action started there: «Операцію «<вид>» від <дата й час> не завершено на сервері. Перевірте її результат перед повторним виконанням.» |
 
 The actions an admin resolves an operation with on the **Потребує уваги** tab, and the refusals of these actions, are described in [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention).
 
@@ -1099,6 +1073,8 @@ An operation with these codes is not applied now and stays in the queue in the �
 | `DEVICE_TOKEN_USER_DISABLED` | enabling offline mode by a user without access to the studio | Ваш обліковий запис у цій студії не має доступу. Офлайн-режим недоступний. |
 | the device access is invalid, revoked or expired | sync and data updates | the sync stops; the banner: «Увімкніть офлайн-режим на цьому компʼютері повторно в онлайн-адмінці» (see [Sync stop](#sync-stop)) |
 | `DEVICE_MISMATCH` | data of a computer other than the one the access was issued for | the same as for invalid access |
+| `INVALID_DEVICE_ID` | enabling offline mode: Device Handler passed an invalid computer id | offline mode is not enabled; the error window is shown |
+| `DEVICE_TOKEN_NOT_FOUND`, `INVALID_DEVICE_TOKEN_ID` | revoking a device access that does not exist or is already revoked | the «Доступ пристрою відкликано» message is not shown; the device list refreshes |
 | `INVALID_DEVICE_ID`, `INVALID_OPERATIONS` | the server does not accept the sync request from this offline till version | the sync stops, the operations stay in the queue; the banner: «Оновіть Device Handler, щоб операції передавались на сервер» |
 
 ### Refusals of online actions with an operation id

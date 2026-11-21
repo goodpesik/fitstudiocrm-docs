@@ -114,6 +114,50 @@ Offline mode lets a till computer with Device Handler installed work without int
 | A section the device access does not open | `403` |
 | Data of another computer than the one the access was issued to | `403`, code `DEVICE_MISMATCH` |
 
+## Device Handler
+
+### The "Офлайн режим" (Offline mode) item
+
+- The **Офлайн режим** (Offline mode) button on the Device Handler page (`http://localhost:9999`) is shown when the installed Device Handler version contains the offline till and FitStudioCRM offers offline mode, or offline mode is already enabled on this computer.
+- When offline tills of several products (FitStudioCRM and Petshandler) are available on the computer, the **Офлайн режим** window shows the **Продукт** (Product) field to choose the till. Tills of different products run at the same time and independently of each other.
+
+| Window row | Value |
+|---|---|
+| **Статус** (Status) | `вимкнено` (off); `увімкнено, сервіс працює` (on, the service is running); `увімкнено, сервіс не працює` (on, the service is not running) with the reason; `потрібне повторне увімкнення у FitStudioCRM` (needs to be switched on again in FitStudioCRM) — the device access is not valid (see [Sync stop](#sync-stop)); `черга зупинена: потрібне оновлення Девайс менеджера` (the queue is stopped: the Device Handler needs an update) — the server does not accept the queue from this offline till version |
+| **Заклад** (Shop) | the studio name |
+| **Дані станом на** (Data as of) | date and time of the till data |
+| **Не синхронізовано операцій** (Operations not synchronised) | the number of operations in the `queued` state |
+| **Номер каси** (Till number) | the till number among the studio computers (see [Several tills](#several-tills)) |
+
+- The **Заклад**, **Дані станом на**, **Не синхронізовано операцій** and **Номер каси** rows are shown only while offline mode is enabled. While it is off, a hint is shown: "Увімкнення офлайн-режиму: FitStudioCRM → Налаштування → Інтеграції → Пристрої → «Увімкнути офлайн-режим»." (To switch offline mode on: FitStudioCRM → Settings → Integrations → Devices → "Enable offline mode".)
+
+### Buttons
+
+| Button | When shown | Action |
+|---|---|---|
+| **Відкрити офлайн-касу** (Open the offline till) | offline mode is enabled, the offline till is running | opens the offline till (`http://127.0.0.1:9899`) in a new browser tab |
+| **Синхронізувати** (Synchronise) | offline mode is enabled, the offline till is running | sends the operation queue to the server and updates the till data without waiting for the scheduled update |
+| **Вимкнути** (Switch off) | offline mode is enabled | switches offline mode off on the computer after confirmation |
+| **Закрити** (Close) | always | closes the window |
+
+- After the sync the message "Синхронізацію виконано. Не синхронізовано операцій: N" (Synchronisation done. Operations not synchronised: N) is shown. When the operations were not sent, the message "Синхронізація не вдалася. Операції залишаються в черзі й будуть надіслані автоматично після відновлення звʼязку." (Synchronisation failed. The operations stay in the queue and will be sent automatically once the connection is back.) is shown.
+- Switching off removes the studio's local data from the computer. Switching off is not performed while the queue holds operations not sent to the server; the message "Офлайн-операцій, що ще не надійшли на сервер: N. Вимкнення можливе після синхронізації." (Offline operations not yet received by the server: N. Switching off is possible after the sync.) is shown.
+- A Device Handler update is not performed while the offline till queue holds operations not sent to the server; Device Handler reports: "офлайн-операції FitStudioCRM ще не надійшли на сервер: N" (FitStudioCRM offline operations have not reached the server yet: N).
+
+### Several tills
+
+- Offline mode is enabled separately on each till computer of the studio. Each computer has its own device access, its own offline shift and its own document numbering.
+- The till number is set when offline mode is enabled on the computer. The till number is part of the document number (see [Document number](#document-number)). Computers of one studio must be given different till numbers.
+
+| Parameter | Value |
+|---|---|
+| Till number | a whole number from 1 to 99 |
+| Till number when not set | 1 |
+| Offline tills of one product per computer | 1 |
+
+- Enabling offline mode again on a computer with another till number changes the number for the following documents; the studio's local data is kept.
+- Enabling offline mode for another studio on a computer where offline mode is already enabled is not performed; the message "Офлайн-режим уже увімкнено для іншого закладу. Спершу вимкніть його там." (Offline mode is already enabled for another shop. Switch it off there first.) is shown.
+
 ## Data available without internet
 
 The offline till works with the data received from the server at the last connection. The offline banner shows when the data was received: "Data as of …".
@@ -680,7 +724,7 @@ Pressing an action button again (including "Pay") does not create a second opera
 
 ### Document number
 
-A till document has a number like `D1-0005`: the studio device number and the document's sequence number on that device. The device number is set by Device Handler; document numbers of different devices of a studio do not coincide.
+A till document has a number like `D1-0005`: the till number and the document's sequence number on that computer. The till number is set when offline mode is enabled (see [Several tills](#several-tills)); document numbers of computers with different till numbers do not coincide.
 
 ### Product stock
 

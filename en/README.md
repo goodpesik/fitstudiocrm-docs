@@ -13,5 +13,5 @@
 - [5. Examples and tips](/en/pages/examples)
 - [6. Information on processing workout visits, plan deductions, reminders, and more](/en/pages/processing)
 - [7. Mobile app (client application)](/en/mobile/mobile)
-- [Offline mode: installation and start, devices and access, Device Handler, data without internet, one-time application of operations, sales sync, class registration and new clients, personal account, certificates and refunds, till work without internet, fiscalization after the sync](/en/pages/offline-mode)
+- [Offline mode: installation and start, devices and access, Device Handler, data without internet, one-time application of operations, sales sync, class registration and new clients, personal account, certificates and refunds, till work without internet, going offline and back, fiscalization after the sync](/en/pages/offline-mode)
 - [8. Support](/en/pages/support-system)

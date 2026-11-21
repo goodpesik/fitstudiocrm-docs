@@ -82,6 +82,22 @@ Offline mode lets a till computer with Device Handler installed work without int
 - The key is passed to the computer once. The server stores only its hash; the key cannot be restored from the server data.
 - One user on one computer has one valid device access. Enabling again issues a new access; the previous one stops working.
 - A device access opens only the data exchange of the offline till with the server: sending offline operations and receiving the till data. Other sections of the system are not available with a device access.
+- Enabling is done in **Settings** on the **Devices** tab, in the **This computer** block, in the browser of the till computer with the Device Handler switched on.
+- The **This computer** block shows the state of offline mode on the computer:
+
+| State | Text |
+|---|---|
+| The Device Handler does not answer | Device Handler на цьому компʼютері не відповідає. Увімкніть його в розділі «Інтеграції». |
+| A Device Handler version without offline mode | Ця версія Device Handler не підтримує офлайн-режим FitStudioCRM. Оновіть Device Handler. |
+| Enabled for another studio | На цьому компʼютері офлайн-режим увімкнено для іншої студії. |
+| Disabled | Офлайн-режим на цьому компʼютері вимкнено. |
+| Enabled, the offline till is not running | Офлайн-режим увімкнено, але офлайн-каса не запущена. Перевірте Device Handler. |
+| Enabled | Офлайн-режим на цьому компʼютері увімкнено. |
+
+- The **Номер каси** (till number) field takes a whole number from 1 to 99 (1 by default). The till number is part of the offline till's document number (see [Document number](#document-number)).
+- The **Увімкнути офлайн-режим** button (for a disabled computer) or **Оновити доступ** (for an enabled one) issues a device access to the computer and passes it to the Device Handler with the till number. After a successful enabling the message «Офлайн-режим на цьому компʼютері увімкнено» is shown. A Device Handler refusal is shown as a message with the reason.
+- The **Відкрити офлайн-касу** button opens the offline till in a new tab. The button is shown when offline mode is enabled for this studio and the offline till is running.
+- The Device Handler and printer settings of the computer are passed to the offline till after enabling and after every change; the offline till applies them when it starts.
 
 ### Access validity
 
@@ -792,6 +808,107 @@ The "Summary", "Products", "Plans" reports and the X-report for the offline peri
 ### Self check-in QR
 
 The reception screen shows the code of the current hour from the till data for the chosen set of rooms. Without a code for the current hour (data older than 48 hours or self check-in turned off) the QR is not shown; the message "Самостійний чекін зараз недоступний: у даних каси немає коду на цю годину." is shown instead.
+
+## Going offline and back
+
+### The offline till in the browser
+
+- The offline till opens at `http://127.0.0.1:9899` from the **Відкрити офлайн-касу** button, from the «Сервер FitStudioCRM недоступний» window or from the error window. Its tab is named «Fitshandler Офлайн».
+- The offline till is entered without the Google sign-in: it works on behalf of the user who enabled offline mode on the computer.
+- The offline till's menu: **Розклад**, **Клієнти**, **Абонементи**, **Товари**, **Сертифікати**, **Каса**, **Звіти**, **Офлайн-операції**. The **Тренування**, **Тренери**, **Зали**, **Налаштування** sections and the **Підтримка**, **Сповіщення** buttons are absent in the offline till.
+- Not shown in the offline till: the «Поповнення особового рахунку» sale type; the personal account **Коригувати** button; deleting and restoring a debt; client import and export; the **Підтвердити** button of a bank transfer payment; repeating bookings and the waiting list; the **Скасувати тренування**, **Перейти до тренування** buttons and the class settings; the **Не фіскалізовано** tab, issuing a fiscal receipt and confirming a missing receipt.
+- On registration for a regular class the text «Повторювані записи недоступні в офлайн-режимі» (in the client window) or «Повторювані записи й лист очікування недоступні в офлайн-режимі.» (in the class window) is shown.
+- Payment methods: cash, card without the terminal, personal account, bank transfer. With a bank transfer payment the message «Оплата рахунком буде підтверджена після синхронізації.» is shown.
+- A sale with several payment methods and a certificate sale with its payment go as one operation.
+- The offline till's shift opens and closes without the fiscal integration.
+
+### Offline banner
+
+The banner above the offline till's menu is always shown: «Офлайн · дані станом на <date and time> · <state> · <action>» and the link «Несинхронізовані операції: N», which opens the **Офлайн-операції** screen.
+
+| Connection state (see [Connection states](#connection-states)) | State text | Banner colour |
+|---|---|---|
+| No internet | Немає інтернету | yellow |
+| Server unavailable | Сервер FitStudioCRM недоступний | yellow |
+| Online | Звʼязок із сервером відновлено | green |
+| The offline service does not answer | Офлайн-сервіс не відповідає | red |
+
+| Condition | Action text | Banner colour |
+|---|---|---|
+| The server does not accept the computer's access | Увімкніть офлайн-режим на цьому компʼютері повторно в онлайн-адмінці | red |
+| The server does not accept the queue from this version | Оновіть Device Handler, щоб операції передавались на сервер | red |
+| The data are stale (see [Stale data](#stale-data)) | Дані каси застарілі | red |
+
+- With several conditions one action is shown, in the order of the table.
+- The data date and time are shown in the studio's time zone.
+- The banner refreshes every 30 s.
+
+### The «Офлайн-операції» screen
+
+- The screen shows the offline till's operations, newest first, in the columns **Час**, **Операція**, **Стан**, **Примітка**. Time is shown in the studio's time zone. The screen refreshes every 30 s and with the **Оновити** button.
+
+| State | Meaning |
+|---|---|
+| Очікує синхронізації | the operation is in the queue, not sent to the server yet |
+| Синхронізовано | the operation is applied on the server |
+| Відхилено сервером | the server rejected the operation; the reason is in the **Примітка** column |
+| Потребує уваги | a conflict during the sync |
+| Результат невідомий · очікує підтвердження | the operation was handed over from the online admin without a server answer; it is in the offline till's queue |
+| Результат невідомий · очікує передачі в чергу | the operation was handed over from the online admin; it is not in the offline till's queue yet (for example, the offline shift is not open) |
+| Не прийнято офлайн-касою | the till data do not allow the operation; the **Примітка** column holds the reason and the text «Перевірте операцію в онлайн-адмінці після відновлення звʼязку.» |
+
+- When the offline service does not answer, the text «Офлайн-сервіс не відповідає. Список буде оновлено автоматично.» is shown.
+
+### Back to the online admin
+
+- When the connection state becomes «Online», the offline till shows the «Звʼязок із сервером відновлено» window with the **Пізніше** and **Перейти в онлайн-адмінку** buttons.
+- The **Перейти в онлайн-адмінку** button:
+  - with the offline shift open, opens the offline shift close; after the close the window is shown again;
+  - with the offline shift closed, opens the online admin at the address the offline till was opened from;
+  - when the offline shift state could not be read, does nothing.
+- When the offline till does not know the online admin's address, the button is not shown; the window holds the text «Відкрийте онлайн-адмінку FitStudioCRM у браузері так, як зазвичай.»
+- The **Пізніше** button closes the window; the window is shown again after 1 minute while the connection state stays «Online».
+- Queue operations are sent to the server without user action, regardless of the window.
+
+### Reminder about an open offline shift
+
+- The online admin on a computer where this studio's offline till has an open shift shows the «Відкрита офлайн-зміна» window with the **Пізніше** and **Перейти до закриття зміни** buttons.
+- The **Перейти до закриття зміни** button opens the offline till in a new tab with the shift close open.
+- The **Пізніше** button closes the window; the reminder repeats every 5 minutes until the offline shift is closed.
+
+### Server unavailable mode
+
+The online admin checks the server when the Device Handler is switched on on the computer, offline mode is enabled for this studio and the offline till is running.
+
+| Parameter | Value |
+|---|---|
+| Server check | every 20 s |
+| Answer wait time | 10 s |
+| Failed check | no connection, no answer within 10 s, answer `502`, `503` or `504` |
+| The «Сервер FitStudioCRM недоступний» window is shown | after 3 failed checks in a row |
+
+- One failed check does not show the window; a successful check starts the count again.
+- The «Сервер FitStudioCRM недоступний» window holds the text «Сервер FitStudioCRM не відповідає. Роботу можна продовжити в офлайн-касі на цьому компʼютері: вона відкриється в новій вкладці, ця сторінка залишиться відкритою.» and the **Закрити** and **Перейти в офлайн-касу** buttons.
+- When there are operations with an unknown result, the window shows their number (see [Operations with an unknown result](#operations-with-an-unknown-result)).
+- The **Перейти в офлайн-касу** button opens the offline till in a new tab; the online admin page with unsaved form data stays open.
+- After a successful check the window closes. A window closed with **Закрити** is not shown again until the first successful check.
+- Going back online follows [Back to the online admin](#back-to-the-online-admin).
+
+### Error window
+
+- The window of a server or connection error shows the text «Спробуйте перезавантажити сторінку.»
+- When this studio's offline till runs on the computer, the window also shows «Якщо сервер не відповідає, продовжте роботу в офлайн-касі.» with a link that opens the offline till in a new tab.
+- A window with a refusal the server explained (`400`, `409`, `413`) does not show these texts.
+
+### Operations with an unknown result
+
+- Online admin operations with an operation id: sale, refund, debt payment, class registration, client creation, certificate sale and redeem.
+- The operation id is created when the action is first sent and goes in the `X-Operation-Id` header. Pressing the same action again with the same data sends the same id; the server applies the operation once.
+- After the server's answer (a success or a `4xx` refusal) the id is forgotten; the next action gets a new id.
+- An action without a server answer (no connection, the wait time ran out, a `5xx` answer) gets the «Результат невідомий» state. The error window shows the text «Сервер не відповів, тому результат операції невідомий. Повторне виконання тієї самої операції не створить її вдруге.»
+- Operations with an unknown result are kept in the computer's browser and handed to the offline till on every move there, with the same id and data. The offline till queues them once the offline shift is open; after the sync the operation exists on the server once — both when the server applied it before the connection was lost and when it did not.
+- Operations older than 24 hours are not handed to the offline till.
+- An operation with an unknown result does not need to be repeated by hand.
 
 ## Fiscalization after the sync
 

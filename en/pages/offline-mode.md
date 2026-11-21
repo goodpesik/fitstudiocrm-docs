@@ -39,6 +39,16 @@ Offline mode lets a till computer with Device Handler installed work without int
 
 - Data not updated for more than 24 hours is stale. The offline till reports it on the offline mode banner.
 
+### Sync stop
+
+| Server response | What happens |
+|---|---|
+| The computer's access is not valid or was issued to another computer | the sync stops until offline mode is enabled on the computer again (see [Devices and access](#devices-and-access)) |
+| The server does not accept the queue from this offline till version | the sync stops until the offline till is updated; the operations stay in the queue with the `queued` state |
+
+- After a stop, the offline till sends no further request to the server automatically; a request from the «Синхронізувати» (Sync) button is refused.
+- After offline mode is enabled again or the offline till is updated, the queue is sent to the server under the general rules.
+
 ### Connection states
 
 | State | Meaning |

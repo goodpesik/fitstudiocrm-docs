@@ -302,7 +302,7 @@ Fields of the `sale` operation:
 | `price` | the sale sum after the discount |
 | `paymentMethod` | payment method of a sale not split into several payments |
 | `acquiringPosData` | the terminal's answer for a card payment |
-| `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData`, `isPersonalAccount` (`true` — the payment is taken from the personal account) |
+| `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData`, `isPersonalAccount` (`true` — the payment is taken from the personal account); no other fields are allowed in a payment |
 | `isPersonalAccount` | `true` — a sale without `payments` is paid from the personal account (see [Payment from the personal account](#payment-from-the-personal-account)) |
 | `isCertificate` | `true` — payment for a certificate: a register transaction with the certificate mark |
 | `partialAmount` | the sum paid now; the rest of `price` remains a debt |
@@ -310,7 +310,10 @@ Fields of the `sale` operation:
 | `total` | the sum the till received |
 | `receiptNo` | the number of the computer's paper receipt, up to 32 characters |
 | `shiftOperationId` | the id of the `shift_open` operation of the computer's shift |
+| `clientPlanIds` | ids (UUID) of the client plans the sale creates: one per unit of `plans`, in the order of `plans`; optional |
 
+- A payment in `payments` with a field not in the list is refused with the `INVALID_PAYLOAD` code.
+- A number of `clientPlanIds` that differs from the number of units of `plans`, an id repeated in `clientPlanIds`, or the id of a plan that exists on the server is refused with the `INVALID_PAYLOAD` code.
 - The sum paid now: the sum of `payments`, otherwise `partialAmount`, otherwise `price`; for a sale with `onDebt: true` — `0`.
 - The sum of `payments` must equal `partialAmount` (when given) or `price` to the kopeck; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
 - `partialAmount` may not exceed `price`; otherwise the operation is refused with the `INVALID_PAYLOAD` code.
@@ -513,6 +516,7 @@ The checks take into account the records saved by the moment the operation is ap
 
 - The plan classes remaining do not go below zero during the sync.
 - A booking status other than `0` and `2` is rejected with code `INVALID_PAYLOAD`.
+- A registration with `paymentStatus: plan` and no `clientPlanId` is rejected with code `INVALID_PAYLOAD`.
 - After the write, the change of the plan remainder is passed to the studio network; a plan activated at the registration is passed to the network before the remainder change. A failure to pass it does not cancel the operation.
 
 ### Class and client actions not available offline
@@ -566,7 +570,7 @@ The content of the `certificate_sale` operation is the content of the online cer
 | `duration` | validity in days, from 1 |
 | `paymentMethod` | payment method of the whole price |
 | `isPersonalAccount` | `true` — the price is paid from the client's personal account |
-| `payments` | several payments, 2 to 10: `paymentMethod`, `amount`, `acquiringPosData`, `isPersonalAccount`; the payments add up to `price` to the kopeck |
+| `payments` | several payments, 2 to 10: `paymentMethod`, `amount`, `acquiringPosData`, `isPersonalAccount`; no other fields are allowed in a payment; the payments add up to `price` to the kopeck |
 | `receiptNo` | number of the computer's paper receipt, up to 32 characters |
 | `shiftOperationId` | id of the `shift_open` operation of the computer's shift |
 
@@ -592,7 +596,7 @@ The content of the `certificate_redeem` operation is the certificate id and the 
 - Redemptions of the same certificate made online and during the sync are applied one after another. A redemption saved online earlier is taken into account: a certificate is redeemed once; the second operation gets the `certificate_already_redeemed` conflict.
 - Validity is checked by the calendar day of the operation in the studio time zone: a certificate is valid through the last day of its validity inclusive. A certificate without an expiry date is valid. A certificate with the "Expired" status whose last day of validity is not earlier than the operation day is redeemed.
 - The redemption sets the "Redeemed" status, the usage date (the operation time) and the certificate's client. For each unit of the certificate's plans, a client plan is created with the "New" status and the purchase date equal to the operation time. After saving, the plans are sent to the studio network; a sending failure does not cancel the operation.
-- A number of `clientPlanIds` that differs from the number of the certificate's plans is rejected with code `INVALID_PAYLOAD`.
+- A number of `clientPlanIds` that differs from the number of the certificate's plans, an id repeated in `clientPlanIds`, or the id of a plan that exists on the server is rejected with code `INVALID_PAYLOAD`.
 - Operation result: `clientPlanIds`.
 
 ### Dependent operations
@@ -658,7 +662,7 @@ Without a connection to the server the till performs the actions below using the
 | Payment from the personal account | Personal account balance |
 | Certificate sale | Certificate with its number, shift total |
 | Certificate redemption | Certificate state, client plans |
-| Refund | Refundable amount of the sale, product stock, personal account balance |
+| Refund | Refundable amount of the sale, product stock, personal account balance, debt balance |
 | Bank transfer payment | Transaction marked "not confirmed" |
 | Class registration | Class roster, sessions left on the plan |
 | Client creation | Client list |
@@ -678,6 +682,12 @@ Pressing an action button again (including "Pay") does not create a second opera
 
 A till document has a number like `D1-0005`: the studio device number and the document's sequence number on that device. The device number is set by Device Handler; document numbers of different devices of a studio do not coincide.
 
+### Product stock
+
+- Product stock in the till data is the package stock minus the sales and plus the product refunds made at the till.
+- A product sale above this stock is not made, as online. Several lines of one product in a sale count together.
+- During the sync the sale is accepted even when the server stock becomes negative; the operation gets the `negative_stock` flag (see [Prices, stock and flags](#prices-stock-and-flags)).
+
 ### Personal account
 
 - The personal account balance in the till data is the package balance minus payments from the account and plus refunds to the account made at the till.
@@ -693,11 +703,13 @@ A till document has a number like `D1-0005`: the studio device number and the do
 - Refunds are available for sales in the till data (the last 3 days) and for sales made at the till. The available amount is the transaction amount minus the refunds known to the till.
 - Money is returned the same way it was paid. A refund to the personal account increases the balance in the till data.
 - A product refund returns it to stock. Client plans are not changed by a refund.
+- A refund of a debt payment increases the debt balance by the refund amount. A fully paid debt for a class becomes open again after such a refund.
 
 ### Class registration
 
 - Registration with a deduction from a plan reduces the sessions left by 1; a plan with the "New" status becomes active, a plan with no sessions left becomes ended.
 - A plan sold at the till without internet is available for registration right after the sale.
+- A registration paid by a plan requires choosing the client's plan.
 - A repeating registration is not available without internet.
 
 ### Till refusals
@@ -708,8 +720,10 @@ The till refuses with an explanation and does not queue the operation:
 |---|---|---|
 | `SHIFT_NOT_OPEN` | Відкрийте офлайн-зміну, щоб приймати оплати. | Payment without an open offline shift |
 | `BALANCE_INSUFFICIENT` | На особовому рахунку недостатньо коштів: доступно … грн. Оплатіть решту іншим способом або залиште борг. | Account payment above the balance in the till data |
+| `INSUFFICIENT_STOCK` | Недостатньо товару на складі: … | A product sale above the stock in the till data |
 | `PLAN_EXHAUSTED` | На абонементі не лишилося занять. | Deduction from a plan with no sessions left |
 | `PLAN_FROZEN`, `PLAN_EXPIRED`, `PLAN_NOT_FOR_CLASS`, `PLAN_NOT_ACTIVE`, `PLAN_NOT_FOUND` | Абонемент заморожено. / Термін дії абонемента минув. / Цей абонемент не діє на це заняття. / Абонемент не активний. / Цього абонемента клієнта немає в даних каси. | The plan cannot pay for the class |
+| `INVALID_PAYLOAD` | Оберіть абонемент, з якого буде списано заняття. | A registration paid by a plan with no plan chosen |
 | `NO_FREE_SEATS` | На занятті немає вільних місць. | All seats of the class are taken |
 | `OCCURRENCE_NOT_FOUND`, `OCCURRENCE_CANCELLED` | Заняття немає в даних каси. / Заняття скасовано. | The class is not in the till data or is cancelled |
 | `CERTIFICATE_NOT_FOUND` | Сертифіката немає в даних каси. | The certificate is not in the till data |

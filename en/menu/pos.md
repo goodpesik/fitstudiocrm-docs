@@ -114,17 +114,18 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 
 **The button is shown when all conditions are met:**
 
-- the transaction is a sale (type **Sale** or no type), an online debt payment included; for a refund the button is not shown, and a refund receipt is not created manually;
+- the transaction is a sale (type **Sale** or no type), a debt payment included; for a refund the button is not shown: the receipt of a refund made offline is created on the [Not fiscalized](#_397-not-fiscalized) tab;
 - the payment is not from the personal account;
-- the transaction was created online, not by the sync of an operation made on a computer without internet;
 - the transaction has no fiscal receipt;
+- the transaction does not have the state **No fiscalization needed**;
 - the transaction does not have the status **Receipt sent, number unknown** (see below);
 - the studio has an active fiscal integration (enabled and configured);
-- the operation time of the transaction is not earlier than the time of the studio's first fiscalized sale (the earliest sale transaction with a fiscal receipt). If the studio has no fiscalized sale, the button is not shown. This condition applies only to the manual receipt; the automatic receipt of a sale or a debt payment does not check it.
+- the operation time of the transaction is not earlier than the time of the studio's first fiscalized sale (the earliest sale transaction with a fiscal receipt). If the studio has no fiscalized sale, the button is not shown. This condition applies only to the manual receipt; the automatic receipt of a sale or a debt payment does not check it. A transaction in the state **Awaiting fiscalization** or **Fiscalization error** is not limited by this condition.
 
 **Execution:**
 
-- After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through the first active fiscal integration, as during a sale. The transaction id is passed to the provider as the receipt id.
+- After confirmation in the **Fiscalization** ("Фіскалізація") window, the server creates the receipt through an active fiscal integration. When the studio has several active fiscal integrations, choosing the **Fiscal register** ("Фіскальна каса") in the **Fiscalization** window is mandatory; without a choice the receipt is not created and no register is taken by default. The transaction id is passed to the provider as the receipt id.
+- The receipt amount is the sale amount less the refunds made before the receipt; the receipt lines are the sale lines less the refunded quantities. A sale refunded in full before the receipt gets no receipt and gets the state **No fiscalization needed**.
 - Before the receipt is created, the transaction is locked and the conditions are checked again. At most one receipt is created for a transaction: a repeated click or a simultaneous action of another user is refused with `RECEIPT_ALREADY_ISSUED`.
 - For a **Checkbox** integration, before the receipt is created the server asks the provider for a receipt with the transaction id. When such a receipt exists and is fiscalized, it is saved on the transaction and no new receipt is created. When the request to the provider fails, the receipt is created. When the receipt with the transaction id has the status `ERROR` in Checkbox, the request is refused with `RECEIPT_REJECTED_AT_PROVIDER`: Checkbox does not accept another receipt with the same id. When the receipt did not get a fiscal number within the wait (15 s), the request is refused with `RECEIPT_PENDING_AT_PROVIDER`; a retry is allowed. For a **VchasnoKasa** integration this request is not made.
 - For a **VchasnoKasa** integration, before the request to the provider the server saves a sent mark (`fiscalSentAt`) on the transaction in a separate write. The mark stays even when the later write of the receipt onto the transaction fails.
@@ -135,7 +136,7 @@ Saving an operation creates matching entries in the **Cash balance** tab with th
 - During a sale with a **VchasnoKasa** integration, when no answer to the receipt request comes from the provider (timeout, HTTP 408, network error, HTTP 5xx), the sale is saved without a receipt with the sent mark and has the status **Receipt sent, number unknown**. When the provider answered with a refusal or the request was not sent, the sale is saved without the mark. For a **Checkbox** integration the mark is not set. A refund receipt does not get the mark.
 - The fiscal receipt of an online debt payment, created automatically after the payment is saved, is created the same way: with the transaction lock and the repeated check of the conditions. When the receipt was already created with the **Fiscalize** button, a second receipt is not created, and the other way round.
 - Once created, the receipt is saved on the transaction, the **Fiscalization** column shows **Fiscalized**, and the receipt window opens.
-- Request: `POST /transactions/:id/fiscal-receipt`. Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
+- Request: `POST /transactions/:id/fiscal-receipt`, body `{ fiscalProviderId }` (the id of the chosen fiscal register; mandatory when the studio has several active fiscal integrations). Response: the receipt data in the same format as `GET /transactions/:id/receipt`.
 
 **Status «Receipt sent, number unknown»** ("Чек надіслано, номер невідомий"):
 
@@ -153,14 +154,18 @@ When several conditions are not met, the code of the first of them in the order 
 |---|---|---|---|
 | 403 | — | — | the user's role is not SuperAdmin, Admin or Manager |
 | 404 | `TRANSACTION_NOT_FOUND` | «Транзакцію не знайдено» | the transaction does not exist |
-| 400 | `TRANSACTION_NOT_FISCAL_KIND` | «Для цієї транзакції фіскальний чек не створюється» | a refund, a personal-account payment, or a transaction created by the sync of an offline operation |
+| 400 | `TRANSACTION_NOT_FISCAL_KIND` | «Для цієї транзакції фіскальний чек не створюється» | a personal-account payment, or a refund without a link to its sale |
 | 409 | `RECEIPT_ALREADY_ISSUED` | «Фіскальний чек для цієї транзакції вже створено» | the transaction already has a fiscal receipt |
+| 409 | `RECEIPT_NOT_REQUIRED` | «Транзакція не потребує фіскалізації: продаж повернено до створення чека» | the transaction has the state **No fiscalization needed** |
 | 400 | `FISCALIZATION_NOT_ENABLED` | «Фіскалізацію не налаштовано» | the studio has no active fiscal integration |
+| 409 | `SALE_NOT_FISCALIZED` | «Продаж, до якого виконано повернення, ще не фіскалізовано. Спочатку фіскалізуйте продаж» | a refund whose sale has no fiscal receipt |
+| 400 | `FISCAL_CARD_NOT_ACTIVE` | «Обрану фіскальну касу не підключено або вимкнено» | the chosen fiscal register is not an active fiscal integration of the studio |
+| 400 | `FISCAL_CARD_REQUIRED` | «Оберіть фіскальну касу» | the studio has several active fiscal integrations and none is chosen |
 | 400 | `TRANSACTION_BEFORE_FIRST_FISCAL_SALE` | «Фіскальний чек вручну створюється лише для продажів, здійснених не раніше першого фіскалізованого продажу студії» | the operation time of the transaction is earlier than the time of the studio's first fiscalized sale, or the studio has no fiscalized sale |
 | 409 | `RECEIPT_SENT_NUMBER_UNKNOWN` | «Чек для цієї транзакції вже надіслано до фіскального сервісу, номер чека невідомий. Перевірте наявність чека в кабінеті Вчасно.Каса» | the transaction has the status **Receipt sent, number unknown** |
 | 409 | `RECEIPT_REJECTED_AT_PROVIDER` | «Фіскальний сервіс відхилив чек цієї транзакції. Повторне створення чека для неї неможливе: зверніться до служби підтримки Checkbox» | the receipt with the transaction id has the status `ERROR` in Checkbox |
 | 409 | `RECEIPT_PENDING_AT_PROVIDER` | «Чек цієї транзакції ще обробляється фіскальним сервісом. Повторіть спробу пізніше» | the receipt with the transaction id in Checkbox did not get a fiscal number within 15 s |
-| 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
+| 502 | `FISCAL_PROVIDER_ERROR` | «Фіскальний сервіс повернув помилку: <текст провайдера>. Чек не створено» | the fiscal provider returned an error; the transaction stays without a receipt |
 | 502 | `FISCAL_RESULT_UNKNOWN` | «Фіскальний сервіс не підтвердив створення чека. Чек міг бути створений: перевірте його наявність у кабінеті Вчасно.Каса» | VchasnoKasa: no answer from the provider; the transaction gets the status **Receipt sent, number unknown** |
 
 ---
@@ -205,3 +210,36 @@ Each section has its own subtotal (sum of the "Amount" column).
 <a href="javascript:void(0)" onclick="history.back()">⬅️ Back</a>
 
 [Back to home](/en/)
+
+---
+
+## 3.9.7 Not fiscalized
+
+> The **Not fiscalized** ("Не фіскалізовано") tab shows the sales, debt payments and refunds made in [offline mode](/en/pages/offline-mode#fiscalization-after-the-sync) that wait for a fiscal receipt after the sync. The tab is shown when the studio has an active fiscal integration; the tab name carries the number of such operations.
+
+**Columns:**
+
+- **Operation time** — the operation time on the computer in the studio time zone.
+- **Type** — **Sale** or **Refund**.
+- **Client** — the client's name.
+- **Receipt amount** — for a sale: the sale amount less the refunds made before the receipt; for a refund: the refund amount.
+- **Payment method** — the actual payment method of the transaction. A sale paid in parts shows one row per payment; each payment gets its own receipt for its amount with its payment method.
+- **Document** — the number of the non-fiscal document the offline till issued.
+- **State** — **Awaiting fiscalization** ("Очікує фіскалізації") or **Fiscalization error** ("Помилка фіскалізації"); under the error badge, the error text of the fiscal provider.
+
+**Fiscalization:**
+
+- The **Fiscalize** button in a row creates the receipt of that operation. The **Fiscalize selected** ("Фіскалізувати вибрані") button creates the receipts of the operations ticked in the first column one after another: sales first, then refunds. At most 50 operations are chosen at once.
+- When the studio has several active fiscal integrations, choosing the **Fiscal register** above the table is mandatory; until then the buttons are inactive. A refund is fiscalized through the fiscal register of its sale's receipt regardless of the choice.
+- The receipt is created in the current shift of the fiscal register, also for operations of a closed shift. The receipt carries the line «Продаж в офлайн-режимі <date and time>, документ <number>» (for a refund, «Повернення в офлайн-режимі …»).
+- Afterwards the number of receipts created and the number not created with the text of the first error are shown. An operation with a created receipt leaves the tab and has the badge **Fiscalized** in the **Fiscalization** column of the **Transactions** tab.
+- An operation for which the fiscal provider returned an error stays on the tab in the state **Fiscalization error** with the error text. A retry does not create a second receipt (see [Fiscalizing a transaction](#_3942-fiscalizing-a-transaction)).
+- A refund is fiscalized only after its sale: for a refund whose sale has no receipt the request is refused with `SALE_NOT_FISCALIZED`.
+- The conditions and error codes for each operation are the same as for [fiscalizing a transaction](#_3942-fiscalizing-a-transaction).
+
+**The «Fiscalization» column of the «Transactions» tab** shows for operations made offline their state: **Awaiting fiscalization**, **Fiscalization error**, **No fiscalization needed** ("Не потребує фіскалізації") or **Fiscalized**.
+
+**Requests:**
+
+- `GET /transactions/awaiting-receipt` — the operations waiting for a receipt, earliest first: `data` (transactions with the fields `fiscalState`, `fiscalError`, `receiptAmount`) and `fiscalCards` (the active fiscal registers: `id`, `label`, `type`).
+- `POST /transactions/fiscal-receipts`, body `{ transactionIds, fiscalProviderId }`. Response: an array of `{ id, ok, code?, message? }`, one item per operation. An empty list or more than 50 operations is refused with 400 `RECEIPT_GROUP_SIZE` «Оберіть від 1 до 50 транзакцій»; no receipt is created.

@@ -317,7 +317,7 @@ The computer's shift is kept for the shifts report apart from the server's shift
 
 ### What is not done during the sync
 
-- Receipt fiscalization.
+- Receipt fiscalization. Receipts are created after the sync (see [Fiscalization after the sync](#fiscalization-after-the-sync)).
 - Client notifications: Telegram, push notifications, SMS.
 - The admin notification about a product running out.
 - The first plan bonus.
@@ -464,7 +464,7 @@ Payments from the personal account, certificate sales and redemptions, and refun
 - Register transactions, personal account history rows, the sale date and the usage date of a certificate, the plans created by a certificate redemption, and stock movements are saved with the operation time on the computer (`occurredAt`).
 - A personal account history row and a certificate written during the sync carry the offline operation id (`offlineOperationId`) and are shown with the "Offline" ("Офлайн") mark. A certificate sold offline carries the id of the sale operation; a certificate sold online and redeemed offline carries the id of the redemption operation.
 - Reports, the register transaction list and the personal account history count these records by the operation time.
-- Fiscal receipts are not created during the sync: refund transactions are saved in the "not fiscalized" state.
+- Fiscal receipts are not created during the sync. The fiscalization state of the transactions is described in [Fiscalization after the sync](#fiscalization-after-the-sync).
 - Client notifications (Telegram, push notifications, SMS) are not sent.
 
 ### Payment from the personal account
@@ -573,3 +573,36 @@ The content of the `refund` operation is the content of the online refund (`POST
 | `CLIENT_NOT_FOUND` | `conflict` | the client of the certificate redemption, or the client of a debt paid from the personal account, is not on the server |
 | `OFFLINE_OPERATION_NOT_SUPPORTED` | `rejected` | the operation is not accepted offline |
 | `INVALID_PAYLOAD` | `rejected` | the operation content does not match the format |
+
+## Fiscalization after the sync
+
+The offline till creates no fiscal receipts, neither without internet nor while the FitStudioCRM server is unavailable: the buyer gets a non-fiscal document with a number (`receiptNo`). The fiscal receipts of the sales and refunds of the offline period are created after the sync, through the server, by the studio's fiscal integration (Checkbox or Vchasno.Kasa), on the [Point of sale → Not fiscalized](/en/menu/pos#_397-not-fiscalized) tab.
+
+### Fiscalization state
+
+| State (`fiscalState`) | Badge | Meaning |
+|---|---|---|
+| `pending` | **Awaiting fiscalization** ("Очікує фіскалізації") | the transaction waits for a fiscal receipt and is shown on the **Not fiscalized** tab |
+| `error` | **Fiscalization error** ("Помилка фіскалізації") | the last attempt failed; the provider's error text is in `fiscalError`; the transaction is shown on the **Not fiscalized** tab |
+| `not_required` | **No fiscalization needed** ("Не потребує фіскалізації") | no receipt is created |
+| `fiscalized` | **Fiscalized** ("Фіскалізовано") | the receipt is created |
+
+### Sales
+
+- A sale, debt payment or certificate sale transaction paid in cash, by card or by bank transfer has the state **Awaiting fiscalization** after the sync when the studio has an active fiscal integration at the time of the sync. Without an active fiscal integration no state is set.
+- A personal-account payment gets no state and needs no receipt, as online. A transaction with a zero amount gets no state.
+- A sale paid in parts has a separate transaction per payment; each transaction is fiscalized with its own receipt for the amount of that payment with its payment method.
+- A bank-transfer payment is fiscalized regardless of the payment confirmation.
+
+### Refunds
+
+- A partial refund of a sale not fiscalized yet is allowed. Such a refund gets no receipt of its own and has the state **No fiscalization needed**: the sale receipt is created for the sale amount less the refunds, with the lines less the refunded quantities.
+- A full refund of a sale not fiscalized yet: no receipt is created, neither for the sale nor for the refund; both transactions have the state **No fiscalization needed**.
+- A refund of a fiscalized sale has the state **Awaiting fiscalization** after the sync. The refund receipt is created through the same fiscal register as the sale receipt, against the sale receipt.
+- A refund made after the sale receipt was created for the net amount is fiscalized against that receipt.
+- These rules also apply to refunds made online of a sale made offline.
+
+### One receipt per transaction
+
+- At most one fiscal receipt is created for a transaction. A provider error leaves the transaction on the **Not fiscalized** tab in the state **Fiscalization error**; a retry does not create a second receipt.
+- The mode of an unavailable FitStudioCRM server fiscalizes the same way: only after the sync, through the server.

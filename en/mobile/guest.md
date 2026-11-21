@@ -61,7 +61,7 @@ Result:
 |---|---|
 | The booking needs the studio's confirmation | «Your request has to be approved by an administrator. We will let you know as soon as it is.» |
 | Booked | «You're booked!» |
-| The booking got the **Waiting list** status | «Вас додано до листа очікування. Після звільнення місця Вас буде записано автоматично та повідомлено.» (You have been added to the waiting list. Once a place becomes available, you will be booked automatically and notified.) |
+| The booking got the **Waiting list** status | «Вас додано до листа очікування. Вільні місця на цьому занятті першочергово надаються клієнтам з листа очікування.» (You have been added to the waiting list. Free places in this class are offered first to clients on the waiting list.) |
 | The person is already booked for this class | **«You're already booked for this class»** — «See you there. Manage your booking in the app.», the **«Got it»** button |
 | No seats | «This class has no seats left» |
 | Other error | «Couldn't book. Please try again.» |

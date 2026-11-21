@@ -851,14 +851,14 @@ The banner above the offline till's menu is always shown: «Офлайн · да
   - with the offline shift closed, opens the online admin at the address the offline till was opened from;
   - when the offline shift state could not be read, does nothing.
 - When the offline till does not know the online admin's address, the button is not shown; the window holds the text «Відкрийте онлайн-адмінку FitStudioCRM у браузері так, як зазвичай.»
-- The **Пізніше** button closes the window; the window is shown again after 1 minute while the connection state stays «Online».
+- The **Пізніше** button closes the window; the window is shown again while the connection state stays «Online».
 - Queue operations are sent to the server without user action, regardless of the window.
 
 ### Reminder about an open offline shift
 
 - The online admin on a computer where this studio's offline till has an open shift shows the «Відкрита офлайн-зміна» window with the **Пізніше** and **Перейти до закриття зміни** buttons.
 - The **Перейти до закриття зміни** button opens the offline till in a new tab with the shift close open.
-- The **Пізніше** button closes the window; the reminder repeats every 5 minutes until the offline shift is closed.
+- The **Пізніше** button closes the window; the reminder is shown again until the offline shift is closed.
 
 ### Server unavailable mode
 
@@ -1037,7 +1037,7 @@ The sync result sets the state of the operation on the **Офлайн-опера
 | `dependency_rejected` | `conflict` | an operation that depends on another queue operation | the operation this one depends on was not applied | Не виконано операцію, від якої залежить ця операція. |
 | `OFFLINE_CLIENT_NOT_APPLIED` | `conflict` | an operation with a client created offline | the client creation got `conflict` or `rejected` | Не виконано створення клієнта, до якого належить операція. |
 | `OFFLINE_SALE_NOT_APPLIED` | `conflict` | a class registration paid by an offline till sale | the sale got `conflict` or `rejected` | Не виконано продаж, яким оплачено операцію. |
-| `OPERATION_INTERRUPTED` | `conflict` | a sale or refund started in the online admin; a queue operation stopped during the sync | the operation stopped after a step that cannot be undone | Виконання операції перервано. Перевірте її результат. Online admin, for an action started there: «Операцію «<вид>» від <дата й час> не завершено на сервері. Перевірте її результат перед повторним виконанням.» |
+| `OPERATION_INTERRUPTED` | `conflict` | a sale or refund started in the online admin; a queue operation stopped during the sync | the operation stopped after a step that cannot be undone | Offline till: state «Потребує уваги», note «Виконання операції перервано. Перевірте її результат.» The **Потребує уваги** tab and the notification: «Виконання операції перервано. Перевірте її результат.» Online admin, for an action started there: «Операцію «<вид>» від <дата й час> не завершено на сервері. Перевірте її результат перед повторним виконанням.» |
 
 The actions an admin resolves an operation with on the **Потребує уваги** tab, and the refusals of these actions, are described in [Каса → Потребує уваги](/en/menu/pos#_398-needs-attention).
 
@@ -1046,7 +1046,8 @@ The actions an admin resolves an operation with on the **Потребує ува
 The server checks the id, kind, version and time of each operation before applying it. An operation that fails the check gets `rejected`; the data does not change. The offline till shows the «Відхилено сервером» state and the reason in the **Примітка** (Note) column.
 
 - An operation with the codes `INVALID_KIND`, `INVALID_VERSION`, `INVALID_OCCURRED_AT`, `OCCURRED_IN_FUTURE`, `OCCURRED_TOO_LONG_AGO` is stored as a refused offline till operation together with its content: it is shown on the [Каса → Потребує уваги](/menu/pos#_398-Потребує-уваги) tab with the reason, and the admins get one notification about the operation. On the tab the operation can only be marked as reviewed.
-- An operation without a kind is shown with the kind «Невідома операція». An operation without a valid time is shown with the time the server received it.
+- An operation without a kind is shown with the kind «Невідома операція». An operation without a valid time, or with a time outside the years 2000–9999, is shown with the time the server received it.
+- If a refused operation cannot be stored, the offline till still gets the `rejected` result with its reason, and the next operations of the queue are synced; the operation is not shown on the **Потребує уваги** tab and no notification is created.
 - Sending such an operation again returns the stored result; no second record and no second notification are created.
 - An operation with the `INVALID_ID` code is not stored: without an id it cannot be recognised when sent again. An operation with the `IDEMPOTENCY_KEY_REUSED` code is not stored: its id belongs to another operation. These operations are not shown on the **Потребує уваги** tab and no notification is created; only the **Офлайн-операції** screen shows the reason.
 - If the id of an operation with a check code already belongs to an applied or stored operation, the stored result of that operation is returned.
@@ -1054,7 +1055,7 @@ The server checks the id, kind, version and time of each operation before applyi
 | Code | Condition | What the user sees |
 |---|---|---|
 | `INVALID_ID` | the operation id is not a UUID | Ідентифікатор операції некоректний. |
-| `INVALID_KIND` | the operation kind is not set or is longer than 32 characters | Тип операції не вказано або він некоректний. |
+| `INVALID_KIND` | the operation kind is not set or is longer than 32 characters | Вид операції не вказано або він некоректний. |
 | `INVALID_VERSION` | the operation version is not a whole number from 1 | Версія операції не підтримується. |
 | `INVALID_OCCURRED_AT` | the operation time is not a date | Час операції не вказано або він некоректний. |
 | `OCCURRED_IN_FUTURE` | the operation time is later than the server time by more than 5 minutes | Час операції пізніший за час сервера. |

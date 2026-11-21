@@ -490,7 +490,7 @@ Actions in the **Action** column:
 
 - An `.xlsx` file of at most 5 MB ("Файл завеликий. Максимальний розмір — 5 МБ.").
 - The data is on the **Clients** sheet; the first row holds the column names.
-- Columns (in export order): `id`, `firstName`, `lastName`, `phone`, `email`, `card`, `birthday`, `comment`. The `firstName` column is required.
+- Columns (in export order): `id`, `firstName`, `lastName`, `phone`, `email`, `card`, `birthday`, `comment`, `createdAt`, `lastVisit`, `personalBalance`. The `firstName` column is required. The `createdAt`, `lastVisit` and `personalBalance` columns are informational only: the import does not read them. `createdAt` and `lastVisit` are the date and time in the [studio time zone](/en/login/settings#studio-time-zone) in the `yyyy-MM-dd HH:mm` format.
 
 ### 3.2.14.2 Import
 

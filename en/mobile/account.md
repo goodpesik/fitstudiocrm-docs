@@ -52,7 +52,7 @@ Tapping a card opens the **History** section. The **«One-time plans»** row sho
 
 ## 7.6.3 History (Client)
 
-Operations on plans and bookings for the selected period (date range selection, not later than today). Rows are loaded 10 at a time; the **«Show more»** button loads the next ones.
+Operations on plans and bookings for the selected period (date range selection, not later than today; by default, from the same day a week ago to today). The period days follow the studio time zone. Rows are loaded 10 at a time; the **«Show more»** button loads the next ones.
 
 Each row: operation date and time, workout name, status, workout date and time and the coach, **«Plan:»** {name}, **«Left:»** {number of workouts} (for attended and missed workouts on a plan, plan activation and plan cancellation), **«Created by:»** {who created it}.
 

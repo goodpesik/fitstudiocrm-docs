@@ -60,7 +60,7 @@ Tapping the card opens [Account → History](/en/mobile/account#_763-history-cli
 For the **Admin** role:
 
 - the badge **«Shift open · {name}»** or **«Shift closed»**;
-- **«Total clients today:»** — the number of clients with the **Attended** status in today's workouts;
+- **«Total clients today:»** — the number of clients with the **Attended** status in today's workouts (the day follows the studio time zone);
 - the **«Booking requests»** card with the caption «Waiting for a decision: {N}» — shown if there are requests waiting for a decision. The card opens the request list: client, workout, date and time, the **«Approve»** and **«Reject»** buttons. An empty list — «No requests are waiting for a decision»; a loading error — «Could not read the requests. Try again.»
 
 A request is also decided with the **«Approve»** / **«Reject»** buttons on the notification card in the [Notifications](/en/mobile/notifications) tab and in the admin panel. For a request already reviewed or a class that has passed, the reason for the refusal is shown.

@@ -583,7 +583,7 @@ The offline till creates no fiscal receipts, neither without internet nor while 
 | State (`fiscalState`) | Badge | Meaning |
 |---|---|---|
 | `pending` | **Awaiting fiscalization** ("Очікує фіскалізації") | the transaction waits for a fiscal receipt and is shown on the **Not fiscalized** tab |
-| `error` | **Fiscalization error** ("Помилка фіскалізації") | the last attempt failed; the provider's error text is in `fiscalError`; the transaction is shown on the **Not fiscalized** tab |
+| `error` | **Fiscalization error** ("Помилка фіскалізації") | the last attempt failed or ended without a stored receipt; the state is set before the request to the provider; the provider's error text is in `fiscalError`; the transaction is shown on the **Not fiscalized** tab |
 | `not_required` | **No fiscalization needed** ("Не потребує фіскалізації") | no receipt is created |
 | `fiscalized` | **Fiscalized** ("Фіскалізовано") | the receipt is created |
 
@@ -601,6 +601,7 @@ The offline till creates no fiscal receipts, neither without internet nor while 
 - A refund of a fiscalized sale has the state **Awaiting fiscalization** after the sync. The refund receipt is created through the same fiscal register as the sale receipt, against the sale receipt.
 - A refund made after the sale receipt was created for the net amount is fiscalized against that receipt.
 - When the fiscal provider already holds a sale receipt created by an earlier attempt before the refund was made, that receipt is stored; the refunds not included in its amount get the state **Awaiting fiscalization** and are fiscalized with return receipts.
+- A refund, partial or full, of a sale in the state **Fiscalization error** or with a sent mark (the sale receipt may have been created at the provider) gets the state **Awaiting fiscalization**; the state of the sale does not change. The rules for a partial and a full refund of a sale not fiscalized yet do not apply to such a sale. After the sale is fiscalized, the refunds included in its receipt amount get the state **No fiscalization needed**, the others are fiscalized with return receipts (see [Fiscalizing a transaction](/en/menu/pos#_3942-fiscalizing-a-transaction)).
 - These rules also apply to refunds made online of a sale made offline.
 
 ### One receipt per transaction

@@ -903,12 +903,24 @@ The online admin checks the server when the Device Handler is switched on on the
 ### Operations with an unknown result
 
 - Online admin operations with an operation id: sale, refund, debt payment, class registration, client creation, certificate sale and redeem.
-- The operation id is created when the action is first sent and goes in the `X-Operation-Id` header. Pressing the same action again with the same data sends the same id; the server applies the operation once.
+- The operation id is created when the action is first sent and goes in the `X-Operation-Id` header. Pressing the same action again with the same data sends the same id and the data of the first send; the server applies the operation once and answers a repeated send with the result of the first.
 - After the server's answer (a success or a `4xx` refusal) the id is forgotten; the next action gets a new id.
 - An action without a server answer (no connection, the wait time ran out, a `5xx` answer) gets the «Результат невідомий» state. The error window shows the text «Сервер не відповів, тому результат операції невідомий. Повторне виконання тієї самої операції не створить її вдруге.»
 - Operations with an unknown result are kept in the computer's browser and handed to the offline till on every move there, with the same id and data. The offline till queues them once the offline shift is open; after the sync the operation exists on the server once — both when the server applied it before the connection was lost and when it did not.
 - Operations older than 24 hours are not handed to the offline till.
 - An operation with an unknown result does not need to be repeated by hand.
+- When the online admin opens and when the server answers again, the online admin asks the server for the result of every operation with an unknown result and shows a message:
+
+| Server answer | Message | Operation state in the browser |
+|---|---|---|
+| the operation was applied | «Операцію «<kind>» від <date and time> виконано.» | forgotten |
+| the operation was refused or the server never received it | «Операцію «<kind>» від <date and time> не виконано. За потреби виконайте її повторно.» | forgotten |
+| the operation stopped after a step that cannot be undone | «Операцію «<kind>» від <date and time> не завершено на сервері. Перевірте її результат перед повторним виконанням.» | forgotten |
+| the operation is being applied | no message | stays «Результат невідомий» |
+
+- An operation handed to the offline till stays «Результат невідомий» until the server receives it; once the server has decided, it is forgotten without a message. Its state is shown on the offline till's **Офлайн-операції** screen.
+- When the server does not answer the result request, the remaining operations stay «Результат невідомий» until the next check.
+- The date and time of the operation are shown in the studio's time zone.
 
 ## Fiscalization after the sync
 

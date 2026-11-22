@@ -4,292 +4,444 @@
 
 # 1.3.2.2 Settings
 
-> The **Settings** ("Налаштування") section is the studio's admin panel, split into tabs. Available to the **Super Admin**, **Admin**, and **Manager** roles.
+> The **Налаштування** (Settings) page opens from the **Налаштування** item of the main menu and consists of tabs. It is available to the **Супер Адмін** (Super Admin), **Адмін** (Admin) and **Менеджер** (Manager) roles.
 
 ![](../../_media/admin-panel-tabs.png ":size=600x362")
 
 **Tabs:**
 
-- [1. Users](#users) ("Користувачі") — administrator account management.
-- [2. Settings](#settings) ("Налаштування") — operating hours, time zone, studio rules.
-- [3. Features](#features) ("Функції") — features and business rules (cancellations, bonuses, bot, reminders).
-- [4. Integrations](#integrations) ("Інтеграції") — fiscalization (VchasnoKasa, Checkbox) and card acquiring.
-- [5. Import](#import) ("Імпорт") — importing clients from Excel.
-- [6. Information](#information) ("Інформація") — version and supporting information.
-- [7. Mobile Application](#mobile-application) ("Мобільний додаток") — client app configuration.
-- [8. Reminders](#reminders) ("Нагадування") — custom reminders for studio staff.
-- [9. Categories](#categories) ("Категорії") — categories for calculating coach salaries (moved from Reports).
-- [10. Studio Information](#studio-information) ("Інформація про студію") — studio name, logo, description, photos, and contact details. This tab appears when the mobile app for clients is enabled.
+- [1. Users](#users) — studio users, invitations by email.
+- [2. Settings](#settings) — operating hours, studio rules, time zone, clearing workouts.
+- [3. Features](#features) — studio business rules.
+- [4. Integrations](#integrations) — fiscalization, acquiring, devices. The tab is shown only to the **Супер Адмін** role.
+- [5. Information](#information) — versions and contacts.
+- [6. Mobile Application](#mobile-application) — client app, online booking, SMS, self check-in.
+- [7. Reminders](#reminders) — custom reminders for studio staff.
+- [8. Categories](#categories) — workout categories for coach salary calculation.
+- [9. Studio Information](#studio-information) — studio name, logo, description, photos and contacts.
+- [10. Devices](#devices) — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Супер Адмін** and **Адмін** roles.
+
+> Client import and export is done on the [Clients](/en/menu/clients#_3214-excel-import-and-export-of-clients) page.
 
 ---
 
 ## Users
 
-> The list of studio administrators: adding new ones, editing roles, deleting.
+> The list of studio users, inviting new ones, editing roles and rates, removal.
 
 ![](../../_media/admin-panel-users.png ":size=600x362")
 
-The full description of the table, of inviting a new user and of the roles is on the [Users](/en/login/users) page. Only the location of this tab is given here, so that one screen is not described in two places: those descriptions inevitably drift apart.
+The full description of the tab is on the [Users](/en/login/users) page.
 
 ---
 
 ## Settings
 
-> General studio parameters.
+> General studio parameters. Changes are saved with the **Зберегти** (Save) button.
 
 ![](../../_media/admin-panel-settings.png ":size=600x362")
 
-> ⚠️ **The studio name and logo have been moved** to the [Studio Information](#studio-information) tab. This tab only appears once the mobile app for clients is enabled.
+The parameters of this tab can be changed regardless of the shift state: an open shift locks none of them.
 
-### Studio Name
-
-A text field on the **Studio Information** tab. Used in the Telegram bot and on fiscal receipts.
-
-### Studio Logo
-
-> Uploading or replacing the logo. Supports JPG/PNG. The **Delete Photo** ("Видалити фото") button removes the current logo.
+> The studio name and logo are set on the [Studio Information](#studio-information) tab.
 
 ### Studio Operating Hours
 
-> The start and end time of the working day (selected with a time picker). Affects:
-
-- Hints in the workout creation form.
-- Administrator salary calculation (cannot exceed the shift duration).
-- The mobile app (hides bookings outside these hours).
+Start (**З**, From) and end (**ДО**, To) of the working day in 30-minute steps. The **Зберегти** button is inactive if the start time is later than the end time.
 
 ### Studio Rules
 
-> A text field that supports multi-line text. Shown to clients in the mobile app (**Account → Information → Rules** tab).
+A multi-line text field. The entered text is shown to clients in the mobile app under **Правила студії** (Studio rules) on the studio card.
+
+> ℹ️ The caption under the heading in the settings reads «Якщо введено, правила будуть доступні клієнтам в телеграм боті» (If entered, the rules will be available to clients in the Telegram bot). The rules are shown to clients in the mobile app.
+
+### Receipt Header
+
+> A multi-line text field ("Верхня частина чека") below the **Studio Rules** field. The text is printed at the top of receipts issued by the [offline till](/en/pages/offline-mode#receipt-header): on receipts without a fiscal card and on receipts of a fiscal card that has no [receipt header](#fiscal-integrations) of its own.
+
+- No length limit; line breaks are kept.
+- An empty value or a value of spaces only means the text is not set.
+- Only the **Super Admin** role can change the field. Other roles see it read-only; they save the other general settings as usual.
+- The server refuses a change of the field from other roles (`403`) and a value that is not text (`400`).
+- The text is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
 
 ### Studio Time Zone
 
-> A dropdown list of IANA time zones (defaults to `Europe/Kyiv`). Affects ALL dates and reports.
+The **Часовий пояс** (Time zone) drop-down (default Kyiv, `Europe/Kyiv`). The time zone defines the dates and times of the studio's workouts and reports.
 
-> ⚠️ Changing the time zone is a wide-reaching operation. The selector is locked if the studio has at least one workout — otherwise the dates on already-created workouts could "shift". First delete/process all workouts, then change the time zone.
+The studio-day rule: a calendar day, "today", a weekday and an hour are determined in the studio time zone, regardless of the time zone of the server, the computer or the phone. Under this rule:
+
+- dates and times in messages to administrators, coaches and clients (app, Telegram, SMS) are shown in studio time;
+- the coach calendar (`.ics` file) lists classes in studio time;
+- the date and time of a Z-report and of a sales receipt are shown in studio time;
+- the clients export file name `clients_YYYY-MM-DD.xlsx` (for example, `clients_2026-11-20.xlsx`) carries the studio date;
+- in the clients Excel export the birthday is a studio day, and the `createdAt` and `lastVisit` columns are the studio date and time in the `yyyy-MM-dd HH:mm` format;
+- when the subscription sets no billing period start, the monthly SMS limit is counted from 00:00 on the 1st of the current month in studio time;
+- a rating request is sent for classes attended during the last 2 studio days, and only for classes no older than 7 studio days.
+
+> ⚠️ If the studio has at least one workout, the list is locked and the message «Зміна часового поясу недоступна» (Changing the time zone is unavailable) is shown under it.
+
+### Danger Zone
+
+The **Очистити тренування** (Clear workouts) button opens the **Очистити тренування** window: «Ця дія незворотня. Всі тренування будуть видалені, а клієнти — відписані. Повернути видалену інформацію буде неможливо.» (This action is irreversible. All workouts will be deleted and clients unsubscribed. The deleted information cannot be restored.)
+
+The **Продовжити** (Continue) button becomes active only after the **Я підтверджую видалення** (I confirm the deletion) switch is on and the word **DELETE** is typed in the field. Clearing runs as a [background task](/en/pages/processing#_65-background-tasks).
+
+#### Start Over
+
+The **Почати все з початку** (Start over) button is available to the studio owner only; it is not shown to other roles, and the server rejects a request from another role with the message «Скинути дані закладу може лише власник» (Only the owner can reset the studio data).
+
+The button opens the **Почати все з початку** window. The action is irreversible and returns the studio to the state of a newly created one:
+
+| Removed | Kept |
+|---|---|
+| clients, their memberships, balance, debts, cards | the accounts with the owner role, including platform administrator accounts |
+| memberships (plans) and their transactions | the studio settings |
+| the schedule, workouts, client bookings, the workout change log | support requests |
+| financial transactions, cash accounts, shifts, staff bonuses | the record of sent SMS |
+| staff (administrators, managers), coaches and their photos, rooms | |
+| categories, products and stock history, certificates | |
+| notifications, reminders, reviews, client import and export jobs | |
+
+In the studio settings the links to the removed categories are cleared: the list of categories for creating workouts via the bot and the categories assigned to fiscal registrars.
+
+To confirm, the saved studio name has to be typed (leading and trailing spaces are ignored, letter case matters). A name that was changed but not saved is not accepted for confirmation. Only then does the **Видалити всі дані** (Delete all data) button become active. If the studio name is not saved, confirmation is impossible: the window shows a hint to set and save the name on the **Інформація про студію** (Studio information) tab.
+
+The reset is not performed, nothing is deleted and a message is shown if:
+
+| Condition | Message |
+|---|---|
+| the studio is in a studio group with a shared client base or shared memberships | «Заклад входить до мережі зі спільною базою клієнтів або абонементів. Перед очищенням даних вийдіть із мережі.» (The studio is in a group with a shared client base or memberships. Leave the group before resetting the data.) |
+| the studio's group membership could not be checked | «Не вдалося перевірити участь закладу в мережі закладів. Спробуйте пізніше.» (The studio's group membership could not be checked. Try again later.) |
+| a cash shift is open at the fiscal provider (Checkbox, Vchasno.Kasa) | «Закрийте касову зміну перед очищенням даних» (Close the cash shift before resetting the data) with the names of the fiscal registrars |
+| the fiscal provider did not answer the cash shift check | «Не вдалося перевірити стан касової зміни у фіскального провайдера» (The cash shift state could not be checked with the fiscal provider) with the names of the fiscal registrars, «Нічого не видалено. Спробуйте пізніше.» (Nothing was deleted. Try again later.) |
+| the list of the studio's fiscal registrars could not be read | «Не вдалося перевірити стан касових змін. Нічого не видалено. Спробуйте пізніше.» (The cash shift state could not be checked. Nothing was deleted. Try again later.) |
+| a client import or a client export to a file is running | «Триває завантаження або збереження клієнтів. Дочекайтеся завершення та повторіть.» (A client import or export is running. Wait until it finishes and try again.) |
+| another operation is changing the studio data at that moment | «Дані закладу зараз використовуються іншою операцією. Нічого не видалено. Спробуйте ще раз за хвилину.» (The studio data is in use by another operation. Nothing was deleted. Try again in a minute.) |
+
+While the reset runs, new client imports and exports do not start.
+
+The server checks the role and the studio name again right before the deletion. If the name does not match, nothing is deleted and the message «Введена назва не збігається з назвою закладу» (The entered name does not match the studio name) is shown. The deletion runs as a single operation: if it fails, the data stays unchanged.
+
+After a successful deletion the message «Дані закладу видалено. Сторінку буде оновлено.» (The studio data has been deleted. The page will be reloaded.) appears and the page reloads. After the reset:
+
+- removed staff lose access to the studio; if the studio is still shown to such a person in the studio list at sign-in, it disappears from the list after the first attempt to open it;
+- the profiles of this studio's clients are removed from the mobile app; a profile that could not be removed at once disappears at the client's next sign-in to the app;
+- the photos of the removed coaches and staff are deleted from file storage.
 
 ---
 
 ## Features
 
-> Business rules and feature toggles. Each group is placed in its own section with a heading.
+> Studio business rules (tab **Функції**). Changes are saved with the **Зберегти** button; after saving, the message «Функції збережено» (Features saved) appears.
 
 ![](../../_media/admin-panel-functions.png ":size=600x362")
 
 ### Minimum Time Before Workout Cancellation
 
-- **Time before workout cancellation (hours)** — a number (default 6).
-- If a client has an active plan and cancels a workout **less than the specified number of hours** before it starts — the workout is **deducted** from the plan as **Unvisited** ("Не відвідано").
-
-### Minimum Number of Clients
-
-- **Min. count** — a number.
-- If the setting is > 0 and fewer clients attended the workout — the coach is credited the minimum (protection against small, unprofitable groups).
-- Available only for the **"Number of people at the workout"** ("Кількість людей на тренуванні") rate type (`PerPerson`).
-
-### Remove Recurring Booking After Missed Workouts
-
-- **Number of misses** — a number.
-- If a client has a duplicate (recurring) booking for a workout and misses N consecutive sessions (status **Unvisited**) — the system automatically removes them from the recurring booking.
-- `0` or an empty field → disables the feature.
-
-### Administrator Bonuses
-
-> Bonus settings that are calculated in the [Admin Salaries](/en/menu/reports#_3-8-5-administrator-payroll) report.
-
-Each bonus is a row with three fields:
-
-- **Condition** — what it is awarded for (for example, "Every card sold", "Every closed shift").
-- **Accrual** — the method (fixed amount / percentage).
-- **Client type** — a filter (new client / all).
-
-The **➕ Add Bonus** and **🗑 Delete** (trash icon) buttons are available for each row.
-
-### Creating Personal Workouts via the Bot
-
-- The **"Allow coaches to create personal workouts via the bot"** toggle — enables the feature.
-- When enabled, a list of **categories** appears for which the bot allows creating workouts. A coach can only create a personal workout within these categories.
-- The **+ Add Category** button adds a row with a dropdown list of the studio's categories.
-
-### Remind About Coach Birthdays
-
-- **Days** — how many days before the birthday the notification arrives.
-- `0` → the feature is disabled.
-
-### Features (Additional Toggles)
-
-- **Notify clients about a coach substitution (App)** — if a substitute is assigned for a workout, all booked clients receive a push notification in the mobile app.
-- **Apply the maximum number of people when calculating salaries** — caps the number of clients credited to a coach at the `workoutCapacity` value.
-- **Close the shift automatically** (closes at 23:57) — under the law, a cash register shift cannot last more than 24 hours. Automatic closing avoids human error and keeps this requirement.
-- **Charge a debt for a no-show on a personal (no-plan) workout and credit the coach** — when enabled: if a personal workout is marked **"Unvisited"**, and the client has **no active personal plan**, the system automatically creates a **debt** for the client equal to the cost of the workout (the price of the plan linked to the category) and **credits the coach** with that workout toward their salary. This triggers on any "Unvisited" status being set (the nightly automatic process, a late cancellation, or a manual status change by an administrator). If the workout's category has no plan with a price linked to it — no debt is created.
-
----
-
-### Danger Zone
-
-The **Clear Workouts** ("Очистити тренування") button irreversibly cancels all of the studio's not-yet-held workouts and stops all recurring ones. To confirm, you must type the word **DELETE** in the confirmation field.
+- Field **Час до відміни тренування (год.)** (Time before workout cancellation, h) — an integer.
+- If a client cancels a booking later than the given number of hours before the start, the workout is deducted from the membership as **Не відвідано** (Not visited).
 
 ### Automatic Logout on Inactivity
 
-The number of hours of inactivity after which a user is automatically logged out of the system. A value of `0` disables automatic logout.
+Field **Годин** (Hours) — the number of hours of inactivity after which the user is signed out automatically. `0` turns automatic logout off.
+
+### Minimum Number of Clients
+
+- Field **Мін. кі-сть** (Min. number) — an integer.
+- If the value is greater than zero and the workout had fewer clients, the coach is credited with the minimum number of clients.
+- Applies to categories with the **За людину** (Per person) rate type.
+
+### Remove Recurring Booking After Consecutive Misses
+
+- Field **Пропусків підряд** (Misses in a row) — an integer from `1`; an empty field turns the rule off.
+- If a client with a recurring booking misses the given number of sessions in a row (status **Не відвідано**), the system removes the recurring booking. A visit resets the counter. A cancellation, including a late one, is not a miss.
+- The administrator receives a notification. See [Removal from a recurring booking after misses](/en/pages/processing#_69-removal-from-a-recurring-booking-after-misses).
+- A client with the app receives a message about the removal from the recurring booking. During the [night pause](/en/pages/processing#the-night-pause) the message is not sent: it arrives at 06:00 in the studio time zone.
+
+### Administrator Bonuses
+
+> Bonus conditions taken into account in the [Administrator payroll](/en/menu/reports#_385-administrator-payroll) report.
+
+Each bonus is a row of fields:
+
+| Field | Value |
+| --- | --- |
+| **Умова** (Condition) | **Перший абонемент клієнта** (Client's first membership) |
+| **Нарахування** (Accrual) | **Розділити між адміністраторами** (Split between administrators) / **Адміністратор що продав абонемент** (Administrator who sold the membership) |
+| **Тип клієнта** (Client type) | **Будь-який клієнт** (Any client) / **Новий клієнт** (New client) |
+| **Сума** (Amount) | Bonus amount, an integer |
+
+The **Додати бонус** (Add bonus) button adds a row; if all conditions are already used, the button is inactive with the hint «Немає доступних умов» (No conditions available). The bin icon removes a row.
+
+Bonus accrual for an individual administrator is turned on with the **Нараховувати бонуси** (Accrue bonuses) switch on the [Users](/en/login/users) page.
+
+### Personal Workouts Created by Coaches
+
+The section titled **Створення персональних тренувань у мобільному застосунку** (Creating personal workouts in the mobile app). The setting defines the categories in which a coach can create a personal workout in the mobile app.
+
+- Switch **Дозволити тренерам створювати персональні тренування в мобільному застосунку** (Allow coaches to create personal workouts in the mobile app) — turns the feature on.
+- Switch **Всі категорії** (All categories) — allows all studio categories.
+- With **Всі категорії** off, the **Додати категорію** (Add category) button adds a row with the **Виберіть категорію** (Select a category) drop-down; the bin icon removes a row.
+
+### Remind About Coach Birthdays
+
+- Field **Днів** (Days) — how many days before a coach's birthday a reminder appears in the notifications.
+- `0` turns the reminders off.
+
+### Features (Switches)
+
+| Switch | Effect |
+| --- | --- |
+| **Повідомляти клієнтам про заміну тренера (Додаток)** (Notify clients about a coach substitution (App)) | When a substitute coach is assigned, booked clients receive a mobile app notification. |
+| **Враховувати максимальну к-сть людей при підрахунку зарплат** (Take the maximum number of people into account in salaries) | The number of clients credited to the coach does not exceed the workout's maximum number of people. |
+| **Закривати зміну автоматично(закриється 23:57)** (Close the shift automatically (closes at 23:57)) | An open shift is closed every day at 23:58 in the [studio time zone](#studio-time-zone); if no time zone is set, `Europe/Kyiv` applies. See [Automatic Shift Closing](/en/pages/shifts#_24-automatic-shift-closing). |
+| **Нараховувати борг за неявку на персональне (без абонемента) та зараховувати тренеру** (Charge a debt for a no-show at a personal workout (without a membership) and credit the coach) | See below. |
+| **Автоматична реєстрація при скануванні картки (клієнт з активним абонементом і записом на сьогодні)** (Automatic registration on card scan (client with an active membership and a booking for today)) | See [Automatic registration on card scan](/en/pages/processing#_610-automatic-registration-on-card-scan). |
+| **Автоматично переводити клієнтів із листа очікування в запис (після звільнення місця на тренуванні)** (Automatically move clients from the waiting list into a booking (when a place on the workout becomes free)) | On: when a spot frees up on a workout that has not started and is not cancelled, the first client on the waiting list is moved to the **Planned** status automatically. Off (default): clients stay on the waiting list and an administrator changes their status manually; any client who books the workout can take the free spot; the studio receives the notification «Звільнилося місце на тренуванні!» (a spot has freed up on the workout). See [Schedule — Waiting list](/en/menu/schedule#waiting-list). |
+
+**Debt for a no-show at a personal workout.** When the switch is on and a personal workout client gets the **Не відвідано** status without a membership deduction (manually, through a late cancellation or by the nightly job), and the client has no active personal membership:
+
+- the client gets the debt «Борг за неявку на персональне тренування: <name>» (Debt for a no-show at a personal workout) for the price of the membership linked to the workout category;
+- the workout is credited to the coach's salary.
+
+No debt is created if no membership is linked to the category or its price is zero. A debt is created once per session.
 
 ---
 
 ## Integrations
 
-> Integration with a fiscal payment recorder. **VchasnoKasa** and **Checkbox** are supported. Each integration is added as a separate card.
+> The tab (**Інтеграції**) is available only to the **Супер Адмін** role. It contains fiscal integrations (Vchasno Kasa, Checkbox), Monobank acquiring and devices.
 
 ![](../../_media/admin-panel-prro.png ":size=600x362")
 
-### Connection
+### Fiscal Integrations
 
-Each fiscal integration is added as a separate card — using the **+ Add VchasnoKasa** or **+ Add Checkbox** button.
+Each fiscal integration is added as a separate card — with the **Додати інтеграцію Вчасно Каса (фіскалізація)** or **Додати інтеграцію Checkbox (фіскалізація)** button.
 
-- **Label** — an arbitrary name for the card, to distinguish between several connections.
-- **Token** — for VchasnoKasa: the token from your personal account.
-- **PIN Code**, **Client Name**, **Client Version**, **License Key** — for Checkbox; all four fields are required.
-- The **Active** ("Активна") toggle enables the card. It only takes effect once the required fields are filled in, and only one card of each type can be active at a time.
+| Integration | Fields |
+| --- | --- |
+| **Вчасно Каса (фіскалізація)** | **Назва** (Name), **Token** |
+| **Checkbox (фіскалізація)** | **Назва**, **Пінкод касира** (Cashier PIN), **Client Name**, **Client Version**, **License Key** |
 
-> ⚠️ The "Receipt Header" and "Receipt Footer" fields no longer exist — they were removed together with the move to integration cards.
+- The **Активна** (Active) switch turns a card on. Before activation the window «Активувати інтеграцію?» (Activate the integration?) — «Зараз перевіримо облікові дані у провайдера. Продовжити?» (We will now check the credentials with the provider. Continue?) — appears. If the check fails, the message «Не вдалося активувати інтеграцію» (Could not activate the integration) appears.
+- Only one card of each type can be active at a time.
+- Turning a card off is confirmed in the «Деактивувати інтеграцію?» (Deactivate the integration?) window.
+- **Верхня частина чека** (Receipt Header) — multi-line text the [offline till](/en/pages/offline-mode#receipt-header) prints at the top of this card's receipts. No length limit; an empty value or a value of spaces only means the text is not set, and the [studio receipt header](#receipt-header) is printed instead. The text is not printed on online receipts of the fiscal provider (Checkbox, Вчасно Каса).
+- Only the **Супер Адмін** role changes the card fields.
 
+> ⚠️ There is no «Нижня частина чека» (Receipt Footer) field.
 
-### Monobank acquiring
+### Monobank Acquiring
 
-Monobank acquiring is added as its own card: a token, and for QR payments a choice of the active QR from the list pulled from Monobank. Several physical terminals can be added, each with its own name.
+The **Додати інтеграцію Monobank** (Add Monobank integration) button adds an acquiring card: **Token (X-Token)**, the QR code list (button **Зчитати QR-коди** (Read QR codes), field **Активний QR** (Active QR)) and physical terminals (button **Додати термінал** (Add terminal), terminal name and `terminal_id`).
 
-> ⚠️ At present this is **configuration only**. Payment at the [Point of sale](/en/menu/pos) does not go through Monobank yet — the card can be filled in, but it does not affect the sale process.
+> ⚠️ The Monobank Acquiring card is not used during payment at the [Cash Register](/en/menu/pos).
 
-### Devices
+### Devices (Device Manager)
 
-A toggle and the address of the local receipt-printing helper (`http://localhost:9999` by default) with a connection check. The setting applies **to this computer only**: it has to be enabled at every workstation separately.
-### What Changes When Fiscalization Is Enabled
+Settings of the local device manager through which the system works with POS terminals and printers. The settings are stored only on this device.
 
-- All sales (cash/card) are **fiscalized** through VchasnoKasa; a fiscal receipt is created for every transaction.
-- A Z-report is printed automatically when the shift closes.
-- Top-ups to a client's personal account are also fiscalized (as a regular transaction). Deductions from the personal account are **NOT** fiscalized (because the funds were already fiscalized at the time of the top-up).
+- Switch **Використовувати менеджер пристроїв** (Use the device manager), field **URL менеджера** (Manager URL, default `http://localhost:9999`), buttons **Зберегти URL** (Save URL) and **Перевірити зʼєднання** (Check connection) (result: «Менеджер підключено» (Manager connected) / «Менеджер недоступний» (Manager unavailable)).
+- Links **Завантажити девайс менеджер** (Download the device manager): **Windows**, **Mac Apple Silicon**, **Mac Intel**, **Android-планшет** (Android tablet).
+- **POS-термінали** (POS terminals) — buttons **Знайти пристрої** (Find devices), **Додати вручну** (Add manually; fields **Банк / протокол** (Bank / protocol), **IP-адреса термінала** (Terminal IP address), **Порт** (Port), **Назва (не обовʼязково)** (Name, optional), button **Додати та перевірити** (Add and check)) and **Перевірити** (Check). Column **Звʼязок** (Connection): **Відповідає** (Responds) / **Не відповідає** (Does not respond) / **Не перевірявся** (Not checked).
+- Printers — **Зареєструвати** (Register), **Тестовий друк** (Test print), **Видалити реєстрацію** (Remove registration); **Принтер для чеків** (Receipt printer), **Принтер цінників** (Label printer), switch **Друкувати чек після оплати** (Print a receipt after payment).
 
-> ℹ️ The **X Report** and **End-of-Day Report** buttons on the [POS](/en/menu/pos) page are available **whenever a shift is open**, regardless of the fiscal integration. Without it, these reports show a summary of cash flow for the shift and for the day; with it, they additionally include fiscal data.
+If a POS terminal is registered and the device manager is on, payment with the **Картка** (Card) method goes through the terminal. Otherwise a card payment is recorded without a terminal — see [Card payment without a terminal](/en/pages/processing#_612-card-payment-without-a-terminal).
 
----
+### Open Shift
 
-## Import
+While a shift is open:
 
-> Importing clients from an Excel file.
+- the fiscal integration cards **Вчасно Каса (фіскалізація)** and **Checkbox (фіскалізація)** are locked: they cannot be activated, deactivated or changed;
+- the warning «Зміна відкрита — налаштування фіскальних інтеграцій заблоковані» (The shift is open — fiscal integration settings are locked) is shown above the fiscal integration cards;
+- an attempt to save changes to a fiscal integration is not executed, and the message «Закрийте зміну перш ніж змінювати фіскальні інтеграції» (Close the shift before changing fiscal integrations) is shown.
 
-[More about importing](/en/pages/setup#_4-7-2-importing-clients-from-an-excel-file)
+The **Пристрої (менеджер пристроїв)** (Devices) and **Monobank Acquiring** cards can be changed regardless of the shift state.
+
+### Fiscalization of Operations
+
+When a fiscal integration is active:
+
+- sales (cash, card, non-cash) are fiscalized; a fiscal receipt is created for each operation;
+- a debt payment is fiscalized at the moment of payment; a sale marked **Сплатити пізніше** (Pay later) creates no receipt — see [Debts](/en/pages/processing#_613-debts);
+- a personal account top-up is fiscalized; a payment from the personal account is not fiscalized;
+- opening and closing a shift is synchronized with the integration, the Z-report is shown in the **Зміну закрито** (Shift closed) window — see [Opening and Closing a Shift with a Fiscal Integration](/en/pages/shifts#_23-opening-and-closing-a-shift-with-a-fiscal-integration).
+
+> ℹ️ The **X Звіт** (X report) and **Звіт за день** (Daily report) buttons on the [Cash Register](/en/menu/pos) page are available while a shift is open, regardless of the fiscal integration. With an integration, the reports also contain fiscal data.
 
 ---
 
 ## Information
 
-> Technical information.
-
-- **Version** — the current version of the application.
-- Date and source of the last update.
-- Support contacts.
+App (**App**) and server (**Api**) versions, the contact address and the **Посібник користувача** (User guide) link. Details — [Information](/en/login/info).
 
 ---
 
 ## Mobile Application
 
-> Tools for working with the studio's mobile PWA client app.
+> Settings of the studio's client mobile app (tab **Мобільний додаток**). The tab is split into sections that can be collapsed; collapsed sections are remembered in the browser. Switches are saved immediately after a change.
 
-> ℹ️ A description of the app **from the user's point of view** (installation, sign-in, booking a workout, the card, notifications) is in section [7. Mobile Application](/en/mobile/mobile).
+> ℹ️ The app as seen by the client is described in [7. Mobile app](/en/mobile/mobile).
 
 ![](../../_media/admin-panel-mobile.png ":size=600x362")
 
-### Main Toggles
+The **Онлайн-запис і вхід** (Online booking and sign-in), **Оцінки й відгуки** (Ratings and reviews), **SMS-сповіщення** (SMS notifications) and **Самореєстрація через застосунок** (Self check-in through the app) sections are shown only when the **Використовувати мобільний додаток для клієнтів** (Use the mobile app for clients) switch is on.
 
-- **Use the mobile app for clients** — the main toggle. To turn it off, you must type the confirmation **SWITCHOFF**: along with the app, clients lose the ability to book online.
-- **Confirm a guest booking by SMS** — allows a person without an account to confirm a booking with an SMS code, not only through Telegram.
-- **Offer to rate the session** — after an attended session, the client is offered the chance to leave a rating.
+### App
 
-### Visit Reminders
+The **Використовувати мобільний додаток для клієнтів** switch turns on the studio's client app: studio selection, booking, the public page.
 
-- **Remind about the visit** — how many hours before the session to send a reminder. A value of `0` disables the reminder.
-- Next to it, the number of SMS already used from the studio's monthly limit is shown.
-- **SMS reminder text** — the studio's own text. The date and time are inserted automatically, so only the words before and after them can be edited. A counter shows how many of the 57 characters remain: an SMS cannot hold more than that, and each additional one is billed separately.
+If clients or coaches of the studio are already registered in the app, turning it off is confirmed in the «Вимкнути мобільний додаток?» (Turn off the mobile app?) window: the studio stops appearing in the app (in studio selection, in the phone number search during client and coach registration), and connected clients and coaches no longer see it in their list. The **Вимкнути** (Turn off) button becomes active after **SWITCHOFF** is typed in capital letters.
 
-### Public Studio Link
+### Online Booking and Sign-in
 
-A link to the studio's public page together with a QR code. Anyone can use it to view the schedule and book a session without an account.
+| Switch | Effect |
+| --- | --- |
+| **Онлайн запис із веб сторінки** (Online booking from the web page) | If off, the studio's public page shows «Онлайн запис тимчасово недоступний» (Online booking is temporarily unavailable); the schedule stays visible. |
+| **Підтверджувати записи з веб сторінки** (Confirm bookings from the web page) | A booking from the web page first reaches the administrator as a notification with the **Підтвердити** (Confirm) / **Відхилити** (Reject) buttons. Until confirmed, the seat is not counted for the person; after confirmation the person receives a message. Bookings from the app are not affected. On by default. |
 
-### Link + QR Code
+**Публічне посилання на студію** (Public studio link) — the link to the studio's public page (`<app link>/s/<studio identifier>`), the **Копіювати** (Copy) button and a QR code. Through the link clients view the studio and the schedule without registering, then sign in to book.
 
-- **App link** — the PWA install URL (defaults to `https://app.fitshandler.com`). Clickable, opens in a new tab.
-- **Download QR Code** — the button downloads a PNG with a QR code that leads to this link. It can be printed and shown to the client at the studio.
-- **Download Banner** — a print-ready promotional banner with the QR code and the app's logo.
+### Ratings and Reviews
 
-### User Counters
+| Switch | Effect |
+| --- | --- |
+| **Пропонувати оцінити заняття** (Offer to rate the session) | After a visited session the client sees an offer in the app to rate it (stars and a review). The rating is shown in [Reports](/en/menu/reports). |
+| **Пропонувати оцінити заняття в смс (для клієнтів без застосунку)** (Offer to rate the session by SMS (for clients without the app)) | After the session the client receives a message with a rating link. Channels — see [Messages to clients](/en/pages/processing#_614-messages-to-clients). Active only with **Пропонувати оцінити заняття** on. The message with the rating link is sent only when both switches are on; for this message they apply to every delivery channel. |
+| **Показувати рейтинг клієнтам** (Show the rating to clients) | Studio stars, reviews and the rating in the studio list. If off, clients do not see the rating; ratings are still collected and shown in Reports. Active only with **Пропонувати оцінити заняття** on. |
 
-An information block showing how many are registered in the app:
+### SMS Notifications
 
-- **Registered clients: N** — how many of the studio's clients have connected the mobile app.
-- **Registered coaches: N** — how many of the studio's coaches have an active account in the app.
+| Setting | Effect |
+| --- | --- |
+| **SMS про відміну заняття** (SMS about a cancelled session) | A paid SMS to clients without the app when the studio cancelled a session. |
+| **SMS про скасування запису** (SMS about a cancelled booking) | A paid SMS when the studio cancelled the client's booking. No message is sent about a cancellation made by the client in the app. |
+| **SMS про перенесення заняття** (SMS about a moved session) | A paid SMS when the date or time of a session changed. |
+| **SMS про підтвердження запису** (SMS about a confirmed booking) | A paid SMS that a booking from the studio web page is confirmed. |
+| **SMS-нагадування про візит** (SMS visit reminder) | A paid SMS reminder about the session, the number of hours set by the **Нагадувати про візит** field. |
+| **Нагадувати про візит** (Remind about the visit) | Field **Годин** (Hours), from `0` to `24`: how many hours before the session to remind clients without the app. `0` turns reminders off. The value is saved automatically. |
+
+Each paid SMS to a client has its own switch. All SMS switches are off by default; until a switch is turned on, the matching SMS is not sent.
+
+Delivery order of a message to a client:
+
+1. A client with the app receives a notification in the app.
+2. A client whose card is linked to one Telegram bot chat receives the message from the bot.
+3. Other clients receive the message from the Fitshandler Telegram account at the phone number on the client card.
+4. If the Telegram account did not deliver the message, an SMS is sent, provided the matching switch is on, the card has a phone number and the monthly SMS limit is not used up.
+5. If the client card is linked to several different Telegram bot chats and neither the Telegram account nor the SMS delivered the message, the bot sends it to one of these chats.
+6. If no channel is available, the message is not sent.
+
+The app and Telegram do not depend on the SMS switches, except the session rating switches, and are not counted in the SMS limit.
+
+Under the **Нагадувати про візит** field, SMS usage is shown: «SMS цього періоду: <sent> / <limit> (залишилось <N>)» (SMS this period: … (N left)) or «SMS цього періоду: без ліміту» (SMS this period: no limit).
+
+**Message texts.** Each message kind has its own text in Ukrainian and in English (English — for those who booked from the English page):
+
+| Block | When sent | Default text |
+| --- | --- | --- |
+| **Текст SMS-нагадування** (SMS reminder text) | Reminder before the visit | «Fitshandler: <date>.» |
+| **Текст SMS про відміну заняття** (Text of the SMS about a cancelled session) | The studio removed the session from the schedule | «Тренування на яке ви записані <date> було відмінено.» (The class you booked on <date> has been cancelled.) |
+| **Текст SMS про скасування запису** (Text of the SMS about a cancelled booking) | A particular person's booking was cancelled | «Ваш запис на тренування <date> було скасовано.» (Your booking for <date> has been cancelled.) |
+| **Текст повідомлення про перенесення заняття** (Text of the message about a moved session) | The session was moved; the text contains the new time | «Час вашого тренування змінено. <date>» (Your class has been moved. <date>) |
+
+- The text consists of the **Текст до дати** (Text before the date) field, the fixed **дата та час** (date and time) chip (substituted automatically) and the **Текст після дати** (Text after the date) field.
+- The text, including the date, is up to 500 characters. Under the fields the number of characters and the number of SMS the message is billed as are shown: one SMS holds 70 Cyrillic characters (67 in each part of a longer message) or 160 Latin characters (153).
+- The **Приклад:** (Example:) line shows the finished message.
+- The **Зберегти текст** (Save text) button saves the text; the message «Текст збережено» (Text saved) appears.
+
+### Self Check-in Through the App
+
+| Setting | Effect |
+| --- | --- |
+| **Реєстрація через мобільний застосунок** (Registration through the mobile app) | The client scans the studio QR code at the reception and registers for the workout; the membership is deducted automatically. |
+| **Реєстрація тільки з записом** (Registration only with a booking) | The client registers only for a workout they are booked for. If off, the client sees today's workouts with free places and can register for any of them. On by default. |
+| **Приймати оплату** (Accept payment) | The switch is inactive. |
+| **Реєстрація в борг** (Registration on credit) | The switch is inactive. |
+
+The **Банер для рецепції** (Reception banner) block (shown when self check-in is on): the **Зали** (Rooms) list and the **Показати банер** (Show banner) button, which opens a banner with a QR code. The code changes every hour. Self check-in rules — [Self check-in by QR code](/en/pages/processing#_611-self-check-in-by-qr-code).
+
+### App Link and Messages
+
+- **App link** — the app installation address (`https://app.fitshandler.com`) and a QR code for it.
+- **Завантажити QR код** (Download QR code) — downloads the QR code image.
+- **Завантажити баннер** (Download banner) — downloads a print-ready banner with the QR code.
+- **Зареєстровано клієнтів: N** (Registered clients), **Зареєстровано тренерів: N** (Registered coaches) — the number of the studio's clients and coaches connected to the app.
 
 ### Send a Message from the Studio
 
-> Sends a push notification to all app users in the chosen audience.
+The **Надіслати повідомлення від студії у мобільний додаток** (Send a message from the studio to the mobile app) block:
 
-- **Choose message type** — a dropdown list:
-  - **Clients** — all clients receive the push.
-  - **Coaches** — all coaches receive the push.
-  - **All** — both audiences.
-- **Text editor** — supports formatting (bold/italic/links). Has a length limit; exceeding it shows the error "Message is empty or too long."
-- **Send** — the button becomes active once an audience is chosen and text is entered. Clicking it immediately queues the message for delivery to all devices.
+- **Виберіть тип повідомлення** (Select the message type) — **Повідомлення клієнтам** (Message to clients) or **Повідомлення тренерам** (Message to coaches).
+- A text editor with formatting. If the text is empty or longer than 4000 characters including markup, «Повідомлення пусте або занадто довге» (The message is empty or too long) is shown.
+- The **Надіслати** (Send) button is active once a message type is selected. After sending, «Повідомлення успішно надіслано» (Message sent successfully) appears.
+
+The message is delivered only to the mobile app, marked «Студія: <name>», to users who have this notification type enabled. It is not sent through Telegram or SMS.
 
 ---
 
 ## Reminders
 
-> Custom reminders for studio staff: one-off or recurring entries with a date, time, and text. Not to be confused with visit reminders sent to clients — those are configured on the [Mobile Application](#mobile-application) tab.
+> Custom reminders for studio staff (tab **Нагадування**). Visit reminders for clients are set on the [Mobile Application](#mobile-application) tab.
 
----
+Table: **Назва** (Name), **Коли** (When), **Активне** (Active), **Дії** (Actions). The **Додати** (Add) button opens the **Нове нагадування** (New reminder) window (when editing — **Редагувати нагадування**, Edit reminder):
 
-## Studio Information
+- **Назва \*** — required;
+- **Опис** (Description);
+- **Тип** (Type) — one-off or recurring;
+- **Дата і час** (Date and time); for a recurring one — **Періодичність** (Frequency), **З числа** (From day), **До числа** (To day);
+- the **Активне** switch.
 
-> This tab appears when the mobile app for clients is enabled. Everything filled in here is shown to the client in the app, in the studio's header and in the **"About Us"** window.
-
-- **Studio Name** — used in the app, the Telegram bot, and on fiscal receipts.
-- **Studio Logo** — the image the client sees next to the name.
-- **About Us** — a description of the studio.
-- **Photos** — up to ten gallery photos.
-- **City** — besides appearing on the studio card, it is used for the city filter in the list of studios.
-- **Phone** and **Address** — contact details the client sees in the studio's header and in the "About Us" window.
-
-Changes are saved with the **Save** button.
-
-> ℹ️ While these fields are empty, only the name and logo are shown in the app: the **"About Us"** button is always present, but inside it there will be a message that no information is available yet.
+Buttons **Відміна** (Cancel) and **Зберегти**. The reminder appears in the studio notifications at the given time.
 
 ---
 
 ## Categories
 
-> The **Categories** tab (previously in [Reports](/en/menu/reports)). Categories are used for calculating coach salaries and, optionally, for linking to a plan.
-
-**Table columns:**
+> Workout categories (tab **Категорії**) for coach salary calculation and linking to a membership.
 
 | Column | Description |
 | --- | --- |
-| **Name** | The category name (for example, "Group", "Personal", "Kids"). |
-| **Category base rate** | The amount in UAH used in the salary formula. |
-| **Rate type** | **Per Person** (`PerPerson`) — the number of clients is counted and multiplied by the rate. **Per Workout** (`PerWorkout`) — the number of workouts held is counted. |
-| **Plan** | An optional link to a specific plan (for categories under personal plans). |
-| **Actions** | Edit / Delete. |
+| **Назва** (Name) | Category name |
+| **Базова ставка категорії** (Category base rate) | Amount in UAH used in the salary calculation |
+| **Тип ставки** (Rate type) | **За людину** (Per person) — number of clients × rate; **За тренування** (Per workout) — number of workouts × rate |
+| **Абонемент** (Membership) | Membership linked to the category |
+| **Дії** (Actions) | Edit / Delete |
 
-**Search** — a field above the table, searches by name.
+The search field above the table searches by name. Calculation — [Calculating coach salaries](/en/pages/processing#_63-calculating-coach-salaries).
 
-### Add / Edit Category
+### Add / Edit a Category
 
-> The **+ Add Category** button opens a modal. The same modal opens when you click **Edit** on a row.
+The **Додати категорію** (Add category) button or the edit button in a row opens the form:
 
-**Fields:**
+- **Назва** — required, at least 3 characters («Мінімум 3 символи», Minimum 3 characters);
+- **Базова ставка** (Base rate) — amount in UAH;
+- **Тип ставки** — **За людину** / **За тренування**;
+- **Абонемент** — required for **За тренування** (marked `*`), optional for **За людину**. Under the field «Ціна: N грн» (Price: N UAH) is shown.
 
-- **Name** — required.
-- **Base rate** — required, a number in UAH.
-- **Rate type** — **Per Person** / **Per Workout**.
-- **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). Reasoning: with Per Workout, the salary for the category depends on the client's specific plan; without a plan it cannot be calculated unambiguously.
+Buttons **Закрити** (Close) and **Зберегти**. If no membership is selected for **За тренування**, the server rejects saving with the message «Абонемент обов'язковий для типу 'За тренування'» (A membership is required for the 'Per workout' type).
 
-> ℹ️ If **Per Workout** is chosen without a plan — the **Save** button will be inactive. First create or choose the corresponding plan.
+---
+
+## Studio Information
+
+> Information the client sees in the app in the studio header, in the **Про нас** (About us) window and on the studio's public page (tab **Інформація про студію**).
+
+- **Назва студії** (Studio name) — used in the app, messages to clients and fiscal receipts.
+- **Лого студії** (Studio logo) — button **Завантажити лого** (Upload logo); **Видалити фото** (Delete photo) removes the logo. File size — up to 5 MB.
+- **Про нас** — studio description.
+- **Фото студії** (Studio photos) — up to 10 photos shown to the client in «Про нас». Photos are saved right after they are selected.
+- **Місто** (City) — also used to search for the studio by city.
+- **Телефон** (Phone, format `+380XXXXXXXXX`) and **Адреса** (Address).
+
+Text fields are saved with the **Зберегти інформацію** (Save information) button; until the changes are saved, «Є незбережені зміни» (There are unsaved changes) is shown next to it.
+
+## Devices
+
+> The tab shows the studio computers with offline mode enabled, the date each one last contacted the server, and the **Revoke** ("Відкликати") button. The tab is visible only to the **Super Admin** and **Admin** roles.
+
+Full description: [Offline mode](/en/pages/offline-mode#device-list-and-revoking).
 
 ---
 

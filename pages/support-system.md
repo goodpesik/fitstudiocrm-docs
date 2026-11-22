@@ -1,217 +1,147 @@
-# Система підтримки (Support Tickets)
+# Система підтримки
 
 ## Огляд
 
-Вбудована система тікетів підтримки для адміністраторів студії. Тікет створюється в адмін-панелі, потрапляє в чергу на Pi-сервер, де Claude Code аналізує його і автоматично відповідає, задає уточнюючі питання, або ескалює як баг/фіча-реквест у Jira.
+Вбудована система звернень підтримки для адміністраторів студії. Звернення створюється в адмін-панелі й передається сервісу підтримки Fitshandler (handler-support), який аналізує звернення і відповідає в зверненні: надає відповідь, ставить уточнювальне питання або заводить дефект.
 
-Клієнт (адмін) ніколи не бачить ні Jira, ні Pi — комунікація завжди через вікно **Підтримка**, яке відкривається однойменною кнопкою у шапці адмін-додатку.
-
----
-
-## Архітектура
-
-```
-┌─────────────────────┐         ┌──────────────────────────┐
-│ fitstudiocrm-app    │         │ fitstudiocrm-server      │
-│ /support route      │ <─────> │ /support/* (client)      │
-│   list / detail     │  REST   │ /support-internal/*      │
-│   create + screen   │         │   (HMAC-signed, no auth) │
-│   10-min poll modal │         │ DB: support_ticket / msg │
-└─────────────────────┘         └────────────┬─────────────┘
-                                             │ POST /v1/ticket-event
-                                             │ (HMAC, request_id)
-                                             ▼
-┌──────────────────────────────────────────────────────────┐
-│ Pi: handler-support (NestJS)                             │
-│ ─ POST /v1/ticket-event → Redis priority queues          │
-│ ─ GET  /health, /health/metrics                          │
-│ ─ HMAC middleware, request_id dedup                      │
-└────────────┬─────────────────────────────────────────────┘
-             │ systemd timer (кожні 10 хвилин)
-             ▼
-┌──────────────────────────────────────────────────────────┐
-│ Claude one-shot (process-queue.ts)                       │
-│ ─ Pop тікет з Redis (priority order)                     │
-│ ─ Fetch деталі через /support-internal                   │
-│ ─ Рішення: answer | question | escalate                  │
-│ ─ POST коментар назад через /support-internal            │
-│ ─ Якщо escalate → Jira issue + Slack alert              │
-└──────────────────────────────────────────────────────────┘
-```
+Спілкування з підтримкою ведеться у вікні **Підтримка**, яке відкривається однойменною кнопкою в хедері адмін-панелі.
 
 ---
 
-## База даних
+## Вікно «Підтримка»
 
-### support_ticket
+**Доступ:** кнопка **Підтримка** в хедері — ролі **Супер Адмін** і **Адмін**. На кнопці відображається кількість звернень зі статусом **Нова відповідь**.
 
-| Поле | Тип | Опис |
-|------|-----|------|
-| id | UUID (PK) | |
-| subject | VARCHAR | Тема тікета |
-| body | TEXT | Опис проблеми |
-| priority | ENUM | normal, sos |
-| status | ENUM | open, awaiting_user, resolved, closed |
-| createdByUserId | UUID | ID адміна що створив |
-| createdAt | TIMESTAMPTZ | |
-| updatedAt | TIMESTAMPTZ | |
-| lastNotifiedAt | TIMESTAMPTZ | Коли останній раз Pi був повідомлений |
+**Список звернень** — колонки **Тема**, **Статус**, **Пріоритет**, **Оновлено**. Кнопки **Новий тікет**, **Посібник користувача** (відкриває цю документацію) і **Запланувати консультацію**.
 
-### support_message
+**Новий тікет** — поля **Тема \*** («Коротко опишіть проблему»), **Опис \*** («Детально опишіть проблему...»), **Пріоритет** (**Звичайний** / **SOS**). Кнопка **Створити**; якщо тема або опис порожні — «Заповніть тему та опис». Після створення — «Тікет створено».
 
-| Поле | Тип | Опис |
-|------|-----|------|
-| id | UUID (PK) | |
-| ticketId | UUID (FK) | → support_ticket.id |
-| authorKind | ENUM | user, support |
-| authorUserId | UUID | Тільки для user |
-| body | TEXT | Текст повідомлення |
-| kind | ENUM | text, answer, question, defect_created |
-| jiraKey | VARCHAR | Ключ Jira issue (тільки для defect_created) |
-| createdAt | TIMESTAMPTZ | |
+**Звернення** відкривається в тому самому вікні у вигляді листування. Тип повідомлення підтримки позначається: **Відповідь**, **Уточнення**, **Дефект**. Поле «Ваше повідомлення...», кнопка вкладення файлів і **Надіслати**. Кнопка **Закрити звернення** закриває звернення («Тікет закрито»). Кнопка **Назад** повертає до списку.
 
-### support_attachment
+Поле «Відповісти як підтримка...» і кнопка **Надіслати як підтримка** відображаються лише ролі **Супер Адмін** і лише для звернення, яке не закрите. Відповідь записується як повідомлення підтримки. Відповідати від імені підтримки може лише роль **Супер Адмін**; запит від будь-якої іншої ролі відхиляється з кодом 403. Статус звернення для цього запиту сервер не перевіряє.
 
-| Поле | Тип | Опис |
-|------|-----|------|
-| id | UUID (PK) | |
-| messageId | UUID (FK) | → support_message.id |
-| filename | VARCHAR | Оригінальне ім'я файлу |
-| mimeType | VARCHAR | |
-| sizeBytes | INT | |
-| storageUrl | VARCHAR | Шлях на FS |
-| createdAt | TIMESTAMPTZ | |
+**Статуси звернення:**
 
----
+| Статус | Значення |
+| --- | --- |
+| **Відкрито** (`open`) | Звернення очікує обробки підтримкою |
+| **Нова відповідь** (`awaiting_user`) | Підтримка відповіла або поставила питання. Коли користувач відкриває звернення, статус змінюється на **Відкрито** |
+| **Вирішено** (`resolved`) | Звернення вирішено |
+| **Закрито** (`closed`) | Звернення закрито |
 
-## API Endpoints
-
-### Client-facing (Firebase auth, Admin/SuperAdmin)
-
-| Метод | Шлях | Опис |
-|-------|------|------|
-| GET | /support/tickets | Список усіх тікетів студії, без фільтра за автором |
-| GET | /support/tickets/:id | Деталі + повідомлення + вкладення |
-| POST | /support/tickets | Створити тікет {subject, body, priority} |
-| POST | /support/tickets/:id/messages | Додати повідомлення + файли (до 5) |
-| GET | /support/unread-count | Кількість тікетів зі статусом awaiting_user |
-
-### Внутрішні маршрути (без перевірки входу Firebase)
-
-> ⚠️ Наразі ці маршрути не захищені підписом — це відомий недолік, заведений окремим тікетом. Підпис формується лише для вихідних запитів до сервера підтримки.
-
-| Метод | Шлях | Опис |
-|-------|------|------|
-| GET | /support-internal/ticket/:id?appId= | Повний тікет для Claude |
-| POST | /support-internal/ticket/:id/comment?appId= | Claude постить відповідь |
-| GET | /support-internal/attachment-data/:id?appId= | Base64 вкладення |
-| GET | /support-internal/attachment/:id/file?appId= | Raw файл (download) |
+**Оновлення.** Кількість звернень зі статусом **Нова відповідь** перевіряється кожні 10 хвилин. Якщо вона зросла, відображається вікно «Вам відповіла підтримка» з кнопкою **Зрозуміло**; вікно лише інформує і звернення не відкриває.
 
 ---
 
 ## Обмеження
 
-- **місячний ліміт тікетів** на студію (за замовчуванням без обмеження). Роль Супер Адмін під ліміт не підпадає
-- **Пріоритет SOS** — окремий рівень для термінових звернень, у якого **власна місячна квота**, окрема від звичайних тікетів. Коли квота SOS вичерпана, цей варіант стає недоступним і поруч зʼявляється пояснення.
+| Обмеження | Значення | Повідомлення |
+| --- | --- | --- |
+| Звернень на місяць на студію | Без обмеження | «Місячний ліміт тікетів вичерпано. Створити новий тікет можна буде наступного місяця.» (`TICKET_MONTHLY_LIMIT`) |
+| SOS-звернень на місяць на студію | Без обмеження | «Місячний ліміт SOS-звернень вичерпано. Оберіть звичайний пріоритет або зачекайте до наступного місяця.» (`SOS_MONTHLY_LIMIT`) |
+| Повідомлень користувача поспіль без відповіді підтримки | 3 | «Ви надіслали 3 повідомлення підряд. Дочекайтеся відповіді підтримки, щоб продовжити.» (`COMMENT_CONSECUTIVE_LIMIT`) |
+| Файлів на повідомлення | 5 (зображення або PDF) | — |
+| Розмір файлу | 5 МБ | — |
 
-**3 повідомлення поспіль** — більше не можна надіслати, поки підтримка не відповіла (Супер Адміна це не стосується)
-- **5 файлів** максимум на повідомлення
-
----
-
-## Frontend (fitstudiocrm-app)
-
-**Де знаходиться:** кнопка **Підтримка** у шапці адмін-додатку — доступ Admin/SuperAdmin.
-
-**Компоненти:**
-- Список тікетів (фільтра за статусом немає)
-- Деталі тікета відкриваються в тому самому вікні (messenger-стиль: user праворуч, Support Bot ліворуч)
-- Modal створення — тема, опис, пріоритет
-- Reply box — textarea + file attach
-
-**Poll:** `useSupportStore` опитує `GET /support/unread-count` кожні 10 хвилин. Якщо з'явились нові відповіді — вікно «Вам відповіла підтримка» з кнопкою **Зрозуміло**, яка лише закриває його — автоматичного переходу до тікета немає.
+Місячні ліміти рахуються з першого числа календарного місяця (UTC). На роль **Супер Адмін** місячні ліміти й обмеження повідомлень поспіль не поширюються.
 
 ---
 
-## handler-support (Pi NestJS)
+## Обробка звернень
 
-**Репозиторій:** `goodpesik/handler-support`
+- Під час створення звернення й кожного нового повідомлення користувача сервер студії надсилає подію сервісу підтримки. Повторне надсилання того самого звернення не створює дубліката.
+- Звернення з пріоритетом **SOS** обробляються щохвилини і першими; звичайні — кожні 10 хвилин.
+- Рішення сервісу підтримки:
 
-**Компоненти:**
-- `ticket-event.controller.ts` — прийом webhook, dedup, enqueue
-- `redis.service.ts` — priority queues (critical/high/medium/low), in_flight ZSET
-- `hmac.middleware.ts` — HMAC-SHA256 верифікація з anti-replay (±5 хв)
-- `health.controller.ts` — `/health` + `/health/metrics`
+| Рішення | Дія | Тип повідомлення (`kind`) |
+| --- | --- | --- |
+| `answer` | Відповідь з інструкцією | `answer` |
+| `question` | Уточнювальне питання | `question` |
+| `escalate` | Заведено дефект | `defect_created` |
 
-**Consumer:** `scripts/process-queue.ts`
-- Pop тікет з Redis (priority order)
-- Move до in_flight (visibility timeout 15 хв)
-- Fetch деталі + вкладення через product API
-- Побудова промпта + запуск Claude CLI
-- Parse JSON рішення (answer/question/escalate)
-- POST результат через `/support-internal`
-- При escalate: Jira issue (label `auto:support`) + Slack webhook
-- При timeout: Jira issue + Slack + fallback відповідь юзеру
-
-**Systemd:** timer кожні 10 хвилин → oneshot service.
+Відповіді надаються мовою звернення: текст кирилицею — українською, інакше — англійською.
 
 ---
 
-## HMAC схема
+## Технічна специфікація
 
-Headers на кожному запиті:
+### База даних
+
+#### support_ticket
+
+| Поле | Тип | Опис |
+|------|-----|------|
+| id | UUID (PK) | |
+| subject | VARCHAR | Тема звернення |
+| body | TEXT | Опис проблеми |
+| priority | ENUM | `normal`, `sos` |
+| status | ENUM | `open`, `awaiting_user`, `resolved`, `closed` |
+| createdByUserId | UUID | Користувач, який створив звернення |
+| createdAt | TIMESTAMPTZ | |
+| updatedAt | TIMESTAMPTZ | |
+| lastNotifiedAt | TIMESTAMPTZ | Час останнього повідомлення сервісу підтримки |
+
+#### support_message
+
+| Поле | Тип | Опис |
+|------|-----|------|
+| id | UUID (PK) | |
+| ticketId | UUID (FK) | → support_ticket.id |
+| authorKind | ENUM | `user`, `support` |
+| authorUserId | UUID | Лише для `user` |
+| body | TEXT | Текст повідомлення |
+| kind | ENUM | `text`, `answer`, `question`, `defect_created` |
+| jiraKey | VARCHAR | Ключ дефекту (лише для `defect_created`) |
+| createdAt | TIMESTAMPTZ | |
+
+#### support_attachment
+
+| Поле | Тип | Опис |
+|------|-----|------|
+| id | UUID (PK) | |
+| messageId | UUID (FK) | → support_message.id |
+| filename | VARCHAR | Оригінальне імʼя файлу |
+| mimeType | VARCHAR | |
+| sizeBytes | INT | |
+| storageUrl | VARCHAR | Шлях до файлу |
+| createdAt | TIMESTAMPTZ | |
+
+### API сервера студії
+
+**Маршрути адмін-панелі** (вхід користувача обовʼязковий):
+
+| Метод | Шлях | Опис |
+|-------|------|------|
+| GET | /support/tickets | Звернення студії |
+| GET | /support/tickets/:id | Звернення із повідомленнями та вкладеннями |
+| GET | /support/unread-count | Кількість звернень зі статусом `awaiting_user` |
+| GET | /support/limits | Місячні ліміти та залишок |
+| POST | /support/tickets | Створити звернення `{subject, body, priority}` |
+| POST | /support/tickets/:id/messages | Додати повідомлення та файли (до 5) |
+| POST | /support/tickets/:id/reply-as-support | Відповідь від імені підтримки `{body}`. Лише роль Супер Адмін; для будь-якої іншої ролі — 403 |
+| PATCH | /support/tickets/:id/status | Змінити статус звернення |
+
+**Внутрішні маршрути** (для сервісу підтримки; обовʼязковий підпис HMAC):
+
+| Метод | Шлях | Опис |
+|-------|------|------|
+| GET | /support-internal/ticket/:id?appId= | Повне звернення |
+| POST | /support-internal/ticket/:id/comment?appId= | Повідомлення підтримки в зверненні |
+| GET | /support-internal/attachment-data/:id?appId= | Вкладення в Base64 |
+| GET | /support-internal/attachment/:id/file?appId= | Файл вкладення |
+| GET | /support-internal/investigate/* | Читання даних студії для аналізу звернення |
+| POST | /support-internal/actions/client-plans/close | Закриття абонемента клієнта |
+
+### Підпис HMAC
+
+Заголовки кожного запиту між сервером студії та сервісом підтримки:
+
 ```
 X-Support-Product:    fitstudio
-X-Support-Timestamp:  <unix seconds>
+X-Support-Timestamp:  <unix-час у секундах або мілісекундах>
 X-Support-Request-Id: <UUID>
-X-Support-Signature:  HMAC-SHA256(secret, "METHOD\n/path\n{timestamp}\n{body}")
+X-Support-Signature:  HMAC-SHA256(secret, "METHOD\n/path?query\n{timestamp}\n{body}")
 ```
 
-Anti-replay: ±5 хвилин від поточного часу.
-
----
-
-## Claude рішення
-
-| Рішення | Дія | kind |
-|---------|-----|------|
-| answer | Покрокова інструкція | answer |
-| question | Уточнююче питання | question |
-| escalate | Баг/фіча → Jira + Slack | defect_created |
-
-Всі відповіді — **тільки українською**.
-
----
-
-## Environment variables
-
-### fitstudiocrm-server
-```
-HANDLER_SUPPORT_URL=http://pi:3200
-HANDLER_SUPPORT_SECRET=<HMAC secret>
-STORAGE_PATH=./uploads
-```
-
-### handler-support
-```
-PORT=3200
-REDIS_HOST=localhost
-REDIS_PORT=6379
-HMAC_SECRET_FITSTUDIO=<same secret>
-FITSTUDIO_API_URL=http://fitstudio:3100
-HANDLER_SUPPORT_SECRET=<same secret>
-JIRA_API_TOKEN=<token>
-JIRA_BASE_URL=https://goodpesyk.atlassian.net
-JIRA_PROJECT_KEY=FC
-JIRA_ASSIGNEE=levinets@gmail.com
-SLACK_SUPPORT_WEBHOOK_URL=<webhook>
-```
-
----
-
-## Roadmap
-
-- ✅ Phase 1 — Backend entities, migration, REST, frontend /support page, handler-support NestJS + Redis
-- ✅ Phase 2 — Claude one-shot consumer, prompt, systemd
-- ✅ Phase 3 — Jira escalation + Slack alerts
-- Phase 4 — Secret rotation, multi-product (Barhandler, Petshandler), pgvector docs indexing, monitoring
+- Підписується повний шлях разом із параметрами запиту і тіло запиту без змін.
+- Запит відхиляється (`401`), якщо підпис або час відсутні, підпис не збігається або час відрізняється від поточного більш ніж на 5 хвилин.

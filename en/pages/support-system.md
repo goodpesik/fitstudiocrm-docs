@@ -1,76 +1,100 @@
-# Support System (Support Tickets)
+# Support System
 
 ## Overview
 
-A built-in support ticket system for studio administrators. A ticket is created in the admin panel, enters a queue on the Pi server, where Claude Code analyzes it and automatically answers, asks clarifying questions, or escalates it as a bug/feature request in Jira.
+A built-in support request system for studio administrators. A request is created in the admin panel and passed to the Fitshandler support service (handler-support), which analyses the request and replies in the request: gives an answer, asks a clarifying question or files a defect.
 
-The client (admin) never sees Jira or the Pi server — communication always happens through the **Support** window, which is opened via the button of the same name in the header of the admin app.
-
----
-
-## Architecture
-
-```
-┌─────────────────────┐         ┌──────────────────────────┐
-│ fitstudiocrm-app    │         │ fitstudiocrm-server      │
-│ /support route      │ <─────> │ /support/* (client)      │
-│   list / detail     │  REST   │ /support-internal/*      │
-│   create + screen   │         │   (HMAC-signed, no auth) │
-│   10-min poll modal │         │ DB: support_ticket / msg │
-└─────────────────────┘         └────────────┬─────────────┘
-                                             │ POST /v1/ticket-event
-                                             │ (HMAC, request_id)
-                                             ▼
-┌──────────────────────────────────────────────────────────┐
-│ Pi: handler-support (NestJS)                             │
-│ ─ POST /v1/ticket-event → Redis priority queues          │
-│ ─ GET  /health, /health/metrics                          │
-│ ─ HMAC middleware, request_id dedup                      │
-└────────────┬─────────────────────────────────────────────┘
-             │ systemd timer (every 10 minutes)
-             ▼
-┌──────────────────────────────────────────────────────────┐
-│ Claude one-shot (process-queue.ts)                       │
-│ ─ Pop ticket from Redis (priority order)                 │
-│ ─ Fetch details via /support-internal                    │
-│ ─ Decision: answer | question | escalate                 │
-│ ─ POST comment back via /support-internal                │
-│ ─ On escalate → Jira issue + Slack alert                 │
-└──────────────────────────────────────────────────────────┘
-```
+Communication with support takes place in the **Підтримка** (Support) window, opened by the button of the same name in the admin panel header.
 
 ---
 
-## Database
+## The «Підтримка» window
 
-### support_ticket
+**Access:** the **Підтримка** button in the header — the **Супер Адмін** (Super Admin) and **Адмін** (Admin) roles. The button shows the number of requests with the **Нова відповідь** (New reply) status.
+
+**Request list** — columns **Тема** (Subject), **Статус** (Status), **Пріоритет** (Priority), **Оновлено** (Updated). Buttons **Новий тікет** (New ticket), **Посібник користувача** (User guide, opens this documentation) and **Запланувати консультацію** (Schedule a consultation).
+
+**New request** — fields **Тема \*** («Коротко опишіть проблему», Briefly describe the problem), **Опис \*** (Description; «Детально опишіть проблему...», Describe the problem in detail...), **Пріоритет** (**Звичайний** (Normal) / **SOS**). The **Створити** (Create) button; if the subject or description is empty — «Заповніть тему та опис» (Fill in the subject and description). After creation — «Тікет створено» (Ticket created).
+
+**A request** opens in the same window as a conversation. The type of a support message is marked: **Відповідь** (Answer), **Уточнення** (Clarification), **Дефект** (Defect). The «Ваше повідомлення...» (Your message...) field, the file attachment button and **Надіслати** (Send). The **Закрити тікет** (Close ticket) button closes the request («Тікет закрито», Request closed). The **Назад** (Back) button returns to the list.
+
+The «Відповісти як підтримка...» (Reply as support...) field and the **Надіслати як підтримка** (Send as support) button are shown only to the **Супер Адмін** role and only for a ticket that is not closed. The reply is recorded as a support message. Only the **Супер Адмін** role can reply on behalf of support; a request from any other role is rejected with code 403. The server does not check the ticket status for this request.
+
+**Request statuses:**
+
+| Status | Meaning |
+| --- | --- |
+| **Відкрито** (Open, `open`) | The request is waiting to be processed by support |
+| **Нова відповідь** (New reply, `awaiting_user`) | Support answered or asked a question. When the user opens the request, the status changes to **Відкрито** |
+| **Вирішено** (Resolved, `resolved`) | The request is resolved |
+| **Закрито** (Closed, `closed`) | The request is closed |
+
+**Updates.** The number of requests with the **Нова відповідь** status is checked every 10 minutes. If it has grown, the «Вам відповіла підтримка» (Support has replied to you) window with the **Зрозуміло** (Got it) button is shown; the window only informs and does not open the request.
+
+---
+
+## Limits
+
+| Limit | Value | Message |
+| --- | --- | --- |
+| Requests per month per studio | No limit | «Місячний ліміт тікетів вичерпано. Створити новий тікет можна буде наступного місяця.» (The monthly ticket limit is used up. A new ticket can be created next month.) (`TICKET_MONTHLY_LIMIT`) |
+| SOS requests per month per studio | No limit | «Місячний ліміт SOS-звернень вичерпано. Оберіть звичайний пріоритет або зачекайте до наступного місяця.» (The monthly SOS limit is used up. Choose the normal priority or wait until next month.) (`SOS_MONTHLY_LIMIT`) |
+| User messages in a row without a support reply | 3 | «Ви надіслали 3 повідомлення підряд. Дочекайтеся відповіді підтримки, щоб продовжити.» (You have sent 3 messages in a row. Wait for the support reply to continue.) (`COMMENT_CONSECUTIVE_LIMIT`) |
+| Files per message | 5 (images or PDF) | — |
+| File size | 5 MB | — |
+
+Monthly limits are counted from the first day of the calendar month (UTC). Monthly limits and the messages-in-a-row restriction do not apply to the **Супер Адмін** role.
+
+---
+
+## Request processing
+
+- When a request is created and on each new user message, the studio server sends an event to the support service. Sending the same request again does not create a duplicate.
+- Requests with the **SOS** priority are processed every minute and first; normal ones — every 10 minutes.
+- Support service decisions:
+
+| Decision | Action | Message type (`kind`) |
+| --- | --- | --- |
+| `answer` | An answer with instructions | `answer` |
+| `question` | A clarifying question | `question` |
+| `escalate` | A defect is filed | `defect_created` |
+
+Replies are given in the language of the request: Cyrillic text — in Ukrainian, otherwise — in English.
+
+---
+
+## Technical specification
+
+### Database
+
+#### support_ticket
 
 | Field | Type | Description |
 |------|-----|------|
 | id | UUID (PK) | |
-| subject | VARCHAR | Ticket subject |
+| subject | VARCHAR | Request subject |
 | body | TEXT | Problem description |
-| priority | ENUM | normal, sos |
-| status | ENUM | open, awaiting_user, resolved, closed |
-| createdByUserId | UUID | ID of the admin who created it |
+| priority | ENUM | `normal`, `sos` |
+| status | ENUM | `open`, `awaiting_user`, `resolved`, `closed` |
+| createdByUserId | UUID | User who created the request |
 | createdAt | TIMESTAMPTZ | |
 | updatedAt | TIMESTAMPTZ | |
-| lastNotifiedAt | TIMESTAMPTZ | When the Pi server was last notified |
+| lastNotifiedAt | TIMESTAMPTZ | Time the support service was last notified |
 
-### support_message
+#### support_message
 
 | Field | Type | Description |
 |------|-----|------|
 | id | UUID (PK) | |
 | ticketId | UUID (FK) | → support_ticket.id |
-| authorKind | ENUM | user, support |
-| authorUserId | UUID | Only for user |
+| authorKind | ENUM | `user`, `support` |
+| authorUserId | UUID | Only for `user` |
 | body | TEXT | Message text |
-| kind | ENUM | text, answer, question, defect_created |
-| jiraKey | VARCHAR | Jira issue key (only for defect_created) |
+| kind | ENUM | `text`, `answer`, `question`, `defect_created` |
+| jiraKey | VARCHAR | Defect key (only for `defect_created`) |
 | createdAt | TIMESTAMPTZ | |
 
-### support_attachment
+#### support_attachment
 
 | Field | Type | Description |
 |------|-----|------|
@@ -79,138 +103,45 @@ The client (admin) never sees Jira or the Pi server — communication always hap
 | filename | VARCHAR | Original file name |
 | mimeType | VARCHAR | |
 | sizeBytes | INT | |
-| storageUrl | VARCHAR | Path on the filesystem |
+| storageUrl | VARCHAR | File path |
 | createdAt | TIMESTAMPTZ | |
 
----
+### Studio server API
 
-## API Endpoints
-
-### Client-facing (Firebase auth, Admin/SuperAdmin)
+**Admin panel routes** (user sign-in required):
 
 | Method | Path | Description |
 |-------|------|------|
-| GET | /support/tickets | List of all studio tickets, no filter by author |
-| GET | /support/tickets/:id | Details + messages + attachments |
-| POST | /support/tickets | Create a ticket {subject, body, priority} |
-| POST | /support/tickets/:id/messages | Add a message + files (up to 5) |
-| GET | /support/unread-count | Number of tickets with status awaiting_user |
+| GET | /support/tickets | Studio requests |
+| GET | /support/tickets/:id | Request with messages and attachments |
+| GET | /support/unread-count | Number of requests with the `awaiting_user` status |
+| GET | /support/limits | Monthly limits and remaining balance |
+| POST | /support/tickets | Create a request `{subject, body, priority}` |
+| POST | /support/tickets/:id/messages | Add a message and files (up to 5) |
+| POST | /support/tickets/:id/reply-as-support | Reply on behalf of support `{body}`. Only the Супер Адмін role; any other role gets 403 |
+| PATCH | /support/tickets/:id/status | Change the request status |
 
-### Internal Routes (without Firebase login verification)
-
-> ⚠️ Currently these routes are not protected by a signature — this is a known shortcoming, tracked as a separate ticket. A signature is generated only for outgoing requests to the support server.
+**Internal routes** (for the support service; an HMAC signature is required):
 
 | Method | Path | Description |
 |-------|------|------|
-| GET | /support-internal/ticket/:id?appId= | Full ticket for Claude |
-| POST | /support-internal/ticket/:id/comment?appId= | Claude posts a reply |
-| GET | /support-internal/attachment-data/:id?appId= | Base64 attachment |
-| GET | /support-internal/attachment/:id/file?appId= | Raw file (download) |
+| GET | /support-internal/ticket/:id?appId= | Full request |
+| POST | /support-internal/ticket/:id/comment?appId= | Support message in the request |
+| GET | /support-internal/attachment-data/:id?appId= | Attachment in Base64 |
+| GET | /support-internal/attachment/:id/file?appId= | Attachment file |
+| GET | /support-internal/investigate/* | Reading studio data to analyse the request |
+| POST | /support-internal/actions/client-plans/close | Closing a client membership |
 
----
+### HMAC signature
 
-## Limits
+Headers of every request between the studio server and the support service:
 
-- **monthly ticket limit** per studio (unlimited by default). The Super Admin role is not subject to the limit
-- **SOS priority** — a separate level for urgent requests, with **its own monthly quota**, apart from ordinary tickets. Once the SOS quota is used up the option is disabled and an explanation appears next to it.
-- **3 consecutive messages** — no more can be sent until support has replied (this does not apply to the Super Admin)
-- **5 files** maximum per message
-
----
-
-## Frontend (fitstudiocrm-app)
-
-**Location:** the **Support** button in the header of the admin app — accessible to Admin/SuperAdmin.
-
-**Components:**
-- Ticket list (no status filter)
-- Ticket details open in the same window (messenger style: user on the right, Support Bot on the left)
-- Creation modal — subject, description, priority
-- Reply box — textarea + file attachment
-
-**Poll:** `useSupportStore` polls `GET /support/unread-count` every 10 minutes. If new replies have appeared, a "Support has replied" window appears with a **Got it** button, which only closes it — there is no automatic navigation to the ticket.
-
----
-
-## handler-support (Pi NestJS)
-
-**Repository:** `goodpesik/handler-support`
-
-**Components:**
-- `ticket-event.controller.ts` — receives the webhook, dedup, enqueue
-- `redis.service.ts` — priority queues (critical/high/medium/low), in_flight ZSET
-- `hmac.middleware.ts` — HMAC-SHA256 verification with anti-replay (±5 min)
-- `health.controller.ts` — `/health` + `/health/metrics`
-
-**Consumer:** `scripts/process-queue.ts`
-- Pop a ticket from Redis (priority order)
-- Move to in_flight (visibility timeout 15 min)
-- Fetch details + attachments via the product API
-- Build the prompt + run the Claude CLI
-- Parse the JSON decision (answer/question/escalate)
-- POST the result via `/support-internal`
-- On escalate: Jira issue (label `auto:support`) + Slack webhook
-- On timeout: Jira issue + Slack + fallback reply to the user
-
-**Systemd:** timer every 10 minutes → oneshot service.
-
----
-
-## HMAC Scheme
-
-Headers on every request:
 ```
 X-Support-Product:    fitstudio
-X-Support-Timestamp:  <unix seconds>
+X-Support-Timestamp:  <unix time in seconds or milliseconds>
 X-Support-Request-Id: <UUID>
-X-Support-Signature:  HMAC-SHA256(secret, "METHOD\n/path\n{timestamp}\n{body}")
+X-Support-Signature:  HMAC-SHA256(secret, "METHOD\n/path?query\n{timestamp}\n{body}")
 ```
 
-Anti-replay: ±5 minutes from the current time.
-
----
-
-## Claude Decisions
-
-| Decision | Action | kind |
-|---------|-----|------|
-| answer | Step-by-step instructions | answer |
-| question | Clarifying question | question |
-| escalate | Bug/feature → Jira + Slack | defect_created |
-
-All replies are **in Ukrainian only**.
-
----
-
-## Environment variables
-
-### fitstudiocrm-server
-```
-HANDLER_SUPPORT_URL=http://pi:3200
-HANDLER_SUPPORT_SECRET=<HMAC secret>
-STORAGE_PATH=./uploads
-```
-
-### handler-support
-```
-PORT=3200
-REDIS_HOST=localhost
-REDIS_PORT=6379
-HMAC_SECRET_FITSTUDIO=<same secret>
-FITSTUDIO_API_URL=http://fitstudio:3100
-HANDLER_SUPPORT_SECRET=<same secret>
-JIRA_API_TOKEN=<token>
-JIRA_BASE_URL=https://goodpesyk.atlassian.net
-JIRA_PROJECT_KEY=FC
-JIRA_ASSIGNEE=levinets@gmail.com
-SLACK_SUPPORT_WEBHOOK_URL=<webhook>
-```
-
----
-
-## Roadmap
-
-- ✅ Phase 1 — Backend entities, migration, REST, frontend /support page, handler-support NestJS + Redis
-- ✅ Phase 2 — Claude one-shot consumer, prompt, systemd
-- ✅ Phase 3 — Jira escalation + Slack alerts
-- Phase 4 — Secret rotation, multi-product (Barhandler, Petshandler), pgvector docs indexing, monitoring
+- The full path including query parameters and the unchanged request body are signed.
+- The request is rejected (`401`) if the signature or time is missing, the signature does not match, or the time differs from the current time by more than 5 minutes.

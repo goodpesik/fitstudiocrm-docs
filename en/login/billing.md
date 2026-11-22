@@ -2,51 +2,54 @@
 
 # 1.4 Plan and access to the system
 
-> A studio uses Fitshandler on a plan. This page covers where the plan status is shown, what happens as it runs out, and how the plan's limits show up in daily work.
+> The studio uses Fitshandler under a plan. This section describes how the plan state is shown, the expiry warning, access suspension and plan limits.
 
 ---
 
 ## Where the plan is shown
 
-The user menu (the avatar in the top right corner) has a **Plan: name** ("Тариф") line. Next to it are the date the plan runs to and how many days are left. Clicking it opens the manager's account, where the details live.
+The user menu (avatar in the top-right corner) has the line **Тариф: <name> · <date> · залишилось N дн.** (Plan: … · N days left). Clicking it opens the [personal cabinet](/en/pages/cabinet).
 
-If payment is not automatic, the same menu also shows **Pay** ("Оплатити").
+If a payment link is set for the studio, the same menu shows the **Оплатити** (Pay) item.
 
 ---
 
 ## The expiry warning
 
-If **automatic renewal** is on, a notice appears once per session on signing in — "Автоматичне поновлення плану" — with the date the amount will be charged to the card on file. Nothing needs doing.
+The warning is shown to users with the **Супер Адмін** (Super Admin) and **Адмін** (Admin) roles once per browser session, when less than 3 days are left until the plan ends or the date has already passed.
 
-If there is **no** automatic renewal, the system itself shows no warning: the reminder comes by email, and the plan's state is visible in the manager's account. The **Plan: name** line in the user menu shows the date and the days remaining, and is worth checking yourself.
+- **Without automatic renewal** (or if the automatic charge failed and the date has passed) — the **Тариф скоро завершується** (The plan ends soon) / **Тариф завершився** (The plan has ended) window with the text «Термін дії тарифу «<name>» спливає <date>. Продовжте підписку, щоб зберегти доступ.» (The plan expires on <date>. Renew the subscription to keep access.) (after the date — «…сплив <date>. Оплатіть підписку, щоб не втратити доступ.», expired on <date>. Pay for the subscription so as not to lose access.) and the **Закрити** (Close) and **Оплатити** (Pay) buttons. **Оплатити** opens the payment page.
+- **With automatic renewal** — the message «Автоматичне поновлення плану» (Automatic plan renewal): «Ваш план поновиться <date> — суму за наступний місяць спишемо з привʼязаної картки.» (Your plan renews on <date> — the amount for the next month will be charged to the linked card.)
+
+The warning is not shown on the self check-in banner page.
 
 ---
 
 ## When access is suspended
 
-Instead of the sign-in screen, a message appears: **Account deactivated** ("Акаунт деактивовано"), explaining that access is suspended, with a button that opens the manager's account. This applies to the whole studio, not to one user.
+Instead of the main interface, the message **Акаунт деактивовано** (Account deactivated) — «Доступ до цього акаунта призупинено. Зверніться до менеджера, щоб відновити доступ.» (Access to this account is suspended. Contact the manager to restore access.) — is shown with the **Перейти до кабінету менеджера** (Go to the manager cabinet) and **Вийти** (Sign out) buttons. The restriction applies to the whole studio.
 
-> ℹ️ Nothing is lost while access is suspended — everything returns as soon as the plan is renewed.
+> ℹ️ The studio's data is kept; access is restored after the plan is renewed.
 
 ---
 
 ## Plan limits
 
-Next to the "add" buttons there is a **used / limit · N left** indicator:
+Next to the add buttons an indicator **«used / limit · ще N»** (N more) is shown:
 
 - on the [Coaches](/en/menu/coaches) page,
 - on the [Rooms](/en/menu/rooms) page,
 - on the [Users](/en/login/users) tab.
 
-> ⚠️ The indicator is **informational**: it shows how much of the plan is already taken, but it does not prevent adding beyond the limit. If the limits are regularly exceeded, that is a conversation with the manager about the plan, not a fault in the system.
+> ⚠️ The indicator is informational: adding beyond the limit is not blocked. When the limit is reached, the indicator is highlighted.
 
-A limit shown as unlimited means the plan does not cap that number, and no remainder is displayed.
+If the plan does not limit the number, the indicator reads «<used> · без ліміту» (no limit).
 
 ---
 
 ## Several studios on one account
 
-If one account has access to several studios, the user menu also shows **Change studio** ("Змінити студію"). The studios' data is fully separate: switching changes everything you are working with.
+If the account has access to several studios, the user menu shows the **Змінити студію** (Switch studio) item. Studio data is separate: after switching, all pages show the data of the selected studio.
 
 ---
 

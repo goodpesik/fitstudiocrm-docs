@@ -217,7 +217,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | **Не синхронізовано операцій** (Operations not synchronised) | the number of operations in the `queued` state |
 | **Номер каси** (Till number) | the till number among the studio computers (see [Several tills](#several-tills)) |
 
-- The **Заклад**, **Дані станом на**, **Не синхронізовано операцій** and **Номер каси** rows are shown only while offline mode is enabled. While it is off, a hint is shown: "Увімкнення офлайн-режиму: FitStudioCRM → Налаштування → Офлайн-режим → «Увімкнути офлайн-режим»." (To switch offline mode on: FitStudioCRM → Settings → Offline mode → «Enable offline mode».)
+- The **Заклад**, **Дані станом на**, **Не синхронізовано операцій** and **Номер каси** rows are shown only while offline mode is enabled. While it is off, a hint is shown: "Увімкнення офлайн-режиму: FitStudioCRM → Налаштування → вкладка «Офлайн-режим» → «Увімкнути офлайн-режим»." (To switch offline mode on: FitStudioCRM → Settings → the «Offline mode» tab → «Enable offline mode».)
 
 ### Buttons
 

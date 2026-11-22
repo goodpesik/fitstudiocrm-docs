@@ -40,7 +40,7 @@ The full description of the table, of inviting a new user and of the roles is on
 
 ![](../../_media/admin-panel-settings.png ":size=600x362")
 
-> ⚠️ **The studio name and logo have been moved** to the [Studio Information](#studio-information) tab. This tab only appears once the mobile app for clients is enabled.
+The studio name and logo are configured on the [Studio Information](#studio-information) tab. This tab only appears once the mobile app for clients is enabled.
 
 ### Studio Name
 

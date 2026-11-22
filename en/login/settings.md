@@ -13,7 +13,7 @@
 - [1. Users](#users) ("Користувачі") — administrator account management.
 - [2. Settings](#settings) ("Налаштування") — operating hours, time zone, studio rules.
 - [3. Features](#features) ("Функції") — features and business rules (cancellations, bonuses, bot, reminders).
-- [4. Integrations](#integrations) ("Інтеграції") — fiscalization (VchasnoKasa, Checkbox) and card acquiring.
+- [4. Integrations](#integrations) ("Інтеграції") — fiscalization (VchasnoKasa, Checkbox) and card acquiring. The tab is visible only to the **Super Admin** role.
 - [5. Import](#import) ("Імпорт") — importing clients from Excel.
 - [6. Information](#information) ("Інформація") — version and supporting information.
 - [7. Mobile Application](#mobile-application) ("Мобільний додаток") — client app configuration.
@@ -161,6 +161,7 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 - The **Active** ("Активна") toggle enables the card. It only takes effect once the required fields are filled in, and only one card of each type can be active at a time.
 - **Receipt Header** ("Верхня частина чека") — multi-line text the [offline till](/en/pages/offline-mode#receipt-header) prints at the top of this card's receipts. No length limit; an empty value or a value of spaces only means the text is not set, and the [studio receipt header](#receipt-header) is printed instead. The text is not printed on online receipts of the fiscal provider (Checkbox, VchasnoKasa).
 - Only the **Super Admin** role changes the card fields.
+- The tab is visible only to the **Super Admin** role.
 
 > ⚠️ There is no "Receipt Footer" field.
 

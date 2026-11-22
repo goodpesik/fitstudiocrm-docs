@@ -19,7 +19,7 @@
 - [7. Mobile Application](#mobile-application) ("Мобільний додаток") — client app configuration.
 - [8. Reminders](#reminders) ("Нагадування") — custom reminders for studio staff.
 - [9. Categories](#categories) ("Категорії") — categories for calculating coach salaries.
-- [10. Studio Information](#studio-information) ("Інформація про студію") — studio name, logo, description, photos, and contact details. This tab appears when the mobile app for clients is enabled.
+- [10. Studio Information](#studio-information) ("Інформація про студію") — studio name, logo, description, photos, and contact details.
 - [11. Offline Mode](#offline-mode) ("Офлайн-режим") — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Super Admin** and **Admin** roles.
 
 ---
@@ -40,7 +40,7 @@ The full description of the table, of inviting a new user and of the roles is on
 
 ![](../../_media/admin-panel-settings.png ":size=600x362")
 
-The studio name and logo are configured on the [Studio Information](#studio-information) tab. This tab only appears once the mobile app for clients is enabled.
+The studio name and logo are configured on the [Studio Information](#studio-information) tab.
 
 ### Studio Name
 
@@ -164,7 +164,6 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 
 > ⚠️ There is no "Receipt Footer" field.
 
-
 ### Monobank acquiring
 
 Monobank acquiring is added as its own card: a token, and for QR payments a choice of the active QR from the list pulled from Monobank. Several physical terminals can be added, each with its own name.
@@ -220,6 +219,8 @@ A toggle and the address of the local receipt-printing helper (`http://localhost
 ### Visit Reminders
 
 - **Remind about the visit** — how many hours before the session to send a reminder. A value of `0` disables the reminder.
+
+> ⚠️ This setting applies **only to clients without the app installed**. Those who use the app set their own reminder time. The full description of both channels, of the night pause and of the shared SMS limit is in the [Class reminders](/en/pages/processing#_66-class-reminders) section.
 - Next to it, the number of SMS already used from the studio's monthly limit is shown.
 - **SMS reminder text** — the studio's own text. The date and time are inserted automatically, so only the words before and after them can be edited. A counter shows how many of the 57 characters remain: an SMS cannot hold more than that, and each additional one is billed separately.
 
@@ -249,7 +250,9 @@ An information block showing how many are registered in the app:
   - **Coaches** — all coaches receive the push.
   - **All** — both audiences.
 - **Text editor** — supports formatting (bold/italic/links). Has a length limit; exceeding it shows the error "Message is empty or too long."
-- **Send** — the button becomes active once an audience is chosen and text is entered. Clicking it immediately queues the message for delivery to all devices.
+- **Send** — the button becomes active once an audience is chosen and text is entered.
+
+> ⚠️ The mailing goes **only through the app**. Clients without the app installed do not receive it — unlike visit reminders, there is no fallback channel through Telegram or SMS here. Clicking the button immediately queues the message for delivery to all devices.
 
 ---
 
@@ -261,7 +264,7 @@ An information block showing how many are registered in the app:
 
 ## Studio Information
 
-> This tab appears when the mobile app for clients is enabled. Everything filled in here is shown to the client in the app, in the studio's header and in the **"About Us"** window.
+> Everything filled in here is shown to the client in the app, in the studio's header and in the **"About Us"** window.
 
 - **Studio Name** — used in the app, the Telegram bot, and on fiscal receipts.
 - **Studio Logo** — the image the client sees next to the name.
@@ -301,9 +304,9 @@ Changes are saved with the **Save** button.
 - **Name** — required.
 - **Base rate** — required, a number in UAH.
 - **Rate type** — **Per Person** / **Per Workout**.
-- **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). For the **Per Workout** type, the salary for the category is calculated from the plan linked to the category. Without a linked plan the calculation is not performed.
+- **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). The server does not save a category of the **Per Workout** type without a linked plan. Coach salary calculation for each rate type is described in the [Coach payroll](/en/menu/reports#_384-coach-payroll) section.
 
-> ℹ️ If **Per Workout** is chosen without a plan — the **Save** button will be inactive. First create or choose the corresponding plan.
+> ℹ️ If **Per Workout** is chosen without a plan, the **Save** button remains active, but saving fails with a server error: "A plan is required for the 'Per Workout' type." First create or choose the corresponding plan.
 
 ## Offline Mode
 

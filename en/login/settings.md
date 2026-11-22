@@ -18,7 +18,7 @@
 - [6. Information](#information) ("Інформація") — version and supporting information.
 - [7. Mobile Application](#mobile-application) ("Мобільний додаток") — client app configuration.
 - [8. Reminders](#reminders) ("Нагадування") — custom reminders for studio staff.
-- [9. Categories](#categories) ("Категорії") — categories for calculating coach salaries (moved from Reports).
+- [9. Categories](#categories) ("Категорії") — categories for calculating coach salaries.
 - [10. Studio Information](#studio-information) ("Інформація про студію") — studio name, logo, description, photos, and contact details. This tab appears when the mobile app for clients is enabled.
 - [11. Offline Mode](#offline-mode) ("Офлайн-режим") — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Super Admin** and **Admin** roles.
 
@@ -169,11 +169,12 @@ Each fiscal integration is added as a separate card — using the **+ Add Vchasn
 
 Monobank acquiring is added as its own card: a token, and for QR payments a choice of the active QR from the list pulled from Monobank. Several physical terminals can be added, each with its own name.
 
-> ⚠️ At present this is **configuration only**. Payment at the [Point of sale](/en/menu/pos) does not go through Monobank yet — the card can be filled in, but it does not affect the sale process.
+> ⚠️ The card fields are stored. Payment at the [Point of sale](/en/menu/pos) does not go through Monobank.
 
 ### Devices
 
 A toggle and the address of the local receipt-printing helper (`http://localhost:9999` by default) with a connection check. The setting applies **to this computer only**: it has to be enabled at every workstation separately.
+
 ### What Changes When Fiscalization Is Enabled
 
 - All sales (cash/card) are **fiscalized** through VchasnoKasa; a fiscal receipt is created for every transaction.
@@ -277,7 +278,7 @@ Changes are saved with the **Save** button.
 
 ## Categories
 
-> The **Categories** tab (previously in [Reports](/en/menu/reports)). Categories are used for calculating coach salaries and, optionally, for linking to a plan.
+> The **Categories** tab. Categories are used for calculating coach salaries and, optionally, for linking to a plan.
 
 **Table columns:**
 
@@ -300,7 +301,7 @@ Changes are saved with the **Save** button.
 - **Name** — required.
 - **Base rate** — required, a number in UAH.
 - **Rate type** — **Per Person** / **Per Workout**.
-- **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). Reasoning: with Per Workout, the salary for the category depends on the client's specific plan; without a plan it cannot be calculated unambiguously.
+- **Plan** — links the category to a specific plan. This field is **optional for the "Per Person" type**, but **required for the "Per Workout" type** (marked with an asterisk on the form). For the **Per Workout** type, the salary for the category is calculated from the plan linked to the category. Without a linked plan the calculation is not performed.
 
 > ℹ️ If **Per Workout** is chosen without a plan — the **Save** button will be inactive. First create or choose the corresponding plan.
 

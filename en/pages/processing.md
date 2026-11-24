@@ -202,11 +202,11 @@ The **Картка** (Card) payment method is available at the Cash Register, in
 **The device manager is on and a POS terminal is registered.** The **Оплата** (Payment) window opens with a terminal and merchant selection and two actions:
 
 - **Оплатити карткою** (Pay by card) — the amount is sent to the selected terminal. The button is available only when both a terminal and a merchant are selected.
-- **Провести вручну** (Record manually) — the payment is recorded as a sale with the **Картка** method without terminal data. Nothing is sent to the terminal and no card is charged. The button is available regardless of the terminal and merchant selection and regardless of the result of the terminal check.
+- **Провести вручну** (Record manually) — the payment is recorded as a sale with the **Картка** method and the manually-entered mark. Nothing is sent to the terminal and no card is charged. The RRN, the authorization code, the card mask, the payment system and the bank are not recorded; the identifier of the selected terminal is recorded when a terminal is selected. At the Cash Register such a transaction has the **Еквайрінг, внесено вручну** badge, and the printed receipt carries the "Еквайрінг — внесено вручну" line. The button is available regardless of the terminal and merchant selection and regardless of the result of the terminal check.
 
 Until one of these two buttons is pressed, nothing is sent to the terminal.
 
-While the terminal is carrying out the operation, the window does not close and both **Оплатити карткою** and **Провести вручну** are unavailable. The same payment is not sent to the terminal again during that time.
+While a payment is being taken, the window does not close and both **Оплатити карткою** and **Провести вручну** are unavailable. Pressing the payment button in the form again creates no new payment and does not send the amount to the terminal again: the payment stays one payment, with its own window and its own terminal answer.
 
 After the terminal refuses the payment or is unavailable, **Повторити** (Retry) and **Провести вручну** are available in the window.
 

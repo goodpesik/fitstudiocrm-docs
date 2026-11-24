@@ -193,14 +193,26 @@ Applies when **Реєстрація через мобільний застосу
 
 ---
 
-## 6.12 Card payment without a terminal
+## 6.12 Card payment
 
 The **Картка** (Card) payment method is available at the Cash Register, in the [Registration](/en/menu/clients#_329-registration) window, when paying a debt and in the workout form.
 
-- If the device manager is on and a POS terminal is registered ([Settings → Integrations](/en/login/settings#integrations)), the hint «Термінал доступний — оплата пройде через нього при підтвердженні» (Terminal available — the payment will go through it on confirmation) is shown, and the amount is sent to the terminal.
-- Otherwise the card payment is recorded immediately as a sale with the **Картка** method without terminal data.
+**The device manager is off, or no POS terminal is registered** ([Settings → Integrations](/en/login/settings#integrations)). The payment window is not opened; the payment is recorded as a sale with the **Картка** method without terminal data.
 
-With an active fiscal integration, a card payment is fiscalized as a regular sale; a receipt without a terminal contains no terminal data.
+**The device manager is on and a POS terminal is registered.** The **Оплата** (Payment) window opens with a terminal and merchant selection and two actions:
+
+- **Оплатити карткою** (Pay by card) — the amount is sent to the selected terminal. The button is available only when both a terminal and a merchant are selected.
+- **Провести вручну** (Record manually) — the payment is recorded as a sale with the **Картка** method without terminal data. Nothing is sent to the terminal and no card is charged. The button is available regardless of the terminal and merchant selection and regardless of the result of the terminal check.
+
+Until one of these two buttons is pressed, nothing is sent to the terminal.
+
+While the terminal is carrying out the operation, the window does not close and both **Оплатити карткою** and **Провести вручну** are unavailable. The same payment is not sent to the terminal again during that time.
+
+After the terminal refuses the payment or is unavailable, **Повторити** (Retry) and **Провести вручну** are available in the window.
+
+Closing the window before the amount is sent to the terminal cancels the payment: no sale and no other records are created.
+
+With an active fiscal integration, a card payment is fiscalized as a regular sale; a receipt without terminal data contains no terminal data.
 
 ---
 

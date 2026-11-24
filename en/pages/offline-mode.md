@@ -84,6 +84,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 - [Розклад](/en/menu/schedule) (Schedule) — classes and client booking.
 - [Клієнти](/en/menu/clients) (Clients) — client card, personal account, debts.
 - [Зміна та сповіщення](/en/pages/shifts) (Shift and notifications) — opening and closing a shift, admin notifications.
+- [ПРРО offline-mode registers](/en/pages/prro-registers) — the registers a computer signs fiscal receipts with while there is no internet.
 
 ## Installation and start
 
@@ -229,7 +230,8 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | **Закрити** (Close) | always | closes the window |
 
 - After the sync the message "Синхронізацію виконано. Не синхронізовано операцій: N" (Synchronisation done. Operations not synchronised: N) is shown. When the operations were not sent, the message "Синхронізація не вдалася. Операції залишаються в черзі й будуть надіслані автоматично після відновлення звʼязку." (Synchronisation failed. The operations stay in the queue and will be sent automatically once the connection is back.) is shown.
-- Switching off removes the studio's local data from the computer. Switching off is not performed while the queue holds operations not sent to the server; the message "Офлайн-операцій, що ще не надійшли на сервер: N. Вимкнення можливе після синхронізації." (Offline operations not yet received by the server: N. Switching off is possible after the sync.) is shown.
+- Switching off removes the studio's local data from the computer, including the fiscal documents of the ПРРО registers. Switching off is not performed while the queue holds operations not sent to the server; the message "Офлайн-операцій, що ще не надійшли на сервер: N. Вимкнення можливе після синхронізації." (Offline operations not yet received by the server: N. Switching off is possible after the sync.) is shown.
+- Switching off is not performed while a ПРРО register has an open offline session or documents not handed over to the tax service (see [Switching offline mode off with documents not handed over](/en/pages/prro-registers#switching-offline-mode-off-with-documents-not-handed-over)).
 - A Device Handler update is not performed while the offline till queue holds operations not sent to the server; Device Handler reports: "офлайн-операції FitStudioCRM ще не надійшли на сервер: N" (FitStudioCRM offline operations have not reached the server yet: N).
 
 ### Several tills

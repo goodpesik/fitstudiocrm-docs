@@ -38,5 +38,7 @@
   - [7.8 Public Studio Page and Booking Without an Account](/en/mobile/guest)
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
 - [Offline mode: overview, installation and start, devices and access, Device Handler, data without internet, one-time application of operations, sales sync, class registration and new clients, personal account, certificates and refunds, till work without internet, going offline and back, fiscalization after the sync, refusal codes](/en/pages/offline-mode)
+- [ПРРО offline-mode registers: the register list and register state, offline time remaining, the offline cashier's key, documents at the tax service, register actions, register settings and key files, refusals, switching offline mode off with documents not handed over](/en/pages/prro-registers)
+- [ПРРО fiscal shift: opening a shift on ПРРО registers, selecting registers, the cashier key, a shift without fiscalization, register refusals, closing a shift and the Z-reports, handing documents over to the tax service, an incomplete plan list](/en/pages/prro-shift)
 - [Personal cabinet (subscription management)](/en/pages/cabinet)
 - [Support System](/en/pages/support-system)

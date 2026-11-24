@@ -37,5 +37,7 @@
   - [7.9 Ratings and Reviews](/en/mobile/ratings)
 
 - [**Offline mode**](/en/pages/offline-mode)
+- [**ПРРО offline-mode registers**](/en/pages/prro-registers)
+- [**ПРРО fiscal shift**](/en/pages/prro-shift)
 - [**Personal cabinet (subscription management)**](/en/pages/cabinet)
 - [**Support System**](/en/pages/support-system)

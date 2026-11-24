@@ -19,7 +19,7 @@
 - [7. Reminders](#reminders) — custom reminders for studio staff.
 - [8. Categories](#categories) — workout categories for coach salary calculation.
 - [9. Studio Information](#studio-information) — studio name, logo, description, photos and contacts.
-- [10. Devices](#devices) — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Супер Адмін** and **Адмін** roles.
+- [10. Offline Mode](#offline-mode) — studio computers with offline mode enabled and revoking their access. The tab is visible only to the **Супер Адмін** and **Адмін** roles.
 
 > Client import and export is done on the [Clients](/en/menu/clients#_3214-excel-import-and-export-of-clients) page.
 
@@ -437,7 +437,7 @@ Buttons **Закрити** (Close) and **Зберегти**. If no membership is
 
 Text fields are saved with the **Зберегти інформацію** (Save information) button; until the changes are saved, «Є незбережені зміни» (There are unsaved changes) is shown next to it.
 
-## Devices
+## Offline Mode
 
 > The tab shows the studio computers with offline mode enabled, the date each one last contacted the server, and the **Revoke** ("Відкликати") button. The tab is visible only to the **Super Admin** and **Admin** roles.
 

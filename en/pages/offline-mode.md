@@ -36,7 +36,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 ### Enabling offline mode
 
 1. Device Handler is installed and running on the till computer; the offline till starts with it (see [Installation and start](#installation-and-start)).
-2. A user with the **Супер Адмін** (Super Admin) or **Адмін** (Admin) role, in the browser of this computer, opens the **Налаштування** (Settings) section, the **Пристрої** (Devices) tab, the **Цей компʼютер** (This computer) block, sets **Номер каси** (Till number) and presses **Увімкнути офлайн-режим** (Enable offline mode) (see [Enabling on a computer](#enabling-on-a-computer)).
+2. A user with the **Супер Адмін** (Super Admin) or **Адмін** (Admin) role, in the browser of this computer, opens the **Налаштування** (Settings) section, the **Офлайн-режим** (Offline mode) tab, the **Цей компʼютер** (This computer) block, sets **Номер каси** (Till number) and presses **Увімкнути офлайн-режим** (Enable offline mode) (see [Enabling on a computer](#enabling-on-a-computer)).
 3. The offline till receives the full data package and then updates the data while connected (see [Data updates](#data-updates)).
 
 ### Going to the offline till and back online
@@ -157,7 +157,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 - The key is passed to the computer once. The server stores only its hash; the key cannot be restored from the server data.
 - One user on one computer has one valid device access. Enabling again issues a new access; the previous one stops working.
 - A device access opens only the data exchange of the offline till with the server: sending offline operations and receiving the till data. Other sections of the system are not available with a device access.
-- Enabling is done in **Settings** on the **Devices** tab, in the **This computer** block, in the browser of the till computer with the Device Handler switched on.
+- Enabling is done in **Settings** on the **Offline mode** tab, in the **This computer** block, in the browser of the till computer with the Device Handler switched on.
 - The **This computer** block shows the state of offline mode on the computer:
 
 | State | Text |
@@ -188,7 +188,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 
 ### Device list and revoking
 
-- The device list is placed in **Settings** ("Налаштування") on the **Devices** ("Пристрої") tab. The tab is visible only to users with the **Super Admin** or **Admin** role; a user with the **Manager** role does not see it.
+- The device list is placed in **Settings** ("Налаштування") on the **Offline mode** ("Офлайн-режим") tab. The tab is visible only to users with the **Super Admin** or **Admin** role; a user with the **Manager** role does not see it.
 - The list contains valid device accesses in the columns: **Device name** ("Назва пристрою"), **User** ("Користувач"), **Last contact** ("Останній звʼязок"), **Enabled on** ("Дата увімкнення": date and time offline mode was enabled on the computer), **Access valid until** ("Доступ діє до": date and time the access expires).
 - Dates and times in the **Last contact**, **Enabled on** and **Access valid until** columns are shown in the studio time zone, regardless of the time zone of the computer the list is opened on.
 - If the computer has not contacted the server since offline mode was enabled, the **Last contact** ("Останній звʼязок") column shows "Ще не виходив на звʼязок" (has not contacted the server yet).
@@ -217,7 +217,7 @@ The full list of codes and messages is in [Till refusal codes](#till-refusal-cod
 | **Не синхронізовано операцій** (Operations not synchronised) | the number of operations in the `queued` state |
 | **Номер каси** (Till number) | the till number among the studio computers (see [Several tills](#several-tills)) |
 
-- The **Заклад**, **Дані станом на**, **Не синхронізовано операцій** and **Номер каси** rows are shown only while offline mode is enabled. While it is off, a hint is shown: "Увімкнення офлайн-режиму: FitStudioCRM → Налаштування → Інтеграції → Пристрої → «Увімкнути офлайн-режим»." (To switch offline mode on: FitStudioCRM → Settings → Integrations → Devices → "Enable offline mode".)
+- The **Заклад**, **Дані станом на**, **Не синхронізовано операцій** and **Номер каси** rows are shown only while offline mode is enabled. While it is off, a hint is shown: "Увімкнення офлайн-режиму: FitStudioCRM → Налаштування → вкладка «Офлайн-режим» → «Увімкнути офлайн-режим»." (To switch offline mode on: FitStudioCRM → Settings → the «Offline mode» tab → «Enable offline mode».)
 
 ### Buttons
 

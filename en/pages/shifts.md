@@ -67,12 +67,20 @@ The window contains the **Активні фіскальні інтеграції
 
 If the shift state in the system and at the operator differ, the row shows the **Синхронізувати** (Synchronize) button; after synchronization the message «Інтеграцію синхронізовано» (Integration synchronized) appears.
 
+If the integration data could not be read, the line «Не вдалося отримати дані фіскальних інтеграцій. Перевірте зʼєднання та оновіть дані.» (The fiscal integration data could not be obtained. Check the connection and refresh the data.) is shown in place of the table, together with the **Оновити** (Refresh) button, which repeats the read; the window does not have to be closed. When no active integration exists, the line «Жодну фіскальну інтеграцію не підключено» (No fiscal integration is connected) is shown.
+
 Window buttons:
 
-- **Скасувати** (Cancel) — closes the window with no action.
+- **Скасувати** (Cancel) — closes the window with no action. Unavailable while an action over the shift is running.
 - **Відкрити** (Open) / **Закрити** (Close) — brings the shift of every active integration into the required state, then opens or closes the shift in the system. If the action fails for one of the integrations, the message «<name>: синхронізація не вдалась» (<name>: synchronization failed) appears; the shift in the system is opened or closed anyway.
 
-On closing, the Z-reports received from the integrations are saved with the shift and shown in the **Зміну закрито** window.
+While the action is running, the action button is unavailable and the window does not close — neither by the **Скасувати** button nor by the Esc key. The window closes once the shift has been opened or closed. When the action did not finish, the message **Дію не завершено** (The action did not finish) is shown with the text «Дію над зміною не завершено. Перевірте стан зміни та повторіть спробу.», the window stays open and the action button becomes available again.
+
+When another user opened the shift, the message «Зміну вже відкрито користувачем <name>» (The shift has already been opened by <name>) is shown, or «Зміну вже відкрито іншим користувачем» (The shift has already been opened by another user) when the name is not known; the shift in the system is not opened a second time and the shift at the integrations is not opened.
+
+On closing, the Z-reports received from the integrations are saved with the shift and shown in the **Зміну закрито** window. Z-reports received in an attempt that did not finish are kept for the next closing attempt; a second Z-report of the same shift is not issued. When the closing request was not carried out, the message **Зміну не закрито** (The shift was not closed) is shown with the text «Запит на закриття зміни не виконано, тому зміна залишається відкритою. Повторіть закриття.», and the shift stays open.
+
+Opening and closing a shift on ПРРО offline-mode registers is covered on the [ПРРО fiscal shift](/en/pages/prro-shift) page.
 
 ---
 

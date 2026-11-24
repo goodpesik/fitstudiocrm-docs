@@ -37,5 +37,6 @@
   - [7.9 Рейтинги та відгуки](/mobile/ratings)
 
 - [**Офлайн-режим**](/pages/offline-mode)
+- [**Каси ПРРО офлайн-режиму**](/pages/prro-registers)
 - [**Особистий кабінет (керування підпискою)**](/pages/cabinet)
 - [**Система підтримки**](/pages/support-system)

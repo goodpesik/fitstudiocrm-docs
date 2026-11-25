@@ -10,6 +10,12 @@ The till shift and the fiscal shift of the ПРРО registers are opened and clo
 
 ## Opening a shift
 
+The list of registers offered for selection when a shift is opened is formed by the ПРРО till. A register on which a shift cannot be opened is not offered for selection; the reason for the refusal is shown for it.
+
+Two registers may use one offline cashier's key file, but not at the same time. When two registers with one cashier's key are selected, opening a shift is unavailable: the names of those registers and the requirement to leave only one of them selected are shown. By default one register of such a pair is selected.
+
+When no register can open a shift, the shift opens without fiscalization of receipts.
+
 ### The register selection window
 
 Pressing **Відкрити зміну** opens the **Відкрити зміну** window with the **Каси ПРРО** block. Only the registers fit to open a shift are offered for selection. The fitness of each register is reported by the offline till of this computer together with the state of the register; the admin panel only displays it.
@@ -81,8 +87,6 @@ The fitness and the reason are reported by the offline till for each register se
 | `CASHIER_KEY_IN_USE` | **Цим ключем касира зараз працює інша офлайн-каса — один ключ працює лише на одному ПРРО одночасно. Закрийте її сесію або дайте цій касі окремий ключ.** | The offline cashier's key signs the open offline session of another register of the computer |
 | `CASHIER_CERTIFICATE_EXPIRED` | **Сертифікат ключа офлайн-касира прострочено, а головний ключ не відкривається — оновіть ключ касира.** | The certificate of the offline cashier's key has run out |
 | Codes of the key container, beginning with `KEY_` | Messages about the state of the key or certificate file; given on the [ПРРО offline-mode registers](/en/pages/prro-registers) page | The container of the key that signs the documents of the register did not open |
-
-When no register of the computer is fit to open a shift, the **Відкрити зміну** button in the window is unavailable.
 
 When the computer has no ПРРО register at all, the line shown is:
 

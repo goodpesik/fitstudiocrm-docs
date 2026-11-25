@@ -27,7 +27,7 @@ The till checks an action against its own data, refuses with an explanation and 
 - a payment from the personal account above the balance, a product sale above the stock;
 - a registration by a plan that is used up, frozen, expired, not active or not valid for the class; a registration for a class with no free seats or a cancelled class;
 - redemption of a certificate that is not in the till data, is already redeemed or has expired;
-- a refund above the available sum, a refund of a sale paid through a terminal and a refund of a personal account top-up;
+- a refund above the available sum, a refund of a sale whose acquiring record holds the terminal's answer and a refund of a personal account top-up;
 - a debt payment above the remaining debt and a payment of a debt created without internet;
 - creating a client with a phone or card number that is already in the till data.
 
@@ -408,7 +408,7 @@ Fields of the `sale` operation:
 | `discount` | discount text, for example `10%` or `200 грн` |
 | `price` | the sale sum after the discount |
 | `paymentMethod` | payment method of a sale not split into several payments |
-| `acquiringPosData` | the terminal's answer for a card payment |
+| `acquiringPosData` | the acquiring record of a card payment: the terminal's answer, or the mark of a payment entered by hand. The record holds the terminal's answer when at least one of `rrn`, `auth_code`, `cardmask`, `transaction_uid`, `paysys`, `bank_name` is filled, or when `status` is one of `ok`, `declined`, `cancelled`, `pending`. The record of a payment entered by hand has `status` `manual_entry`, the `terminal_id` of the selected terminal (when a terminal is selected) and every other field empty |
 | `payments` | several payments, 2 to 10: `paymentMethod`, `amount` (at least 0.01), `acquiringPosData`, `isPersonalAccount` (`true` — the payment is taken from the personal account); no other fields are allowed in a payment |
 | `isPersonalAccount` | `true` — a sale without `payments` is paid from the personal account (see [Payment from the personal account](#payment-from-the-personal-account)) |
 | `isCertificate` | `true` — payment for a certificate: a register transaction with the certificate mark |
@@ -513,7 +513,7 @@ The server refuses these operations with the `rejected` result and the `OFFLINE_
 | Refund sent as a sale | `type: "Refund"` in a sale; a refund is sent as the `refund` operation |
 | Personal account top-up | `balance_top_up`; `isBalanceTopUp: true` in a sale |
 | Refund of a personal account top-up | `refund` of a sale with the account top-up mark |
-| Refund of a sale paid through a terminal, and refund through a terminal | `refund` of a sale with terminal data (`acquiringPosData`); `refund` with `refundTransaction.acquiringPosData` |
+| Refund of a sale with the terminal's answer, and refund through a terminal | `refund` of a sale whose `acquiringPosData` holds the terminal's answer; `refund` with the terminal's answer in `refundTransaction.acquiringPosData`. A sale with a payment entered by hand is refunded offline |
 | Personal account correction | `balance_correction` |
 | Bonuses | `bonus` |
 | Bank transfer confirmation | `payment_approve` |
@@ -712,7 +712,7 @@ The content of the `refund` operation is the content of the online refund with a
 - Client plans do not change on a refund, as on an online refund.
 - A refund and other operations on the same sale made online and during the sync are applied one after another. A refund of a sale that is not on the server gets `conflict` with code `TRANSACTION_NOT_FOUND`; no records are created.
 - The sum available for refund is the sale sum minus the sums of all its refunds. If the refund sum exceeds the available sum by more than a kopeck, the operation gets `conflict` with code `refund_exceeds_remaining`; the `details.available` field contains the available sum. A refund made both online and offline for the full sale sum is applied once: the second operation gets a conflict with available sum `0`.
-- A refund of a personal account top-up, a refund of a sale paid through a terminal and a refund through a terminal (`refundTransaction.acquiringPosData`) are rejected with code `OFFLINE_OPERATION_NOT_SUPPORTED`.
+- A refund of a personal account top-up, a refund of a sale whose `acquiringPosData` holds the terminal's answer and a refund with the terminal's answer in `refundTransaction.acquiringPosData` are rejected with code `OFFLINE_OPERATION_NOT_SUPPORTED`. A sale with a payment entered by hand is refunded offline on the general terms.
 - Operation result: `transactionId` — the id of the refund transaction.
 
 ### Personal account, certificate and refund sync codes
@@ -978,7 +978,7 @@ The till refuses with an explanation and does not queue the operation. The messa
 | `CERTIFICATE_EXPIRED` | Термін дії сертифіката минув. | The certificate's last valid day in the studio time zone has passed |
 | `REFUND_SALE_NOT_FOUND` | Продажу немає в даних каси. | The sale is not in the till data |
 | `REFUND_EXCEEDS_REMAINING` | Сума повернення більша за доступну: … грн. | The refund is above the available amount |
-| `REFUND_PAID_BY_TERMINAL` | Продаж, оплачений через термінал, повертається лише онлайн. | The sale was paid through a terminal |
+| `REFUND_PAID_BY_TERMINAL` | Продаж, оплачений через термінал, повертається лише онлайн. | The sale's `acquiringPosData` holds the terminal's answer |
 | `REFUND_OF_TOP_UP` | Поповнення особового рахунку не повертається в офлайн-режимі. | Refund of a personal account top-up |
 | `DEBT_NOT_FOUND` | Боргу немає в даних каси. | The debt is not in the till data |
 | `DEBT_OVERPAYMENT` | Сума оплати більша за залишок боргу: … грн. | Payment above the debt balance |

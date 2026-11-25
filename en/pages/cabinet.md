@@ -158,7 +158,7 @@ After creation the group is **inactive** («Неактивна — додайт�
 
 ### 7.2 Adding studios and an Enterprise plan
 
-The **Додати в групу** (Add to group) button adds a studio to the group. If the studio has a paid plan, it stays in effect until the end of the period, after which the studio moves to the group plan. The Enterprise plan turns on shared limits for the whole group; group settings are available right after the plan is assigned. The **Вилучити з групи** (Remove from group) button returns the studio to its own plan.
+The **Додати в групу** (Add to group) button adds a studio to the group. Any active studio can be added to a group, including a studio on a trial plan. An added studio works on its own plan until the group invoice is paid, or, when the group is already paid, until its join invoice is paid; a trial plan stays in effect until its own end date. The studio moves to the group plan only after the corresponding invoice is paid. Unused paid days of its own plan reduce the invoice amount; trial days do not. The Enterprise plan turns on shared limits for the whole group; group settings are available right after the plan is assigned. The **Вилучити з групи** (Remove from group) button returns the studio to its own plan.
 
 ### 7.3 Active group and shared data
 

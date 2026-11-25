@@ -17,7 +17,7 @@
 
 A section opens as a separate page; the **«Cabinet»** button at the top returns to the list.
 
-**«Log out»** — logs out of the account after the confirmation «Are you sure you want to continue?».
+**«Log out»** — logs out of the account after the confirmation «Are you sure you want to continue?». Logging out ends the login on all of the user's devices (see [Session Duration](/en/mobile/install#session-duration)).
 
 ---
 

@@ -73,6 +73,12 @@ After a failed send, the **«Send code»** button is inactive for 5 seconds and 
 - A user without a client card in the selected studio sees Home in the **Guest** role and can submit a booking request (see [7.2](/en/mobile/registration)).
 - If notifications are off, the app offers to turn them on (see [7.3.6](/en/mobile/home#_736-offer-to-enable-notifications)).
 
+### Session Duration
+
+- The login is kept while the user uses the app.
+- If the app is not used for 90 days, the login ends; on the next launch the app shows the login screen.
+- **«Log out»** in the Account tab (see [Account](/en/mobile/account)) ends the login on all of the user's devices. On the other devices the app shows the login screen at the next request to the server.
+
 ---
 
 <a href="javascript:void(0)" onclick="history.back()">⬅️ Back</a>

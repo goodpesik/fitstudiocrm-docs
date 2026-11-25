@@ -312,7 +312,10 @@ The channels are checked in this order; the message is sent through the first on
 | The schedule is changed, the list is not saved | **Вихідні дні збережено не повністю** (closures saved in part) | Changed for the selected dates | Saved list |
 
 - In the **Вихідні дні збережено не повністю** state the selected dates stay in the panel and the background task progress is shown. Clicking **Save** again completes the saving of the list and does not change the workout schedule a second time.
+- In the **Вихідні дні збережено не повністю** state **Save** is also available when the list in the panel matches the saved one. Removing a date from the panel and clicking **Save** returns the workout schedule on that date to the list in the panel.
 - In the other states the panel and the calendar show the saved list of closures.
+- **Save** is unavailable while a save is in progress. At most one save of the closures runs at a time; clicking during a save sends no requests and does not change the panel.
+- Do not reload the page before the save completes. After a reload the dates already changed are not available: the panel and the calendar show the saved list, and the workout schedule stays changed for the selected dates.
 
 ### How to remove a closure
 

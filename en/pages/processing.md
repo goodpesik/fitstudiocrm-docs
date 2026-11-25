@@ -212,7 +212,11 @@ After the terminal refuses the payment or is unavailable, **Повторити**
 
 Closing the window before the amount is sent to the terminal cancels the payment: no sale and no other records are created.
 
-With an active fiscal integration, a card payment is fiscalized as a regular sale; a receipt without terminal data contains no terminal data.
+With an active fiscal integration, a card payment is fiscalized as a regular sale. The fiscal receipt holds the acquiring requisites only for a payment the terminal answered:
+
+- **A payment with the terminal's answer.** The fiscal receipt holds the transaction code (RRN), the authorization code, the card mask, the payment system, the acquirer bank name and the terminal identifier.
+- **A payment entered manually.** The fiscal receipt holds no acquiring requisites; its payment line holds the manual-entry mark.
+- **A payment without a terminal.** The fiscal receipt holds no acquiring requisites.
 
 ---
 

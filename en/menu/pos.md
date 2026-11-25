@@ -145,6 +145,7 @@ Saving creates a record on the **Cash balance** tab with the matching type: **В
 > The **Показати** button in the **Receipt** column opens the receipt window titled **Фіскальний чек** (fiscal receipt) or **Товарний чек (не фіскальний)** (sales receipt, non-fiscal).
 
 - The window holds the receipt text (when available), the badges **Фіскалізовано** / **Не фіскальний** and **Готівка** / **Без еквайрингу**, and the fiscal number ("Фіск. № …") for a fiscal receipt.
+- For a payment entered manually, the receipt text holds the line «Еквайрінг — внесено вручну» (Acquiring — entered manually) and holds no **Картка**, **Платіжна система**, **RRN** or **Код авт.** lines; the **Термінал** line is present when a terminal was selected.
 - The **Друкувати** (print) button sends the receipt to the receipt printer through the device manager (notification "Надіслано на друк"; when the printer is unavailable — "Принтер недоступний"). The button is disabled when the manager and a receipt printer are not connected in the settings.
 
 ### 3.9.4.4 Fiscalizing a transaction

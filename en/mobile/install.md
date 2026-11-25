@@ -77,7 +77,7 @@ After a failed send, the **«Send code»** button is inactive for 5 seconds and 
 
 - The login is kept while the user uses the app.
 - If the app is not used for 90 days, the login ends; on the next launch the app shows the login screen.
-- **«Log out»** in the Account tab (see [Account](/en/mobile/account)) ends the login on all of the user's devices. On the other devices the app shows the login screen at the next request to the server.
+- **«Log out»** on the [Account](/en/mobile/account) tab ends the login on all of the user's devices. On the other devices the app shows the login screen at the next request to the server.
 
 ---
 

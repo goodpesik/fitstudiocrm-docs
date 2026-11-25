@@ -107,7 +107,9 @@ If the server refuses the booking (no seats, the client is already booked, the w
 ## 7.5.6 Coach Schedule
 
 - The schedule shows all studio workouts for the selected day; the **«My workouts»** filter — only the coach's workouts.
-- The **«Add schedule to calendar»** button subscribes the phone calendar to the coach's schedule.
+- The **«Add schedule to calendar»** button subscribes the phone calendar to the coach's schedule. On iOS the subscription opens in the device calendar, on other devices in Google Calendar.
+- The coach calendar link is unique and cannot be derived from the studio and coach identifiers. After the system update the link changes: a subscription to the previous link keeps updating for 30 more days and then stops updating. A coach subscribed to the calendar must subscribe again — with the **«Add schedule to calendar»** button or with the **«Subscribe to the new calendar»** button in the notification.
+- Every coach receives the notification «The class calendar link has been updated. If you are subscribed to the calendar, tap «Subscribe to the new calendar» to keep the schedule updating.» once, with the **«Subscribe to the new calendar»** button.
 - The card of an own workout shows the number and names of clients by status: **Planned**, **Attended**, **Not attended**, **Canceled**, **Wait list** (rows with zero are not shown), and **«Spots left:»** and **«Credited to coach:»**. For a regular workout — «Repeats every: {days}». For a rental — the **«Rent»** badge.
 
 ---

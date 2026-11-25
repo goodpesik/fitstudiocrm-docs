@@ -96,7 +96,7 @@ Saving creates a record on the **Cash balance** tab with the matching type: **В
 | **Plans** ("Абонементи") | Names of the sold plans or "--". |
 | **Products** ("Товари") | Names of the sold products or "--". |
 | **Receipt** ("Чек") | The **Показати** (show) button — opens the [receipt window](#_3943-receipt). The **Фіскалізувати** (fiscalize) button creates the fiscal receipt of a saved transaction without a receipt (see [Fiscalizing a transaction](#_3944-fiscalizing-a-transaction)). |
-| **Fiscalization** ("Фіскалізація") | Two badges: **Еквайрінг** / **Без еквайрінгу** (whether the payment went through a payment terminal) and **Фіскалізовано** / **Не фіскалізовано** (fiscalized / not fiscalized). |
+| **Fiscalization** ("Фіскалізація") | Two badges: **Еквайрінг** / **Еквайрінг, внесено вручну** / **Без еквайрінгу** (the payment went through a payment terminal / the payment was taken on the terminal and entered into the register manually / the terminal took no part in the payment) and **Фіскалізовано** / **Не фіскалізовано** (fiscalized / not fiscalized). |
 | **Offline** ("Офлайн") | The mark of a transaction created during the sync of an operation made on a computer without internet: a sale, a debt payment, a personal-account payment, a certificate sale, a refund. The **Date** of such a transaction is the operation time on the computer. See [Sales sync](/en/pages/offline-mode#sales-sync) and [Personal account, certificates and refunds](/en/pages/offline-mode#personal-account-certificates-and-refunds). |
 | **Status** | **Повне повернення** (full refund) / **Часткове повернення** (partial refund) and the actions on the sale. |
 
@@ -136,13 +136,16 @@ Saving creates a record on the **Cash balance** tab with the matching type: **В
 
 - If no payment terminal is connected on this device, the payment is recorded without a terminal; in the **Fiscalization** column the transaction has the **Без еквайрінгу** badge.
 - If a terminal is connected, the **Оплата** (payment) window opens: the choice of **Термінал** and **Мерчант** (terminal and merchant, when there are several) and the **Оплатити карткою** (pay by card) button, then "Виконуйте інструкції на терміналі…" (follow the terminal instructions) with the amount, and after success "Оплату проведено" (payment completed).
-- If the terminal returns an error, the **Повторити** (retry) and **Провести вручну** (record manually) buttons are available. **Провести вручну** records the card payment without terminal data.
+- If the terminal returns an error, the **Повторити** (retry) and **Провести вручну** (record manually) buttons are available.
+- **Провести вручну** records the card payment with the manually-entered mark. The RRN, the authorization code, the card mask, the payment system and the bank are not recorded; the identifier of the selected terminal is recorded when a terminal is selected. In the **Fiscalization** column such a transaction has the **Еквайрінг, внесено вручну** badge, and the printed receipt carries the "Еквайрінг — внесено вручну" line.
+- While a payment is being taken, pressing the payment button again creates no new payment and does not send the amount to the terminal again. The payment window stays open until the terminal answers or the payment is entered manually.
 
 ### 3.9.4.3 Receipt
 
 > The **Показати** button in the **Receipt** column opens the receipt window titled **Фіскальний чек** (fiscal receipt) or **Товарний чек (не фіскальний)** (sales receipt, non-fiscal).
 
 - The window holds the receipt text (when available), the badges **Фіскалізовано** / **Не фіскальний** and **Готівка** / **Без еквайрингу**, and the fiscal number ("Фіск. № …") for a fiscal receipt.
+- For a payment entered manually, the receipt text holds the line «Еквайрінг — внесено вручну» (Acquiring — entered manually) and holds no **Картка**, **Платіжна система**, **RRN** or **Код авт.** lines; the **Термінал** line is present when a terminal was selected.
 - The **Друкувати** (print) button sends the receipt to the receipt printer through the device manager (notification "Надіслано на друк"; when the printer is unavailable — "Принтер недоступний"). The button is disabled when the manager and a receipt printer are not connected in the settings.
 
 ### 3.9.4.4 Fiscalizing a transaction

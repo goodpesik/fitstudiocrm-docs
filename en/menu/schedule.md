@@ -303,6 +303,17 @@ The channels are checked in this order; the message is sent through the first on
 - All workouts on the selected dates are **cancelled** automatically; client bookings get the **Cancelled** status.
 - The list of closures is saved in the studio settings. Closure days are not marked in the month calendar.
 
+### If the save does not complete
+
+| State | Message | Workout schedule | List of closures |
+|---|---|---|---|
+| The request is refused | **Вихідні дні не збережено** (closures not saved) | Unchanged | Saved list |
+| The studio settings are not loaded | **Вихідні дні не збережено** (closures not saved) | Unchanged | Saved list |
+| The schedule is changed, the list is not saved | **Вихідні дні збережено не повністю** (closures saved in part) | Changed for the selected dates | Saved list |
+
+- In the **Вихідні дні збережено не повністю** state the selected dates stay in the panel and the background task progress is shown. Clicking **Save** again completes the saving of the list and does not change the workout schedule a second time.
+- In the other states the panel and the calendar show the saved list of closures.
+
 ### How to remove a closure
 
 1. Open the **Studio closures** panel.

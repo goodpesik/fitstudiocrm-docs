@@ -305,17 +305,18 @@ The channels are checked in this order; the message is sent through the first on
 
 ### If the save does not complete
 
+The list of closures and the workout schedule of those days are saved together. A save has exactly two results: saved, or not saved.
+
 | State | Message | Workout schedule | List of closures |
 |---|---|---|---|
+| Saved | — | Changed for the selected dates | The selected list |
 | The request is refused | **Вихідні дні не збережено** (closures not saved) | Unchanged | Saved list |
-| The studio settings are not loaded | **Вихідні дні не збережено** (closures not saved) | Unchanged | Saved list |
-| The schedule is changed, the list is not saved | **Вихідні дні збережено не повністю** (closures saved in part) | Changed for the selected dates | Saved list |
 
-- In the **Вихідні дні збережено не повністю** state the selected dates stay in the panel and the background task progress is shown. Clicking **Save** again completes the saving of the list and does not change the workout schedule a second time.
-- In the **Вихідні дні збережено не повністю** state **Save** is also available when the list in the panel matches the saved one. Removing a date from the panel and clicking **Save** returns the workout schedule on that date to the list in the panel.
-- In the other states the panel and the calendar show the saved list of closures.
+- In the **Вихідні дні не збережено** state the panel and the calendar show the saved list of closures and the workout schedule stays unchanged. Clicking **Save** again sends the save anew.
+- There is no state in which the workout schedule is changed and the list of closures is not saved.
 - **Save** is unavailable while a save is in progress. At most one save of the closures runs at a time; clicking during a save sends no requests and does not change the panel.
-- Do not reload the page before the save completes. After a reload the dates already changed are not available: the panel and the calendar show the saved list, and the workout schedule stays changed for the selected dates.
+- Reloading the page during a save does not affect its result.
+- Saving the same list of closures again does not change the workout schedule a second time.
 
 ### How to remove a closure
 

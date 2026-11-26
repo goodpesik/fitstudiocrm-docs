@@ -180,9 +180,9 @@ The file is stored in the offline till directory of that computer. After storing
 | "Не вказано адресу Device Handler — вкажіть «URL менеджера» в налаштуваннях інтеграцій." | The Device Handler address is not set |
 | "Адресу Device Handler вказано неправильно — потрібна повна адреса, наприклад http://localhost:9999. Виправте «URL менеджера» в налаштуваннях інтеграцій." | The Device Handler address is not a full address |
 | "Браузер не пропускає звернення з цієї сторінки на адресу Device Handler без шифрування. Вкажіть у «URL менеджера» адресу цього компʼютера або адресу з https." | The browser does not allow a request to the address given |
-| "Ключ каси не відкривається." | The register's key container was not opened |
+| "Ключ каси не відкривається. Перевірте в налаштуваннях каси, чи вказано правильний файл ключа та пароль до нього, і спробуйте ще раз." | The register's key container was not opened |
 | "Ключ офлайн-касира не відкривається." | The offline cashier's key container was not opened |
-| "Офлайн-каса відмовила — подивіться лог каси." | The till refused without a separate reason |
+| "Офлайн-каса відмовила у цій дії. Спробуйте ще раз, а якщо відмова повториться, зверніться до технічної підтримки." | The till refused without a separate reason |
 
 ---
 

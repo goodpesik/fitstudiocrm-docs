@@ -10,9 +10,15 @@ The till shift and the fiscal shift of the ПРРО registers are opened and clo
 
 ## Opening a shift
 
+The list of registers offered for selection when a shift is opened is formed by the ПРРО till. A register on which a shift cannot be opened is not offered for selection; the reason for the refusal is shown for it.
+
+Two registers may use one offline cashier's key file, but not at the same time. When two registers with one cashier's key are selected, opening a shift is unavailable: the names of those registers and the requirement to leave only one of them selected are shown. By default one register of such a pair is selected.
+
+When no register can open a shift, the shift opens without fiscalization of receipts.
+
 ### The register selection window
 
-Pressing **Відкрити зміну** opens the **Відкрити зміну** window with the **Каси ПРРО** block. The block lists only the registers a shift can be opened on.
+Pressing **Відкрити зміну** opens the **Відкрити зміну** window with the **Каси ПРРО** block. Only the registers fit to open a shift are offered for selection. The fitness of each register is reported by the offline till of this computer together with the state of the register; the admin panel only displays it.
 
 When more than one register is set up on the computer, the list carries selection boxes and the line:
 
@@ -63,18 +69,26 @@ One cashier's key works on one registrar at a time. When two registers with one 
 
 The **Відкрити зміну** button is unavailable. To proceed, one of the named registers must be unselected.
 
-### A register absent from the list
+### A register not fit to open a shift
 
-A register that cannot open a shift is absent from the list. When no register of the computer can open a shift, one line is shown in place of the list:
+A register not fit to open a shift is not offered for selection: it cannot be marked, and no shift is opened on it. The reason for the refusal is shown for every such register.
 
-| Line | When shown |
-| --- | --- |
-| **Каса має документи, не передані в ДПС. Передайте їх у ДПС, і тоді відкривайте зміну.** | At least one register has a closed session with documents still to hand over |
-| **Каса ще реєструється в ДПС і не має фіскального номера.** | No register has a fiscal number yet |
-| **Каса працює в тестовому режимі ДПС, який доступний лише на тестовому сервері. Вимкніть тестовий режим у налаштуваннях каси.** | At least one register runs in the tax service's test mode and the computer is not the test server |
-| **Ключ касира не заявлено в ДПС або його сертифікат прострочено. Перевірте ключ касира в налаштуваннях.** | At least one register has an undeclared cashier's key or an expired certificate |
-| **Ключ касира цієї каси вже підписує відкриту офлайн-сесію іншої каси. Один ключ працює на одному реєстраторі, тому спочатку поверніть ту касу в онлайн.** | The cashier's key already signs the open session of another register |
-| **Жодна каса не має права на офлайн. Отримайте право на офлайн у налаштуваннях, поки є інтернет.** | No register holds the right to work offline |
+The fitness and the reason are reported by the offline till for each register separately. A reason carries a code and a message: the code is the machine value, the message is the text shown to the user. The set of codes is closed and given below.
+
+| Code | Message | When shown |
+| --- | --- | --- |
+| `REGISTER_NOT_REGISTERED` | **Касу ще реєструють у Державній податковій службі. Працювати на ній можна буде після того, як реєстрація завершиться і каса отримає фіскальний номер, — зачекайте та оновіть сторінку.** | The register has no fiscal number yet |
+| `TEST_MODE_DEV_ONLY` | **Каса працює в тестовому режимі Державної податкової служби, а цей режим доступний лише на тестовому сервері. Закрийте зміну каси й вимкніть тестовий режим у налаштуваннях каси.** | The tax service's test mode is on in the register settings and the computer is not the test server |
+| `OFFLINE_SESSION_CLOSED` | **Офлайн-сесію цієї каси вже закрито. Документи цієї сесії ще потрібно надіслати до Державної податкової служби — дочекайтесь, поки каса їх надішле.** | The offline session of the register is closed and its documents have not reached the tax service |
+| `OFFLINE_GRANT_NONE` | **Ця каса не має права працювати в офлайні. Отримайте його в налаштуваннях каси, поки є звʼязок з інтернетом.** | The register has no open session and holds no right to work offline |
+| `CASHIER_KEY_NOT_SET_UP` | **Додайте ключ офлайн-касира — без нього каса не працює в офлайні.** | No offline cashier's key is set up on the register |
+| `CASHIER_KEY_NOT_DECLARED` | **Ключ офлайн-касира не заявлено в Державній податковій службі. Подайте повідомлення про касира за формою 5-ПРРО і перевірте ключ ще раз.** | The key is not among the operators the tax service lists, or was not checked after being replaced |
+| `CASHIER_KEY_SAME_AS_HEAD` | **Ключ офлайн-касира — це головний ключ каси. Для роботи в офлайні потрібен окремий ключ касира: отримайте його в будь-якого кваліфікованого надавача електронних довірчих послуг і вкажіть у налаштуваннях каси.** | The offline cashier's key is the head key of this or another register of the computer |
+| `CASHIER_KEY_IN_USE` | **Ключем офлайн-касира цієї каси зараз працює каса «назва іншої каси». Один ключ працює лише на одній касі одночасно: закрийте зміну на тій касі або вкажіть цій касі окремий ключ касира.** | The offline cashier's key signs the open offline session of another register of the computer |
+| `CASHIER_CERTIFICATE_EXPIRED` | **Строк дії сертифіката ключа офлайн-касира закінчився, а головний ключ не відкривається. Отримайте новий ключ касира та вкажіть його в налаштуваннях каси.** | The certificate of the offline cashier's key has run out |
+| Codes of the key container, beginning with `KEY_` | Messages about the state of the key or certificate file; given on the [ПРРО offline-mode registers](/en/pages/prro-registers) page | The container of the key that signs the documents of the register did not open |
+
+The name of the other register is filled in by the till; when no name is given, «інша каса цього компʼютера» is shown.
 
 When the computer has no ПРРО register at all, the line shown is:
 
@@ -107,14 +121,14 @@ When the fiscal shift was not opened on every selected register, a separate mess
 | --- | --- |
 | **Офлайн-сесія вичерпала свої 36 годин.** | The register's offline session is spent |
 | **Місячний запас офлайну (168 годин) вичерпано.** | The monthly offline allowance is spent |
-| **Немає права на офлайн — отримайте його, поки є інтернет.** | The right to work offline is absent or already spent |
+| **Ця каса не має права працювати в офлайні. Отримайте його в налаштуваннях каси, поки є звʼязок з інтернетом.** | The right to work offline is absent or already spent |
 | **Каса не перейшла в офлайн. Щоб спробувати ще раз, закрийте зміну й відкрийте її знову.** | The document was not signed |
 | **Зміна на цій касі вже відкрита.** | The register's fiscal shift was already open |
 | **Додайте ключ офлайн-касира — без нього каса не працює в офлайні.** | No offline cashier's key has been added for the register |
-| **Ключ офлайн-касира не заявлено в ДПС (5-ПРРО) — подайте повідомлення 5-ПРРО і перевірте ключ ще раз.** | The key is not declared to the tax service |
-| **Сертифікат ключа офлайн-касира прострочено, а головний ключ не відкривається — оновіть ключ касира.** | The certificate of the cashier's key has run out |
-| **Ключ офлайн-касира — це головний ключ. Потрібен окремий: якщо головний ви отримали в ПриватБанку, додатковий отримайте в monoКЕП, КНЕДП ДПС чи іншому надавачі.** | The cashier's key is the head key of a register |
-| **Цим ключем касира зараз працює інша офлайн-каса — один ключ працює лише на одному ПРРО одночасно. Закрийте її сесію або дайте цій касі окремий ключ.** | The cashier's key signs the open session of another register |
+| **Ключ офлайн-касира не заявлено в Державній податковій службі. Подайте повідомлення про касира за формою 5-ПРРО і перевірте ключ ще раз.** | The key is not declared to the tax service |
+| **Строк дії сертифіката ключа офлайн-касира закінчився, а головний ключ не відкривається. Отримайте новий ключ касира та вкажіть його в налаштуваннях каси.** | The certificate of the cashier's key has run out |
+| **Ключ офлайн-касира — це головний ключ каси. Для роботи в офлайні потрібен окремий ключ касира: отримайте його в будь-якого кваліфікованого надавача електронних довірчих послуг і вкажіть у налаштуваннях каси.** | The cashier's key is the head key of a register |
+| **Ключем офлайн-касира цієї каси зараз працює каса «назва іншої каси». Один ключ працює лише на одній касі одночасно: закрийте зміну на тій касі або вкажіть цій касі окремий ключ касира.** | The cashier's key signs the open session of another register |
 
 When a selected register could not be taken into the shift because of its settings, its key or its right to work offline, the shift opens on no register and the reason for the refusal is shown.
 
